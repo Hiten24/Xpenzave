@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.hcapps.xpenzave.presentation.auth.AuthenticationScreen
 import com.hcapps.xpenzave.presentation.home.HomeScreen
+import com.hcapps.xpenzave.presentation.settings.SettingsScreen
 import com.hcapps.xpenzave.util.Screen
 
 @Composable
@@ -16,6 +17,7 @@ fun XpenzaveNavGraph(startDestination: String, navController: NavHostController)
             navController.navigate(Screen.Home.route)
         }
         homeRoute()
+        settingsRoute()
     }
 }
 
@@ -28,5 +30,11 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
 fun NavGraphBuilder.homeRoute() {
     composable(route = Screen.Home.route) {
         HomeScreen()
+    }
+}
+
+fun NavGraphBuilder.settingsRoute() {
+    composable(route = Screen.Settings.route) {
+        SettingsScreen()
     }
 }

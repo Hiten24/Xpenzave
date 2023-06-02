@@ -15,7 +15,8 @@ class MainActivity : ComponentActivity() {
             XpenzaveTheme {
                 val navController = rememberNavController()
                 XpenzaveNavGraph(
-                    startDestination = Screen.Authentication.route,
+//                    startDestination = Screen.Authentication.route,
+                    startDestination = Screen.Settings.route,
                     navController = navController
                 )
             }
