@@ -3,7 +3,7 @@ package com.hcapps.xpenzave
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.Surface
+import com.hcapps.xpenzave.presentation.auth.RegisterScreen
 import com.hcapps.xpenzave.ui.theme.XpenzaveTheme
 
 class MainActivity : ComponentActivity() {
@@ -11,9 +11,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             XpenzaveTheme {
-                Surface {
-
-                }
+                RegisterScreen()
             }
         }
     }
