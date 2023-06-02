@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
 
 @Composable
-fun RegisterScreen() {
+fun AuthenticationScreen(navigateToHome: () -> Unit) {
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -56,9 +56,7 @@ fun RegisterScreen() {
         RegisterMiddleComponent()
 
         RegisterBottomComponent(
-            onClickOfRegisterButton = {
-                Toast.makeText(context, "Registering", Toast.LENGTH_SHORT).show()
-            },
+            onClickOfRegisterButton = navigateToHome,
             onClickOfFaceBook = {
                 Toast.makeText(context, "Facebook Register", Toast.LENGTH_SHORT).show()
             },
