@@ -57,7 +57,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.4"
+        kotlinCompilerExtensionVersion = "1.4.7"
     }
 
 }
@@ -75,6 +75,7 @@ dependencies {
 
     // appwrite
     implementation("io.appwrite:sdk-for-android:1.1.0")
+    implementation("androidx.core:core-ktx:1.10.1")
 
     testImplementation ("junit:junit:4.13.2")
 
