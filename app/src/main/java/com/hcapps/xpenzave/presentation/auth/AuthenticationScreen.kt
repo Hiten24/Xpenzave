@@ -154,7 +154,7 @@ fun RegisterBottomComponent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(text = "or continue with")
+        Text(text = "or continue with", color = MaterialTheme.colorScheme.onSurface)
 
         Spacer(modifier = Modifier.height(16.dp))
 

@@ -1,5 +1,4 @@
 package com.hcapps.xpenzave.ui.theme
-
 import androidx.compose.ui.graphics.Color
 
 val md_theme_light_primary = Color(0xFF194AED)
@@ -10,7 +9,7 @@ val md_theme_light_secondary = Color(0xFF005BC1)
 val md_theme_light_onSecondary = Color(0xFFFFFFFF)
 val md_theme_light_secondaryContainer = Color(0xFFD8E2FF)
 val md_theme_light_onSecondaryContainer = Color(0xFF001A41)
-val md_theme_light_tertiary = Color(0xFF194AED)
+val md_theme_light_tertiary = Color(0xFF4C57A9)
 val md_theme_light_onTertiary = Color(0xFFFFFFFF)
 val md_theme_light_tertiaryContainer = Color(0xFFDFE0FF)
 val md_theme_light_onTertiaryContainer = Color(0xFF000B62)
@@ -22,7 +21,7 @@ val md_theme_light_background = Color(0xFFFEFBFF)
 val md_theme_light_onBackground = Color(0xFF1B1B1F)
 val md_theme_light_surface = Color(0xFFFEFBFF)
 val md_theme_light_onSurface = Color(0xFF1B1B1F)
-val md_theme_light_surfaceVariant = Color(0xFF194AED)
+val md_theme_light_surfaceVariant = Color(0xFFE3E1EC)
 val md_theme_light_onSurfaceVariant = Color(0xFF45464F)
 val md_theme_light_outline = Color(0xFF767680)
 val md_theme_light_inverseOnSurface = Color(0xFFF3F0F4)
