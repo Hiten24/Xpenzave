@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Shapes
@@ -28,8 +29,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hcapps.xpenzave.ui.theme.XpenzaveColor
+import com.hcapps.xpenzave.ui.theme.ButtonHeight
 
 @Composable
 fun RegisterScreen() {
@@ -77,18 +79,20 @@ fun RegisterHeader(
         Text(
             text = "Log In",
             style = MaterialTheme.typography.headlineMedium,
-            color = if (authState.value == 1) XpenzaveColor.colorSchema.primary else XpenzaveColor.colorSchema.primary.copy(alpha = 0.5f),
+            color = if (authState.value == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
             modifier = Modifier.clickable(interactionSource = MutableInteractionSource(), indication = null) {
                 authState.value = 1
+                onClickOfLogin()
             }
         )
         Spacer(modifier = Modifier.width(32.dp))
         Text(
             text = "Register",
             style = MaterialTheme.typography.headlineMedium,
-            color = if (authState.value == 2) XpenzaveColor.colorSchema.primary else XpenzaveColor.colorSchema.primary.copy(alpha = 0.5f),
+            color = if (authState.value == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
             modifier = Modifier.clickable(interactionSource = MutableInteractionSource(), indication = null) {
                 authState.value = 2
+                onClickOfRegister()
             }
         )
     }
@@ -145,39 +149,49 @@ fun RegisterBottomComponent(
     ) {
         Button(
             onClick = { onClickOfRegisterButton() },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(ButtonHeight),
             shape = Shapes().small,
-            colors = ButtonDefaults.buttonColors(containerColor = XpenzaveColor.colorSchema.primary)
         ) {
-            Text(text = "Register")
+            Text(
+                text = "Register",
+                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                fontWeight = MaterialTheme.typography.labelLarge.fontWeight
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(text = "or continue with", color = MaterialTheme.colorScheme.onSurface)
+        Text(
+            text = "or continue with",
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.labelLarge
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            Button(
+
+            FilledTonalButton(
                 onClick = { onClickOfFaceBook() },
                 shape = Shapes().small,
                 colors = ButtonDefaults
-                    .buttonColors(containerColor = XpenzaveColor.colorSchema.primary.copy(alpha = 0.1f)),
-                modifier = Modifier.weight(1f)
+                    .buttonColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+                modifier = Modifier.height(ButtonHeight).weight(1f)
             ) {
                 Text(
                     text = "FaceBook",
                     color = MaterialTheme.colorScheme.primary
                 )
             }
+
             Spacer(modifier = Modifier.width(12.dp))
-            Button(
+
+            FilledTonalButton(
                 onClick = { onClickOfGoogle() },
                 shape = Shapes().small,
                 colors = ButtonDefaults
-                    .buttonColors(containerColor = XpenzaveColor.colorSchema.primary.copy(alpha = 0.1f)),
-                modifier = Modifier.weight(1f)
+                    .buttonColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+                modifier = Modifier.height(ButtonHeight).weight(1f)
             ) {
                 Text(
                     text = "Google",
@@ -185,6 +199,17 @@ fun RegisterBottomComponent(
                 )
             }
         }
+
+    }
+}
+
+@Preview
+@Composable
+fun PreviewAuthBottom() {
+    RegisterBottomComponent(
+        onClickOfRegisterButton = {  },
+        onClickOfGoogle = {  }
+    ) {
 
     }
 }
