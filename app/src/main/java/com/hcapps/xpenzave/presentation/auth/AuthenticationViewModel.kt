@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.source.remote.repository.AuthRepository
+import com.hcapps.xpenzave.util.ResponseState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -13,20 +14,47 @@ class AuthenticationViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
+    var authScreenState = mutableStateOf(1)
+        private set
+
     var emailState = mutableStateOf("")
         private set
 
     var passwordState = mutableStateOf("")
         private set
 
-    fun registerUser(onInvalid: () -> Unit) = viewModelScope.launch {
+    fun registerUser(
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit
+    ) = viewModelScope.launch {
         if (!validateFields()) {
-            onInvalid()
+            onError(Exception("Enter all require details to register."))
             return@launch
         }
         val email = emailState.value
         val password = passwordState.value
-        authRepository.createAccountWithCredentials(email, password)
+        when (val response = authRepository.createAccountWithCredentials(email, password)) {
+            is ResponseState.Success -> onSuccess()
+            is ResponseState.Error -> onError(response.error)
+            else -> Unit
+        }
+    }
+
+    fun login(
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit
+    ) = viewModelScope.launch {
+        if (!validateFields()) {
+            onError(Exception("Enter all require details to login."))
+            return@launch
+        }
+        val email = emailState.value
+        val password = passwordState.value
+        when (val response = authRepository.loginWithCredentials(email, password)) {
+            is ResponseState.Success -> onSuccess()
+            is ResponseState.Error -> onError(response.error)
+            else -> Unit
+        }
     }
 
     private fun validateFields(): Boolean {

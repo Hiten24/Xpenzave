@@ -34,10 +34,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
+import com.hcapps.xpenzave.util.Constant.AUTH_LOGIN_SCREEN
+import com.hcapps.xpenzave.util.Constant.AUTH_REGISTER_SCREEN
 
 @Composable
 fun AuthenticationScreen(
@@ -48,6 +49,7 @@ fun AuthenticationScreen(
     val context = LocalContext.current
     var email by viewModel.emailState
     var password by viewModel.passwordState
+    var screenState by viewModel.authScreenState
 
     Column(
         modifier = Modifier
@@ -59,11 +61,12 @@ fun AuthenticationScreen(
     ) {
         RegisterHeader(
             onClickOfLogin = {
-                Toast.makeText(context, "Login", Toast.LENGTH_SHORT).show()
+                screenState = AUTH_LOGIN_SCREEN
             },
             onClickOfRegister = {
-                Toast.makeText(context, "Register", Toast.LENGTH_SHORT).show()
-            }
+                screenState = AUTH_REGISTER_SCREEN
+            },
+            screenState = screenState
         )
 
         RegisterMiddleComponent(
@@ -75,8 +78,16 @@ fun AuthenticationScreen(
 
         RegisterBottomComponent(
             onClickOfRegisterButton = {
-                viewModel.registerUser {
-                    Toast.makeText(context, "Fill all the require field to register", Toast.LENGTH_SHORT).show()
+                if (screenState == AUTH_LOGIN_SCREEN) {
+                    viewModel.login(
+                        onSuccess = { Toast.makeText(context, "Login Successfully", Toast.LENGTH_SHORT).show() },
+                        onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
+                    )
+                } else {
+                    viewModel.registerUser(
+                        onSuccess = { Toast.makeText(context, "User registered successfully", Toast.LENGTH_SHORT).show() },
+                        onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
+                    )
                 }
             },
             onClickOfFaceBook = {
@@ -84,24 +95,29 @@ fun AuthenticationScreen(
             },
             onClickOfGoogle = {
                 Toast.makeText(context, "Google Register", Toast.LENGTH_SHORT).show()
-            }
+            },
+            buttonTitle = if (screenState == AUTH_LOGIN_SCREEN) "Log In" else "Register"
         )
     }
 }
 
 @Composable
 fun RegisterHeader(
+    screenState: Int,
     onClickOfLogin: () -> Unit,
     onClickOfRegister: () -> Unit
 ) {
-    val authState = remember { mutableStateOf(1) }
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Log In",
             style = MaterialTheme.typography.headlineMedium,
-            color = if (authState.value == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-            modifier = Modifier.clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                authState.value = 1
+            color = if (screenState == AUTH_LOGIN_SCREEN)
+                        MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+            modifier = Modifier.clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) {
                 onClickOfLogin()
             }
         )
@@ -109,9 +125,13 @@ fun RegisterHeader(
         Text(
             text = "Register",
             style = MaterialTheme.typography.headlineMedium,
-            color = if (authState.value == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-            modifier = Modifier.clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                authState.value = 2
+            color = if (screenState == AUTH_REGISTER_SCREEN)
+                        MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+            modifier = Modifier.clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) {
                 onClickOfRegister()
             }
         )
@@ -164,10 +184,11 @@ fun RegisterMiddleComponent(
 fun RegisterBottomComponent(
     onClickOfRegisterButton: () -> Unit,
     onClickOfGoogle: () -> Unit,
-    onClickOfFaceBook: () -> Unit
+    onClickOfFaceBook: () -> Unit,
+    buttonTitle: String
 ) {
 
-    var loadingState by remember { mutableStateOf(false) }
+    val loadingState by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -186,7 +207,7 @@ fun RegisterBottomComponent(
         ) {
             if (!loadingState) {
                 Text(
-                    text = "Register",
+                    text = buttonTitle,
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                     fontWeight = MaterialTheme.typography.labelLarge.fontWeight
                 )
@@ -246,17 +267,6 @@ fun RegisterBottomComponent(
                 )
             }
         }
-
-    }
-}
-
-@Preview
-@Composable
-fun PreviewAuthBottom() {
-    RegisterBottomComponent(
-        onClickOfRegisterButton = {  },
-        onClickOfGoogle = {  }
-    ) {
 
     }
 }

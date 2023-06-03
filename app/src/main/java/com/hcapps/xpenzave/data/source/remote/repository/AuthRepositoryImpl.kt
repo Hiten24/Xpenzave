@@ -7,6 +7,7 @@ import com.hcapps.xpenzave.util.ResponseState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.appwrite.Client
 import io.appwrite.ID
+import io.appwrite.models.Session
 import io.appwrite.services.Account
 import timber.log.Timber
 import javax.inject.Inject
@@ -42,12 +43,33 @@ class AuthRepositoryImpl @Inject constructor(
                 email = email,
                 password = password
             )
+            Timber.i("response: $response")
+            Timber.i("response: ${response.registration}")
             Timber.i("createAccountWithCredentials: user " + response.email + " registered successfully")
             ResponseState.Success(response)
         } catch (e: Exception) {
-            Timber.i("createAccountWithCredentials: Failed to create account")
             e.printStackTrace()
-            ResponseState.Error<AppUser>(e)
+            if (e.message == "A user with the same email already exists in your project.") {
+                ResponseState.Error(Exception("A user with the same email already exists."))
+            } else {
+                ResponseState.Error(e)
+            }
+        }
+    }
+
+    override suspend fun loginWithCredentials(
+        email: String,
+        password: String
+    ): ResponseState<Session> {
+        return try {
+            val response = account.createEmailSession(
+                email = email,
+                password = password
+            )
+            ResponseState.Success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ResponseState.Error(e)
         }
     }
 }
