@@ -1,12 +1,7 @@
 package com.hcapps.xpenzave.data.source.remote.repository
 
-import android.content.Context
 import androidx.activity.ComponentActivity
-import com.hcapps.xpenzave.util.Constant.APP_WRITE_ENDPOINT
-import com.hcapps.xpenzave.util.Constant.APP_WRITE_PROJECT_ID
 import com.hcapps.xpenzave.util.ResponseState
-import dagger.hilt.android.qualifiers.ApplicationContext
-import io.appwrite.Client
 import io.appwrite.ID
 import io.appwrite.models.Session
 import io.appwrite.services.Account
@@ -16,24 +11,8 @@ import javax.inject.Inject
 typealias AppUser = io.appwrite.models.Account<Any>
 
 class AuthRepositoryImpl @Inject constructor(
-    @ApplicationContext
-    private val context: Context
+    private val account: Account
 ): AuthRepository {
-
-    private lateinit var client: Client
-    private lateinit var account: Account
-
-    init {
-        configureAppWrite()
-    }
-
-    private fun configureAppWrite() {
-        client = Client(context)
-            .setEndpoint(APP_WRITE_ENDPOINT)
-            .setProject(APP_WRITE_PROJECT_ID)
-            .setSelfSigned(true)
-        account = Account(client)
-    }
 
     override suspend fun createAccountWithCredentials(
         email: String,
@@ -80,7 +59,10 @@ class AuthRepositoryImpl @Inject constructor(
         provider: String
     ): ResponseState<Boolean> {
         return try {
-            account.createOAuth2Session(activity = activity, provider = provider)
+            account.createOAuth2Session(
+                activity = activity,
+                provider = provider
+            )
             ResponseState.Success(true)
         } catch (e: Exception) {
             e.printStackTrace()
