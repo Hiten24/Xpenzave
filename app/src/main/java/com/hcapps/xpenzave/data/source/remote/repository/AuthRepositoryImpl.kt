@@ -30,6 +30,7 @@ class AuthRepositoryImpl @Inject constructor(
         client = Client(context)
             .setEndpoint(APP_WRITE_ENDPOINT)
             .setProject(APP_WRITE_PROJECT_ID)
+            .setSelfSigned(true)
         account = Account(client)
     }
 

@@ -5,13 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.source.remote.repository.AuthRepository
 import com.hcapps.xpenzave.util.ResponseState
+import com.hcapps.xpenzave.util.SettingsDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val settingsDataStore: SettingsDataStore
 ) : ViewModel() {
 
     var authScreenState = mutableStateOf(1)
@@ -34,7 +36,10 @@ class AuthenticationViewModel @Inject constructor(
         val email = emailState.value
         val password = passwordState.value
         when (val response = authRepository.createAccountWithCredentials(email, password)) {
-            is ResponseState.Success -> onSuccess()
+            is ResponseState.Success -> {
+                settingsDataStore.saveBoolean(SettingsDataStore.SETTINGS_IS_LOGGED_IN_KEY, true)
+                onSuccess()
+            }
             is ResponseState.Error -> onError(response.error)
             else -> Unit
         }
@@ -51,7 +56,10 @@ class AuthenticationViewModel @Inject constructor(
         val email = emailState.value
         val password = passwordState.value
         when (val response = authRepository.loginWithCredentials(email, password)) {
-            is ResponseState.Success -> onSuccess()
+            is ResponseState.Success -> {
+                settingsDataStore.saveBoolean(SettingsDataStore.SETTINGS_IS_LOGGED_IN_KEY, true)
+                onSuccess()
+            }
             is ResponseState.Error -> onError(response.error)
             else -> Unit
         }
