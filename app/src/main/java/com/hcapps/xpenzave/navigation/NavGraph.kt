@@ -13,11 +13,13 @@ import com.hcapps.xpenzave.util.Screen
 @Composable
 fun XpenzaveNavGraph(startDestination: String, navController: NavHostController) {
     NavHost(navController = navController, startDestination = startDestination) {
-        authenticationRoute {
-            navController.navigate(Screen.Home.route)
-        }
+
+        authenticationRoute { navController.navigate(Screen.Settings.route) }
+
         homeRoute()
+
         settingsRoute()
+
     }
 }
 

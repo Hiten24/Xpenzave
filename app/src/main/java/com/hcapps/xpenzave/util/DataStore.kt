@@ -3,6 +3,7 @@ package com.hcapps.xpenzave.util
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
@@ -17,6 +18,7 @@ class SettingsDataStore @Inject constructor(
 
     companion object {
         const val SETTINGS_IS_LOGGED_IN_KEY = "is_logged_in"
+        const val USER_EMAIL_KEY = "email"
     }
 
     private val Context.datastore by preferencesDataStore(name = "settings")
@@ -32,6 +34,19 @@ class SettingsDataStore @Inject constructor(
         val dataStoreKey = booleanPreferencesKey(key)
         val preferences = context.datastore.data.first()
         return preferences[dataStoreKey] ?: false
+    }
+
+    suspend fun saveString(key: String, value: String) {
+        val dataStoreKey = stringPreferencesKey(key)
+        context.datastore.edit { settings ->
+            settings[dataStoreKey] = value
+        }
+    }
+
+    suspend fun getString(key: String): String {
+        val dataStoreKey = stringPreferencesKey(key)
+        val preferences = context.datastore.data.first()
+        return preferences[dataStoreKey] ?: ""
     }
 
 }

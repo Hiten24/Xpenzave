@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.source.remote.repository.AuthRepository
 import com.hcapps.xpenzave.util.ResponseState
 import com.hcapps.xpenzave.util.SettingsDataStore
+import com.hcapps.xpenzave.util.SettingsDataStore.Companion.SETTINGS_IS_LOGGED_IN_KEY
+import com.hcapps.xpenzave.util.SettingsDataStore.Companion.USER_EMAIL_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,6 +28,14 @@ class AuthenticationViewModel @Inject constructor(
     var passwordState = mutableStateOf("")
         private set
 
+    var loadingState = mutableStateOf(false)
+        private set
+
+    fun clearFields() {
+        emailState.value = ""
+        passwordState.value = ""
+    }
+
     fun registerUser(
         onSuccess: () -> Unit,
         onError: (Throwable) -> Unit
@@ -34,14 +44,20 @@ class AuthenticationViewModel @Inject constructor(
             onError(Exception("Enter all require details to register."))
             return@launch
         }
+        loadingState.value = true
         val email = emailState.value
         val password = passwordState.value
         when (val response = authRepository.createAccountWithCredentials(email, password)) {
             is ResponseState.Success -> {
-                settingsDataStore.saveBoolean(SettingsDataStore.SETTINGS_IS_LOGGED_IN_KEY, true)
+                settingsDataStore.saveBoolean(SETTINGS_IS_LOGGED_IN_KEY, true)
+                settingsDataStore.saveString(USER_EMAIL_KEY, response.data.email)
+                loadingState.value = false
                 onSuccess()
             }
-            is ResponseState.Error -> onError(response.error)
+            is ResponseState.Error -> {
+                loadingState.value = false
+                onError(response.error)
+            }
             else -> Unit
         }
     }
@@ -54,14 +70,20 @@ class AuthenticationViewModel @Inject constructor(
             onError(Exception("Enter all require details to login."))
             return@launch
         }
+        loadingState.value = true
         val email = emailState.value
         val password = passwordState.value
         when (val response = authRepository.loginWithCredentials(email, password)) {
             is ResponseState.Success -> {
-                settingsDataStore.saveBoolean(SettingsDataStore.SETTINGS_IS_LOGGED_IN_KEY, true)
+                settingsDataStore.saveBoolean(SETTINGS_IS_LOGGED_IN_KEY, true)
+                settingsDataStore.saveString(USER_EMAIL_KEY, email)
+                loadingState.value = false
                 onSuccess()
             }
-            is ResponseState.Error -> onError(response.error)
+            is ResponseState.Error -> {
+                loadingState.value = false
+                onError(response.error)
+            }
             else -> Unit
         }
     }

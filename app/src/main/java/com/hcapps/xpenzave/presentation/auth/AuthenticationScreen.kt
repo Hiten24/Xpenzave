@@ -25,8 +25,6 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +51,7 @@ fun AuthenticationScreen(
     var email by viewModel.emailState
     var password by viewModel.passwordState
     var screenState by viewModel.authScreenState
+    val loadingState by viewModel.loadingState
 
     Column(
         modifier = Modifier
@@ -64,9 +63,11 @@ fun AuthenticationScreen(
     ) {
         RegisterHeader(
             onClickOfLogin = {
+                viewModel.clearFields()
                 screenState = AUTH_LOGIN_SCREEN
             },
             onClickOfRegister = {
+                viewModel.clearFields()
                 screenState = AUTH_REGISTER_SCREEN
             },
             screenState = screenState
@@ -83,12 +84,12 @@ fun AuthenticationScreen(
             onClickOfRegisterButton = {
                 if (screenState == AUTH_LOGIN_SCREEN) {
                     viewModel.login(
-                        onSuccess = { Toast.makeText(context, "Login Successfully", Toast.LENGTH_SHORT).show() },
+                        onSuccess = { navigateToHome() },
                         onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
                     )
                 } else {
                     viewModel.registerUser(
-                        onSuccess = { Toast.makeText(context, "User registered successfully", Toast.LENGTH_SHORT).show() },
+                        onSuccess = { navigateToHome() },
                         onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
                     )
                 }
@@ -109,7 +110,8 @@ fun AuthenticationScreen(
                     onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
                 )
             },
-            buttonTitle = if (screenState == AUTH_LOGIN_SCREEN) stringResource(R.string.login) else stringResource(R.string.register)
+            buttonTitle = if (screenState == AUTH_LOGIN_SCREEN) stringResource(R.string.login) else stringResource(R.string.register),
+            loadingState = loadingState
         )
     }
 }
@@ -198,10 +200,9 @@ fun RegisterBottomComponent(
     onClickOfRegisterButton: () -> Unit,
     onClickOfGoogle: () -> Unit,
     onClickOfFaceBook: () -> Unit,
-    buttonTitle: String
+    buttonTitle: String,
+    loadingState: Boolean
 ) {
-
-    val loadingState by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxWidth(),

@@ -29,7 +29,6 @@ class MainActivity : ComponentActivity() {
                     navController.navigate(getStartDestination(dataStore))
                 }
                 XpenzaveNavGraph(
-//                    startDestination = Screen.Authentication.route,
                     startDestination = Screen.Authentication.route,
                     navController = navController
                 )
@@ -42,6 +41,6 @@ suspend fun getStartDestination(dataStore: SettingsDataStore): String {
     return withContext(Dispatchers.IO) {
         val isLoggedIn = dataStore.getBoolean(SettingsDataStore.SETTINGS_IS_LOGGED_IN_KEY)
         return@withContext if (!isLoggedIn) Screen.Authentication.route
-        else Screen.Home.route
+        else Screen.Settings.route
     }
 }
