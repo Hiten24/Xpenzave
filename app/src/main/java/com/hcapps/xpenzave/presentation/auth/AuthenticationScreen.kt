@@ -1,6 +1,7 @@
 package com.hcapps.xpenzave.presentation.auth
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -95,9 +96,11 @@ fun AuthenticationScreen(
             onClickOfFaceBook = {
                 Toast.makeText(context, "Facebook Register", Toast.LENGTH_SHORT).show()
             },
-            onClickOfGoogle = {
-                Toast.makeText(context, "Google Register", Toast.LENGTH_SHORT).show()
-            },
+            onClickOfGoogle = { viewModel.loginWithGoogle(
+                context as ComponentActivity,
+                onSuccess = { Toast.makeText(context, "logged in successfully", Toast.LENGTH_SHORT).show() },
+                onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() },
+            ) },
             buttonTitle = if (screenState == AUTH_LOGIN_SCREEN) stringResource(R.string.login) else stringResource(R.string.register)
         )
     }

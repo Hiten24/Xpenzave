@@ -1,6 +1,7 @@
 package com.hcapps.xpenzave.data.source.remote.repository
 
 import android.content.Context
+import androidx.activity.ComponentActivity
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_ENDPOINT
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_PROJECT_ID
 import com.hcapps.xpenzave.util.ResponseState
@@ -68,6 +69,16 @@ class AuthRepositoryImpl @Inject constructor(
                 password = password
             )
             ResponseState.Success(response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ResponseState.Error(e)
+        }
+    }
+
+    override suspend fun authWithGoogle(activity: ComponentActivity): ResponseState<Boolean> {
+        return try {
+            account.createOAuth2Session(activity = activity, provider = "google")
+            ResponseState.Success(true)
         } catch (e: Exception) {
             e.printStackTrace()
             ResponseState.Error(e)

@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.data.source.remote.repository
 
+import androidx.activity.ComponentActivity
 import com.hcapps.xpenzave.util.ResponseState
 import io.appwrite.models.Session
 
@@ -14,5 +15,7 @@ interface AuthRepository {
         email: String,
         password: String
     ): ResponseState<Session>
+
+    suspend fun authWithGoogle(activity: ComponentActivity): ResponseState<Boolean>
 
 }

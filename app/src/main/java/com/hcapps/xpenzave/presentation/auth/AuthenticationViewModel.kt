@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.presentation.auth
 
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -60,6 +61,18 @@ class AuthenticationViewModel @Inject constructor(
                 settingsDataStore.saveBoolean(SettingsDataStore.SETTINGS_IS_LOGGED_IN_KEY, true)
                 onSuccess()
             }
+            is ResponseState.Error -> onError(response.error)
+            else -> Unit
+        }
+    }
+
+    fun loginWithGoogle(
+        activity: ComponentActivity,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit
+    ) = viewModelScope.launch {
+        when (val response = authRepository.authWithGoogle(activity)) {
+            is ResponseState.Success -> onSuccess()
             is ResponseState.Error -> onError(response.error)
             else -> Unit
         }
