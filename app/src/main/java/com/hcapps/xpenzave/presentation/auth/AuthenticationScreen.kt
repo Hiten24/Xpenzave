@@ -31,11 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.util.Constant.AUTH_LOGIN_SCREEN
 import com.hcapps.xpenzave.util.Constant.AUTH_REGISTER_SCREEN
@@ -96,7 +98,7 @@ fun AuthenticationScreen(
             onClickOfGoogle = {
                 Toast.makeText(context, "Google Register", Toast.LENGTH_SHORT).show()
             },
-            buttonTitle = if (screenState == AUTH_LOGIN_SCREEN) "Log In" else "Register"
+            buttonTitle = if (screenState == AUTH_LOGIN_SCREEN) stringResource(R.string.login) else stringResource(R.string.register)
         )
     }
 }
@@ -152,7 +154,7 @@ fun RegisterMiddleComponent(
             value = email,
             onValueChange = onEmailChanged,
             label = {
-                Text(text = "E-Mail")
+                Text(text = stringResource(R.string.e_mail))
             },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -167,7 +169,7 @@ fun RegisterMiddleComponent(
             value = password,
             onValueChange = onPasswordChanged,
             label = {
-                Text(text = "Set Password")
+                Text(text = stringResource(R.string.set_password))
             },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -224,7 +226,7 @@ fun RegisterBottomComponent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "or continue with",
+            text = stringResource(R.string.or_continue_with),
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.labelLarge
         )
@@ -244,7 +246,7 @@ fun RegisterBottomComponent(
                     .weight(1f)
             ) {
                 Text(
-                    text = "FaceBook",
+                    text = stringResource(R.string.facebook),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -262,7 +264,7 @@ fun RegisterBottomComponent(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Google",
+                    text = stringResource(R.string.google),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
