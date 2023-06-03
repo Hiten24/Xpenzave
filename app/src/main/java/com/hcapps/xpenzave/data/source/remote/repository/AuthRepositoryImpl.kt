@@ -1,7 +1,6 @@
 package com.hcapps.xpenzave.data.source.remote.repository
 
 import android.content.Context
-import android.util.Log
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_ENDPOINT
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_PROJECT_ID
 import com.hcapps.xpenzave.util.ResponseState
@@ -9,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import io.appwrite.Client
 import io.appwrite.ID
 import io.appwrite.services.Account
+import timber.log.Timber
 import javax.inject.Inject
 
 typealias AppUser = io.appwrite.models.Account<Any>
@@ -17,10 +17,6 @@ class AuthRepositoryImpl @Inject constructor(
     @ApplicationContext
     private val context: Context
 ): AuthRepository {
-
-    companion object {
-        const val TAG = "AuthRepository"
-    }
 
     private lateinit var client: Client
     private lateinit var account: Account
@@ -46,10 +42,10 @@ class AuthRepositoryImpl @Inject constructor(
                 email = email,
                 password = password
             )
-            Log.i(TAG, "createAccountWithCredentials: user ${response.email} registered successfully")
+            Timber.i("createAccountWithCredentials: user " + response.email + " registered successfully")
             ResponseState.Success(response)
         } catch (e: Exception) {
-            Log.i(TAG, "createAccountWithCredentials: Failed to create account")
+            Timber.i("createAccountWithCredentials: Failed to create account")
             e.printStackTrace()
             ResponseState.Error<AppUser>(e)
         }
