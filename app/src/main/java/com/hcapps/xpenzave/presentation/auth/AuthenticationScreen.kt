@@ -36,12 +36,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
 
 @Composable
-fun AuthenticationScreen(navigateToHome: () -> Unit) {
+fun AuthenticationScreen(
+    navigateToHome: () -> Unit,
+    viewModel: AuthenticationViewModel = hiltViewModel()
+) {
 
     val context = LocalContext.current
+    var email by viewModel.emailState
+    var password by viewModel.passwordState
 
     Column(
         modifier = Modifier
@@ -60,10 +66,19 @@ fun AuthenticationScreen(navigateToHome: () -> Unit) {
             }
         )
 
-        RegisterMiddleComponent()
+        RegisterMiddleComponent(
+            email = email,
+            onEmailChanged = { email = it },
+            password = password,
+            onPasswordChanged = { password = it }
+        )
 
         RegisterBottomComponent(
-            onClickOfRegisterButton = navigateToHome,
+            onClickOfRegisterButton = {
+                viewModel.registerUser {
+                    Toast.makeText(context, "Fill all the require field to register", Toast.LENGTH_SHORT).show()
+                }
+            },
             onClickOfFaceBook = {
                 Toast.makeText(context, "Facebook Register", Toast.LENGTH_SHORT).show()
             },
@@ -104,15 +119,18 @@ fun RegisterHeader(
 }
 
 @Composable
-fun RegisterMiddleComponent() {
-    val emailState = remember { mutableStateOf("") }
-    val passwordState = remember { mutableStateOf("") }
+fun RegisterMiddleComponent(
+     email: String,
+     onEmailChanged: (String) -> Unit,
+     password: String,
+     onPasswordChanged: (String) -> Unit
+) {
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
         OutlinedTextField(
-            value = emailState.value,
-            onValueChange = { emailState.value = it },
+            value = email,
+            onValueChange = onEmailChanged,
             label = {
                 Text(text = "E-Mail")
             },
@@ -126,8 +144,8 @@ fun RegisterMiddleComponent() {
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = passwordState.value,
-            onValueChange = { passwordState.value = it },
+            value = password,
+            onValueChange = onPasswordChanged,
             label = {
                 Text(text = "Set Password")
             },
@@ -157,7 +175,7 @@ fun RegisterBottomComponent(
     ) {
         Button(
             onClick = {
-                loadingState = true
+//                loadingState = true
                 onClickOfRegisterButton()
             },
             modifier = Modifier
