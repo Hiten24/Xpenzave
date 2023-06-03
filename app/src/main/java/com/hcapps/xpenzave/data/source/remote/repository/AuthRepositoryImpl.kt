@@ -75,9 +75,12 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun authWithGoogle(activity: ComponentActivity): ResponseState<Boolean> {
+    override suspend fun authenticateWithOauth2(
+        activity: ComponentActivity,
+        provider: String
+    ): ResponseState<Boolean> {
         return try {
-            account.createOAuth2Session(activity = activity, provider = "google")
+            account.createOAuth2Session(activity = activity, provider = provider)
             ResponseState.Success(true)
         } catch (e: Exception) {
             e.printStackTrace()

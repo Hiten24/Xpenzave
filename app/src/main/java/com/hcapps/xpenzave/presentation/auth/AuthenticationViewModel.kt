@@ -66,12 +66,13 @@ class AuthenticationViewModel @Inject constructor(
         }
     }
 
-    fun loginWithGoogle(
+    fun loginWithOath2(
         activity: ComponentActivity,
         onSuccess: () -> Unit,
-        onError: (Throwable) -> Unit
+        onError: (Throwable) -> Unit,
+        provider: String
     ) = viewModelScope.launch {
-        when (val response = authRepository.authWithGoogle(activity)) {
+        when (val response = authRepository.authenticateWithOauth2(activity, provider)) {
             is ResponseState.Success -> onSuccess()
             is ResponseState.Error -> onError(response.error)
             else -> Unit

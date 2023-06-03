@@ -16,6 +16,6 @@ interface AuthRepository {
         password: String
     ): ResponseState<Session>
 
-    suspend fun authWithGoogle(activity: ComponentActivity): ResponseState<Boolean>
+    suspend fun authenticateWithOauth2(activity: ComponentActivity, provider: String): ResponseState<Boolean>
 
 }

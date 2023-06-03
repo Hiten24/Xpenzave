@@ -94,13 +94,21 @@ fun AuthenticationScreen(
                 }
             },
             onClickOfFaceBook = {
-                Toast.makeText(context, "Facebook Register", Toast.LENGTH_SHORT).show()
+                viewModel.loginWithOath2(
+                    context as ComponentActivity,
+                    provider = "facebook",
+                    onSuccess = { Toast.makeText(context, "logged in successfully", Toast.LENGTH_SHORT).show() },
+                    onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
+                )
             },
-            onClickOfGoogle = { viewModel.loginWithGoogle(
-                context as ComponentActivity,
-                onSuccess = { Toast.makeText(context, "logged in successfully", Toast.LENGTH_SHORT).show() },
-                onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() },
-            ) },
+            onClickOfGoogle = {
+                viewModel.loginWithOath2(
+                    context as ComponentActivity,
+                    provider = "google",
+                    onSuccess = { Toast.makeText(context, "logged in successfully", Toast.LENGTH_SHORT).show() },
+                    onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
+                )
+            },
             buttonTitle = if (screenState == AUTH_LOGIN_SCREEN) stringResource(R.string.login) else stringResource(R.string.register)
         )
     }
