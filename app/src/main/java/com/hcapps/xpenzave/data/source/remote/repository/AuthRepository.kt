@@ -18,4 +18,6 @@ interface AuthRepository {
 
     suspend fun authenticateWithOauth2(activity: ComponentActivity, provider: String): ResponseState<Boolean>
 
+    suspend fun logOut(): ResponseState<Boolean>
+
 }

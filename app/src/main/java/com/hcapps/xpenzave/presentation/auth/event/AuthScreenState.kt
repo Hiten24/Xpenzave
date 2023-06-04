@@ -1,4 +1,4 @@
-package com.hcapps.xpenzave.presentation.auth
+package com.hcapps.xpenzave.presentation.auth.event
 
 data class AuthScreenState(
     val authState: Int = 1,

@@ -69,4 +69,15 @@ class AuthRepositoryImpl @Inject constructor(
             ResponseState.Error(e)
         }
     }
+
+    override suspend fun logOut(): ResponseState<Boolean> {
+        return try {
+            // logs out from all the devices
+            account.deleteSessions()
+            ResponseState.Success(true)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ResponseState.Error(e)
+        }
+    }
 }

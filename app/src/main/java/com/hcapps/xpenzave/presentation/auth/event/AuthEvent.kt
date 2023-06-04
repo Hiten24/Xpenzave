@@ -1,4 +1,4 @@
-package com.hcapps.xpenzave.presentation.auth
+package com.hcapps.xpenzave.presentation.auth.event
 
 sealed class AuthEvent {
     data class EmailChanged(val email: String): AuthEvent()

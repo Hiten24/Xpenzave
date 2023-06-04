@@ -26,6 +26,7 @@ class MainActivity : ComponentActivity() {
             XpenzaveTheme {
                 val navController = rememberNavController()
                 LaunchedEffect(key1 = Unit) {
+                    navController.popBackStack()
                     navController.navigate(getStartDestination(dataStore))
                 }
                 XpenzaveNavGraph(
