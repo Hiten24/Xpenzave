@@ -19,6 +19,7 @@ class SettingsDataStore @Inject constructor(
     companion object {
         const val SETTINGS_IS_LOGGED_IN_KEY = "is_logged_in"
         const val USER_EMAIL_KEY = "email"
+        const val CURRENCY_CODE_KEY = "currency_code"
     }
 
     private val Context.datastore by preferencesDataStore(name = "settings")
