@@ -24,8 +24,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
@@ -37,9 +37,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
+import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.util.Constant.AUTH_LOGIN_SCREEN
 import com.hcapps.xpenzave.util.Constant.AUTH_REGISTER_SCREEN
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AuthenticationScreen(
@@ -48,10 +50,16 @@ fun AuthenticationScreen(
 ) {
 
     val context = LocalContext.current
-    var email by viewModel.emailState
-    var password by viewModel.passwordState
-    var screenState by viewModel.authScreenState
-    val loadingState by viewModel.loadingState
+    val state by viewModel.authScreenState
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.uiEventFlow.collectLatest { event ->
+            when (event) {
+                is UIEvent.Error -> Toast.makeText(context, event.error.message, Toast.LENGTH_SHORT).show()
+                is UIEvent.ShowMessage -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -63,34 +71,30 @@ fun AuthenticationScreen(
     ) {
         RegisterHeader(
             onClickOfLogin = {
-                viewModel.clearFields()
-                screenState = AUTH_LOGIN_SCREEN
+                viewModel.onEvent(AuthEvent.SwitchAuthScreen(AUTH_LOGIN_SCREEN))
             },
             onClickOfRegister = {
-                viewModel.clearFields()
-                screenState = AUTH_REGISTER_SCREEN
+                viewModel.onEvent(AuthEvent.SwitchAuthScreen(AUTH_REGISTER_SCREEN))
             },
-            screenState = screenState
+            screenState = state.authState
         )
 
         RegisterMiddleComponent(
-            email = email,
-            onEmailChanged = { email = it },
-            password = password,
-            onPasswordChanged = { password = it }
+            email = state.email,
+            onEmailChanged = { viewModel.onEvent(AuthEvent.EmailChanged(it)) },
+            password = state.password,
+            onPasswordChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) }
         )
 
         RegisterBottomComponent(
             onClickOfRegisterButton = {
-                if (screenState == AUTH_LOGIN_SCREEN) {
+                if (state.authState == AUTH_LOGIN_SCREEN) {
                     viewModel.login(
-                        onSuccess = { navigateToHome() },
-                        onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
+                        onSuccess = { navigateToHome() }
                     )
                 } else {
                     viewModel.registerUser(
-                        onSuccess = { navigateToHome() },
-                        onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
+                        onSuccess = { navigateToHome() }
                     )
                 }
             },
@@ -98,20 +102,18 @@ fun AuthenticationScreen(
                 viewModel.loginWithOath2(
                     context as ComponentActivity,
                     provider = "facebook",
-                    onSuccess = { Toast.makeText(context, "logged in successfully", Toast.LENGTH_SHORT).show() },
-                    onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
+                    onSuccess = { Toast.makeText(context, "logged in successfully", Toast.LENGTH_SHORT).show() }
                 )
             },
             onClickOfGoogle = {
                 viewModel.loginWithOath2(
                     context as ComponentActivity,
                     provider = "google",
-                    onSuccess = { Toast.makeText(context, "logged in successfully", Toast.LENGTH_SHORT).show() },
-                    onError = { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
+                    onSuccess = { Toast.makeText(context, "logged in successfully", Toast.LENGTH_SHORT).show() }
                 )
             },
-            buttonTitle = if (screenState == AUTH_LOGIN_SCREEN) stringResource(R.string.login) else stringResource(R.string.register),
-            loadingState = loadingState
+            buttonTitle = if (state.authState == AUTH_LOGIN_SCREEN) stringResource(R.string.login) else stringResource(R.string.register),
+            loadingState = state.loading
         )
     }
 }
