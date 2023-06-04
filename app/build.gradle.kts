@@ -29,22 +29,25 @@ android {
             applicationIdSuffix = ".debug"
             isMinifyEnabled = false
             isShrinkResources = false
+//            buildConfigField("Boolean", "DEBUG", "true")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
 
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
+//            buildConfigField("Boolean", "DEBUG", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(8)
     }
 
     kotlinOptions {
@@ -75,6 +78,9 @@ dependencies {
     implementation ("androidx.compose.material3:material3:1.1.0")
     implementation("androidx.core:core-ktx:1.10.1")
 
+    // timber
+    implementation ("com.jakewharton.timber:timber:5.0.1")
+
     // navigation
     implementation ("androidx.navigation:navigation-compose:2.5.3")
 
@@ -82,6 +88,9 @@ dependencies {
     implementation ("com.google.dagger:hilt-android:2.44.2")
     kapt ("com.google.dagger:hilt-compiler:2.44.2")
     implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    // data store
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
     // appwrite
     implementation("io.appwrite:sdk-for-android:1.2.1")

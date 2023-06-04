@@ -13,11 +13,19 @@ import com.hcapps.xpenzave.util.Screen
 @Composable
 fun XpenzaveNavGraph(startDestination: String, navController: NavHostController) {
     NavHost(navController = navController, startDestination = startDestination) {
+
         authenticationRoute {
-            navController.navigate(Screen.Home.route)
+            navController.popBackStack()
+            navController.navigate(Screen.Settings.route)
         }
+
         homeRoute()
-        settingsRoute()
+
+        settingsRoute(navigateToAuth = {
+            navController.popBackStack()
+            navController.navigate(Screen.Authentication.route)
+        })
+
     }
 }
 
@@ -33,8 +41,8 @@ fun NavGraphBuilder.homeRoute() {
     }
 }
 
-fun NavGraphBuilder.settingsRoute() {
+fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit) {
     composable(route = Screen.Settings.route) {
-        SettingsScreen()
+        SettingsScreen(navigateToAuth = navigateToAuth)
     }
 }

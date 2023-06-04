@@ -1,6 +1,7 @@
 package com.hcapps.xpenzave.presentation.auth
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -23,25 +24,43 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.hcapps.xpenzave.R
+import com.hcapps.xpenzave.presentation.auth.event.AuthEvent
+import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
+import com.hcapps.xpenzave.util.Constant.AUTH_LOGIN_SCREEN
+import com.hcapps.xpenzave.util.Constant.AUTH_REGISTER_SCREEN
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun AuthenticationScreen(navigateToHome: () -> Unit) {
+fun AuthenticationScreen(
+    navigateToHome: () -> Unit,
+    viewModel: AuthenticationViewModel = hiltViewModel()
+) {
 
     val context = LocalContext.current
+    val state by viewModel.authScreenState
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.uiEventFlow.collectLatest { event ->
+            when (event) {
+                is UIEvent.Error -> Toast.makeText(context, event.error.message, Toast.LENGTH_SHORT).show()
+                is UIEvent.ShowMessage -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -53,40 +72,70 @@ fun AuthenticationScreen(navigateToHome: () -> Unit) {
     ) {
         RegisterHeader(
             onClickOfLogin = {
-                Toast.makeText(context, "Login", Toast.LENGTH_SHORT).show()
+                viewModel.onEvent(AuthEvent.SwitchAuthScreen(AUTH_LOGIN_SCREEN))
             },
             onClickOfRegister = {
-                Toast.makeText(context, "Register", Toast.LENGTH_SHORT).show()
-            }
+                viewModel.onEvent(AuthEvent.SwitchAuthScreen(AUTH_REGISTER_SCREEN))
+            },
+            screenState = state.authState
         )
 
-        RegisterMiddleComponent()
+        RegisterMiddleComponent(
+            email = state.email,
+            onEmailChanged = { viewModel.onEvent(AuthEvent.EmailChanged(it)) },
+            password = state.password,
+            onPasswordChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) }
+        )
 
         RegisterBottomComponent(
-            onClickOfRegisterButton = navigateToHome,
+            onClickOfRegisterButton = {
+                if (state.authState == AUTH_LOGIN_SCREEN) {
+                    viewModel.login(
+                        onSuccess = { navigateToHome() }
+                    )
+                } else {
+                    viewModel.registerUser(
+                        onSuccess = { navigateToHome() }
+                    )
+                }
+            },
             onClickOfFaceBook = {
-                Toast.makeText(context, "Facebook Register", Toast.LENGTH_SHORT).show()
+                viewModel.loginWithOath2(
+                    context as ComponentActivity,
+                    provider = "facebook",
+                    onSuccess = { Toast.makeText(context, "logged in successfully", Toast.LENGTH_SHORT).show() }
+                )
             },
             onClickOfGoogle = {
-                Toast.makeText(context, "Google Register", Toast.LENGTH_SHORT).show()
-            }
+                viewModel.loginWithOath2(
+                    context as ComponentActivity,
+                    provider = "google",
+                    onSuccess = { Toast.makeText(context, "logged in successfully", Toast.LENGTH_SHORT).show() }
+                )
+            },
+            buttonTitle = if (state.authState == AUTH_LOGIN_SCREEN) stringResource(R.string.login) else stringResource(R.string.register),
+            loadingState = state.loading
         )
     }
 }
 
 @Composable
 fun RegisterHeader(
+    screenState: Int,
     onClickOfLogin: () -> Unit,
     onClickOfRegister: () -> Unit
 ) {
-    val authState = remember { mutableStateOf(1) }
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Log In",
             style = MaterialTheme.typography.headlineMedium,
-            color = if (authState.value == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-            modifier = Modifier.clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                authState.value = 1
+            color = if (screenState == AUTH_LOGIN_SCREEN)
+                        MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+            modifier = Modifier.clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) {
                 onClickOfLogin()
             }
         )
@@ -94,9 +143,13 @@ fun RegisterHeader(
         Text(
             text = "Register",
             style = MaterialTheme.typography.headlineMedium,
-            color = if (authState.value == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-            modifier = Modifier.clickable(interactionSource = MutableInteractionSource(), indication = null) {
-                authState.value = 2
+            color = if (screenState == AUTH_REGISTER_SCREEN)
+                        MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+            modifier = Modifier.clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) {
                 onClickOfRegister()
             }
         )
@@ -104,17 +157,20 @@ fun RegisterHeader(
 }
 
 @Composable
-fun RegisterMiddleComponent() {
-    val emailState = remember { mutableStateOf("") }
-    val passwordState = remember { mutableStateOf("") }
+fun RegisterMiddleComponent(
+     email: String,
+     onEmailChanged: (String) -> Unit,
+     password: String,
+     onPasswordChanged: (String) -> Unit
+) {
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
         OutlinedTextField(
-            value = emailState.value,
-            onValueChange = { emailState.value = it },
+            value = email,
+            onValueChange = onEmailChanged,
             label = {
-                Text(text = "E-Mail")
+                Text(text = stringResource(R.string.e_mail))
             },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -126,10 +182,10 @@ fun RegisterMiddleComponent() {
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = passwordState.value,
-            onValueChange = { passwordState.value = it },
+            value = password,
+            onValueChange = onPasswordChanged,
             label = {
-                Text(text = "Set Password")
+                Text(text = stringResource(R.string.set_password))
             },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -146,10 +202,10 @@ fun RegisterMiddleComponent() {
 fun RegisterBottomComponent(
     onClickOfRegisterButton: () -> Unit,
     onClickOfGoogle: () -> Unit,
-    onClickOfFaceBook: () -> Unit
+    onClickOfFaceBook: () -> Unit,
+    buttonTitle: String,
+    loadingState: Boolean
 ) {
-
-    var loadingState by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -157,7 +213,7 @@ fun RegisterBottomComponent(
     ) {
         Button(
             onClick = {
-                loadingState = true
+//                loadingState = true
                 onClickOfRegisterButton()
             },
             modifier = Modifier
@@ -168,7 +224,7 @@ fun RegisterBottomComponent(
         ) {
             if (!loadingState) {
                 Text(
-                    text = "Register",
+                    text = buttonTitle,
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                     fontWeight = MaterialTheme.typography.labelLarge.fontWeight
                 )
@@ -185,7 +241,7 @@ fun RegisterBottomComponent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "or continue with",
+            text = stringResource(R.string.or_continue_with),
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.labelLarge
         )
@@ -205,7 +261,7 @@ fun RegisterBottomComponent(
                     .weight(1f)
             ) {
                 Text(
-                    text = "FaceBook",
+                    text = stringResource(R.string.facebook),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -223,22 +279,11 @@ fun RegisterBottomComponent(
                     .weight(1f)
             ) {
                 Text(
-                    text = "Google",
+                    text = stringResource(R.string.google),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
         }
-
-    }
-}
-
-@Preview
-@Composable
-fun PreviewAuthBottom() {
-    RegisterBottomComponent(
-        onClickOfRegisterButton = {  },
-        onClickOfGoogle = {  }
-    ) {
 
     }
 }

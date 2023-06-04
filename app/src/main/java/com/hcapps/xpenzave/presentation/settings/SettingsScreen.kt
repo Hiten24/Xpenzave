@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.presentation.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,24 +20,55 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.hcapps.xpenzave.presentation.core.UIEvent
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    viewModel: SettingsViewModel = hiltViewModel(),
+    navigateToAuth: () -> Unit
+) {
+
+    val context = LocalContext.current
+    val state by viewModel.state
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.uiEventFlow.collectLatest { event ->
+            when (event) {
+                is UIEvent.Error -> Toast.makeText(context, event.error.message, Toast.LENGTH_SHORT).show()
+                is UIEvent.ShowMessage -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
-        SettingsHeader()
+        SettingsHeader(
+            state.email,
+            onCLickOfLogOut = { viewModel.logOut {
+                Toast.makeText(context, "logging out", Toast.LENGTH_SHORT).show()
+                navigateToAuth()
+            } }
+        )
         SettingsContent()
     }
 }
 
 @Composable
-fun SettingsHeader() {
+fun SettingsHeader(
+    email: String,
+    onCLickOfLogOut: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,7 +85,7 @@ fun SettingsHeader() {
             .padding(bottom = 32.dp),
         verticalArrangement = Arrangement.SpaceAround
     ) {
-        SettingsTopBar()
+        SettingsTopBar(onCLickOfLogOut)
         Spacer(modifier = Modifier.height(32.dp))
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -62,7 +94,7 @@ fun SettingsHeader() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "john.snow@gmail.com",
+                text = email,
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White
             )
@@ -71,14 +103,19 @@ fun SettingsHeader() {
 }
 
 @Composable
-fun SettingsTopBar() {
+fun SettingsTopBar(
+    onCLickOfLogOut: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = "Settings", style = MaterialTheme.typography.headlineMedium, color = Color.White)
-        OutlinedButton(onClick = { /*TODO*/ }, shape = Shapes().small) {
+        OutlinedButton(
+            onClick = { onCLickOfLogOut() },
+            shape = Shapes().small
+        ) {
             Text(text = "Log Out", color = Color.White)
         }
     }
@@ -132,12 +169,12 @@ fun SettingItem(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun PreviewSettingsHeader() {
-    SettingsHeader()
+    SettingsHeader("test.account@gmail.com") {}
 }
 
 @Preview
 @Composable
 fun PreviewSettingsTopBar() {
-    SettingsTopBar()
+    SettingsTopBar {}
 }
 
