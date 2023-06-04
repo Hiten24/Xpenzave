@@ -78,6 +78,9 @@ dependencies {
     implementation ("androidx.compose.material3:material3:1.1.0")
     implementation("androidx.core:core-ktx:1.10.1")
 
+    // material icons
+    implementation ("androidx.compose.material:material-icons-extended:1.4.3")
+
     // timber
     implementation ("com.jakewharton.timber:timber:5.0.1")
 
