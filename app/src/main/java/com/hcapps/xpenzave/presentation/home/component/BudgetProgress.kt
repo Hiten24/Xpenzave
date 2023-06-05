@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import timber.log.Timber
 
 @Composable
 fun BudgetProgress(
@@ -60,19 +59,19 @@ fun BudgetProgress(
                 cubicTo(
                     reduceArchWidth,
                     (-(canvasSize.y / 4) + (archWidth / 2)), // first control point
-                    canvasSize.x - reduceArchWidth,
-                    (-(canvasSize.y / 4) + (archWidth / 2)), // second control point
-                    canvasSize.x - reduceArchWidth,
-                    canvasSize.y // end point (connect point / close point)
+                    canvasSize.x - reduceArchWidth, (-(canvasSize.y / 4) + (archWidth / 2)), // second control point
+                    canvasSize.x - reduceArchWidth, canvasSize.y // end point (connect point / close point)
                 )
             }
+
+            // responsible for animate progress
             val outPath = Path()
             PathMeasure().apply {
                 setPath(path, false)
-                val progressValue = length.times(progress).div(100)
-                Timber.d("length: $length, progress: $progressValue")
-                getSegment(0f, progressValue, outPath)
+                val progressLength = length.times(progress).div(100)
+                getSegment(0f, pathPortion.value * progressLength, outPath)
             }
+
             // background of the budget progress indicator
             drawPath(path = path, color = progressContainerColor, style = Stroke(width = archWidth))
             // progress bar of the budget progress indicator

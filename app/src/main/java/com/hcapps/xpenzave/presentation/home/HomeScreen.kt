@@ -66,10 +66,12 @@ fun MonthBudgetCard(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             BudgetCardHeader(onClickOfCalendar)
-            
+
             BudgetProgress(
                 archWidth = 130f,
                 containerWidth = 200.dp,
+                progress = 69,
+                progressContainerColor = MaterialTheme.colorScheme.outlineVariant,
                 progressGradient = listOf(
                     MaterialTheme.colorScheme.secondary,
                     MaterialTheme.colorScheme.primary,
