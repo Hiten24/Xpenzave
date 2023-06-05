@@ -7,6 +7,9 @@ import com.hcapps.xpenzave.data.source.remote.repository.AuthRepository
 import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.util.ResponseState
 import com.hcapps.xpenzave.util.SettingsDataStore
+import com.hcapps.xpenzave.util.SettingsDataStore.Companion.CURRENCY_CODE_KEY
+import com.hcapps.xpenzave.util.SettingsDataStore.Companion.SETTINGS_IS_LOGGED_IN_KEY
+import com.hcapps.xpenzave.util.SettingsDataStore.Companion.USER_EMAIL_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -27,19 +30,24 @@ class SettingsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            state.value = state.value.copy(email = settingsDataStore.getString(SettingsDataStore.USER_EMAIL_KEY))
+            state.value = state.value.copy(email = settingsDataStore.getString(USER_EMAIL_KEY))
+            state.value = state.value.copy(currencyCode = settingsDataStore.getString(CURRENCY_CODE_KEY))
         }
     }
 
     fun logOut(onSuccess: () -> Unit) = viewModelScope.launch {
         when (val response = authRepository.logOut()) {
             is ResponseState.Success -> {
-                settingsDataStore.saveBoolean(SettingsDataStore.SETTINGS_IS_LOGGED_IN_KEY, false)
+                settingsDataStore.saveBoolean(SETTINGS_IS_LOGGED_IN_KEY, false)
                 onSuccess()
             }
             is ResponseState.Error -> { onError(response.error) }
             else -> Unit
         }
+    }
+
+    fun setCurrencyPreference(currencyCode: String) = viewModelScope.launch {
+        settingsDataStore.saveString(CURRENCY_CODE_KEY, currencyCode)
     }
 
     private fun onError(error: Throwable) = viewModelScope.launch {
