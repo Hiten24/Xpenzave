@@ -9,39 +9,39 @@ import androidx.compose.material.icons.outlined.Savings
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.ui.graphics.vector.ImageVector
 
-data class CategoryData(
+data class Category(
     val name: String,
     val icon: ImageVector,
     val isSelected: Boolean
 ) {
     companion object {
         fun dummies() = listOf(
-            CategoryData(
+            Category(
                 name = "Bills",
                 icon = Icons.Outlined.Receipt,
                 isSelected = true
             ),
-            CategoryData(
+            Category(
                 name = "Shopping",
                 icon = Icons.Outlined.ShoppingBag,
                 isSelected = false
             ),
-            CategoryData(
+            Category(
                 name = "Food",
                 icon = Icons.Outlined.Restaurant,
                 isSelected = false
             ),
-            CategoryData(
+            Category(
                 name = "Transport",
                 icon = Icons.Outlined.DirectionsCar,
                 isSelected = false
             ),
-            CategoryData(
+            Category(
                 name = "Investment",
                 icon = Icons.Outlined.Savings,
                 isSelected = false
             ),
-            CategoryData(
+            Category(
                 name = "Medication",
                 icon = Icons.Outlined.Medication,
                 isSelected = false
