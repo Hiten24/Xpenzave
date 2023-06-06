@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -7,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.hcapps.xpenzave.presentation.add_expense.AddExpense
 import com.hcapps.xpenzave.presentation.auth.AuthenticationScreen
+import com.hcapps.xpenzave.presentation.edit_budget.EditBudgetScreen
 import com.hcapps.xpenzave.presentation.expense.ExpenseScreen
 import com.hcapps.xpenzave.presentation.home.HomeScreen
 import com.hcapps.xpenzave.presentation.settings.SettingsScreen
@@ -14,7 +16,11 @@ import com.hcapps.xpenzave.presentation.stats.StateScreen
 import com.hcapps.xpenzave.util.Screen
 
 @Composable
-fun XpenzaveNavGraph(startDestination: String, navController: NavHostController) {
+fun XpenzaveNavGraph(
+    startDestination: String,
+    navController: NavHostController,
+    paddingValues: PaddingValues
+) {
     NavHost(navController = navController, startDestination = startDestination) {
 
         authenticationRoute {
@@ -22,7 +28,7 @@ fun XpenzaveNavGraph(startDestination: String, navController: NavHostController)
             navController.navigate(Screen.Settings.route)
         }
 
-        homeRoute()
+        homeRoute(paddingValues)
 
         settingsRoute(navigateToAuth = {
             navController.popBackStack()
@@ -32,6 +38,8 @@ fun XpenzaveNavGraph(startDestination: String, navController: NavHostController)
         statsRoute()
 
         expenseRoute()
+
+        editBudget()
 
         addExpense()
 
@@ -44,9 +52,9 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.homeRoute() {
+fun NavGraphBuilder.homeRoute(paddingValues: PaddingValues) {
     composable(route = Screen.Home.route) {
-        HomeScreen()
+        HomeScreen(paddingValues)
     }
 }
 
@@ -65,6 +73,12 @@ fun NavGraphBuilder.statsRoute() {
 fun NavGraphBuilder.expenseRoute() {
     composable(route = Screen.Expense.route) {
         ExpenseScreen()
+    }
+}
+
+fun NavGraphBuilder.editBudget() {
+    composable(route = Screen.EditBudget.route) {
+        EditBudgetScreen()
     }
 }
 
