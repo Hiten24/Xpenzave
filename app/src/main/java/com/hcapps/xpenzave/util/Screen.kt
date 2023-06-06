@@ -10,8 +10,6 @@ sealed class Screen(val route: String) {
 
     object Stats: Screen(route = "stats_screen")
 
-    object Expense: Screen(route = "expense_screen")
-
     object EditBudget: Screen(route = "edit_budget")
 
     object AddExpense: Screen(route = "add_expense")

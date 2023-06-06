@@ -18,8 +18,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,12 +55,14 @@ import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AddExpense() {
+fun AddExpense(
+    navigateUP: () -> Unit
+) {
 
     Scaffold(
-        topBar = { AddExpenseTopBar(
-            onClickOfNavigationIcon = {}
-        )  }
+        topBar = {
+            AddExpenseTopBar(onClickOfNavigationIcon = navigateUP)
+        }
     ) {
         LazyVerticalGrid(
             modifier = Modifier
@@ -122,7 +124,7 @@ fun AddExpenseTopBar(
         navigationIcon = {
             IconButton(onClick = onClickOfNavigationIcon) {
                 Icon(
-                    imageVector = Icons.Outlined.ArrowBack,
+                    imageVector = Icons.Outlined.Close,
                     contentDescription = "Back Arrow",
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
@@ -203,7 +205,7 @@ fun AdditionalInfoCard(
                 modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
                 title = stringResource(R.string.add)
             ) {
-                
+
             }
         }
     }
