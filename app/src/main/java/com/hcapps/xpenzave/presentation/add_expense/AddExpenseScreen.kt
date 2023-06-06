@@ -7,7 +7,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -24,7 +26,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.LocalPizza
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,9 +41,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,6 +64,9 @@ import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 fun AddExpense() {
 
     var addBillEachMonthSwitchState by remember { mutableStateOf(false) }
+//    val cardColor = MaterialTheme.colorScheme.surface
+    val cardColor = Color.Red
+    val padding = 14.dp
 
     Scaffold(
         topBar = { AddExpenseTopBar(
@@ -71,43 +76,82 @@ fun AddExpense() {
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = it.calculateTopPadding())
-                .padding(22.dp),
+                .background(MaterialTheme.colorScheme.background)
+                .padding(top = it.calculateTopPadding()),
             columns = GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(22.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = PaddingValues(12.dp)
         ) {
 
-            item(span = { GridItemSpan(3) }) { AmountSection(amount = "", onAmountChange = {}) }
+            item(span = { GridItemSpan(3) }) {
+                AmountSection(
+                    modifier = Modifier.padding(horizontal = padding),
+                    amount = "",
+                    onAmountChange = {}
+                )
+            }
 
-            item(span = { GridItemSpan(3) }) { DateSection {
+            // empty space
+            item(span = { GridItemSpan(3) }) { Spacer(modifier = Modifier.height(22.dp)) }
 
-            } }
+            item(span = { GridItemSpan(3) }) {
+                DateSection(modifier = Modifier.padding(horizontal = padding)) {
+
+                }
+            }
+
+            // empty space
+            item(span = { GridItemSpan(3) }) { Spacer(modifier = Modifier.height(11.dp)) }
+
+            item(span = { GridItemSpan(3) }) { Spacer(modifier = Modifier.height(11.dp).background(cardColor)) }
 
             item(span = { GridItemSpan(3) }) {
                 Text(
                     text = stringResource(R.string.select_category),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.background(cardColor).padding(horizontal = padding)
                 )
             }
+
+            // empty space
+            item(span = { GridItemSpan(3) }) { Spacer(modifier = Modifier.height(22.dp).background(cardColor)) }
 
             items(
                 items = CategoryData.dummies(),
                 span = { GridItemSpan(1) }
             ) { category ->
-                Category(category = category)
+                Box(modifier = Modifier.background(cardColor)) {
+                    Category(modifier = Modifier.padding(8.dp), category = category)
+                }
             }
 
-            item(span = { GridItemSpan(3) }) { AddBillEachMonth(
-                checked = addBillEachMonthSwitchState,
-                onCheckedChange = { checked ->
-                    addBillEachMonthSwitchState = checked
-                }
-            ) }
+            // empty space
+            item(span = { GridItemSpan(3) }) { Spacer(modifier = Modifier.height(22.dp).background(cardColor)) }
 
-            item(span = { GridItemSpan(3) }) { AddPhotoSection() }
+            item(span = { GridItemSpan(3) }) {
+                AddBillEachMonth(
+                    modifier = Modifier.background(cardColor).padding(horizontal = padding),
+                    checked = addBillEachMonthSwitchState,
+                    onCheckedChange = { checked ->
+                        addBillEachMonthSwitchState = checked
+                    }
+                )
+            }
 
-            item(span = { GridItemSpan(3) }) { MoreDetailsSection() }
+            // empty space
+            item(span = { GridItemSpan(3) }) { Spacer(modifier = Modifier.height(22.dp).background(cardColor)) }
+
+            item(span = { GridItemSpan(3) }) {
+                AddPhotoSection(modifier = Modifier.background(cardColor).padding(horizontal = padding))
+            }
+
+            // empty space
+            item(span = { GridItemSpan(3) }) { Spacer(modifier = Modifier.height(22.dp).background(cardColor)) }
+
+            item(span = { GridItemSpan(3) }) {
+                MoreDetailsSection(modifier = Modifier.background(cardColor).padding(horizontal = padding))
+            }
+
+            item(span = { GridItemSpan(3) }) { Spacer(modifier = Modifier.height(22.dp).background(cardColor)) }
 
         }
     }
@@ -147,10 +191,11 @@ fun AddExpenseTopBar(
 
 @Composable
 fun AmountSection(
+    modifier: Modifier = Modifier,
     amount: String,
     onAmountChange: (String) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = stringResource(R.string.amount),
             style = MaterialTheme.typography.titleMedium
@@ -187,11 +232,12 @@ fun AmountSection(
 
 @Composable
 fun DateSection(
+    modifier: Modifier = Modifier,
     date: String = "Tuesday, 25 September",
     onClickOfCalenderIcon: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -226,7 +272,8 @@ fun Category(modifier: Modifier = Modifier, category: CategoryData) {
                 interactionSource = MutableInteractionSource(),
                 indication = null
             ) { isSelected = !isSelected },
-        border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.primary.copy(alpha = borderColorAlpha))
+        border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.primary.copy(alpha = borderColorAlpha)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -251,11 +298,12 @@ fun Category(modifier: Modifier = Modifier, category: CategoryData) {
 
 @Composable
 fun AddBillEachMonth(
+    modifier: Modifier = Modifier,
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(Shapes().small)
             .background(MaterialTheme.colorScheme.surface)
@@ -281,13 +329,13 @@ fun AddBillEachMonth(
 fun AddPhotoSection(modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(text = "Add Photo", style = MaterialTheme.typography.titleMedium)
-        // Add Expense button
+
     }
 }
 
 @Composable
-fun MoreDetailsSection() {
-    Column(modifier = Modifier.fillMaxWidth()) {
+fun MoreDetailsSection(modifier: Modifier) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Text(text = "More Details", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(18.dp))
         TextField(
@@ -308,7 +356,13 @@ fun MoreDetailsSection() {
     }
 }
 
+@Preview
+@Composable
+fun PreviewAddExpense() {
+    AddExpense()
+}
 
+/*
 @Preview
 @Composable
 fun PreviewAmountSection() {
@@ -356,11 +410,4 @@ fun PreviewMoreDetailsSection() {
 fun PreviewTopBar() {
     AddExpenseTopBar(onClickOfNavigationIcon = {})
 }
-
-
-
-/*@Preview
-@Composable
-fun PreviewAddExpense() {
-    AddExpense()
-}*/
+*/
