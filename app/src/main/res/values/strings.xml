@@ -8,4 +8,9 @@
     <string name="google">Google</string>
     <string name="facebook">FaceBook</string>
     <string name="or_continue_with">or continue with</string>
+    <string name="enter">Enter</string>
+    <string name="amount">Amount</string>
+    <string name="add_this_bill_each_month">Add This Bill Each Month</string>
+    <string name="enter_here">Enter here…</string>
+    <string name="select_category">Select Category</string>
 </resources>
