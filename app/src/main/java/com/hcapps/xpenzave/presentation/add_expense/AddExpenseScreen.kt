@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
@@ -77,7 +80,7 @@ fun AddExpense() {
 
             item(span = { GridItemSpan(3) }) { AmountSection(amount = "", onAmountChange = {}) }
 
-            item(span = { GridItemSpan(3) }) { DateSection() {
+            item(span = { GridItemSpan(3) }) { DateSection {
 
             } }
 
@@ -89,10 +92,10 @@ fun AddExpense() {
             }
 
             items(
-                count = 6,
+                items = CategoryData.dummies(),
                 span = { GridItemSpan(1) }
-            ) {
-                Category(isSelected = it == 0)
+            ) { category ->
+                Category(category = category)
             }
 
             item(span = { GridItemSpan(3) }) { AddBillEachMonth(
@@ -208,13 +211,21 @@ fun DateSection(
 }
 
 @Composable
-fun Category(modifier: Modifier = Modifier, isSelected: Boolean = false) {
+fun Category(modifier: Modifier = Modifier, category: CategoryData) {
+
+    var isSelected by remember { mutableStateOf(category.isSelected) }
 
     val borderColorAlpha = if (isSelected) 1f else 0.1f
     val iconColorAlpha = if (isSelected) 1f else 0.6f
 
     OutlinedCard(
-        modifier = modifier.aspectRatio(1f),
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(shape = Shapes().small)
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) { isSelected = !isSelected },
         border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.primary.copy(alpha = borderColorAlpha))
     ) {
         Column(
@@ -223,14 +234,14 @@ fun Category(modifier: Modifier = Modifier, isSelected: Boolean = false) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                modifier = Modifier.size(42.dp),
-                imageVector = Icons.Outlined.LocalPizza,
+                modifier = Modifier.size(32.dp),
+                imageVector = category.icon,
                 contentDescription = "Icon",
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = iconColorAlpha)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Pizza",
+                text = category.name,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary.copy(alpha = iconColorAlpha)
             )
@@ -298,19 +309,6 @@ fun MoreDetailsSection() {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 @Preview
 @Composable
 fun PreviewAmountSection() {
@@ -320,7 +318,7 @@ fun PreviewAmountSection() {
 @Preview
 @Composable
 fun PreviewDateSection() {
-    DateSection() {}
+    DateSection {}
 }
 
 @Preview
@@ -332,13 +330,13 @@ fun PreviewSelectCategorySection() {
 @Preview
 @Composable
 fun PreviewCategory() {
-    Category()
+    Category(category = CategoryData("Pizza", Icons.Outlined.LocalPizza, false))
 }
 
 @Preview
 @Composable
 fun PreviewAddBillEachMonth() {
-    AddBillEachMonth(false, {})
+    AddBillEachMonth(false) {}
 }
 
 @Preview
