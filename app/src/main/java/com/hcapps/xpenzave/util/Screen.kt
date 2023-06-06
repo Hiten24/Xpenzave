@@ -14,4 +14,6 @@ sealed class Screen(val route: String) {
 
     object EditBudget: Screen(route = "edit_budget")
 
+    object AddExpense: Screen(route = "add_expense")
+
 }

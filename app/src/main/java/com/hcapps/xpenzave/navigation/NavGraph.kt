@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.hcapps.xpenzave.presentation.add_expense.AddExpense
 import com.hcapps.xpenzave.presentation.auth.AuthenticationScreen
 import com.hcapps.xpenzave.presentation.edit_budget.EditBudgetScreen
 import com.hcapps.xpenzave.presentation.expense.ExpenseScreen
@@ -39,6 +40,8 @@ fun XpenzaveNavGraph(
         expenseRoute()
 
         editBudget()
+
+        addExpense()
 
     }
 }
@@ -76,5 +79,11 @@ fun NavGraphBuilder.expenseRoute() {
 fun NavGraphBuilder.editBudget() {
     composable(route = Screen.EditBudget.route) {
         EditBudgetScreen()
+    }
+}
+
+fun NavGraphBuilder.addExpense() {
+    composable(route = Screen.AddExpense.route) {
+        AddExpense()
     }
 }

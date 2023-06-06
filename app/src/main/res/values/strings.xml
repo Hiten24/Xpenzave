@@ -12,5 +12,9 @@
     <string name="see_all">See all</string>
     <string name="recent_expense">Recent Expense</string>
     <string name="edit_budget">Edit Budget</string>
- 
+    <string name="enter">Enter</string>
+    <string name="amount">Amount</string>
+    <string name="add_this_bill_each_month">Add This Bill Each Month</string>
+    <string name="enter_here">Enter here…</string>
+    <string name="select_category">Select Category</string>
 </resources>
