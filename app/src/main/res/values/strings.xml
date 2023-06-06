@@ -9,4 +9,8 @@
     <string name="facebook">FaceBook</string>
     <string name="or_continue_with">or continue with</string>
     <string name="budget">Budget</string>
+    <string name="see_all">See all</string>
+    <string name="recent_expense">Recent Expense</string>
+    <string name="edit_budget">Edit Budget</string>
+ 
 </resources>

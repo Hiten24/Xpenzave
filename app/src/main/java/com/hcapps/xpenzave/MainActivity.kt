@@ -32,10 +32,11 @@ class MainActivity : ComponentActivity() {
                     navController.navigate(getStartDestination(dataStore))
                 }
                 val backStackEntry = navController.currentBackStackEntryAsState()
-                XpenzaveScaffold(onClickOfItem = { route -> navController.navigate(route) }, backStackEntry = backStackEntry) {
+                XpenzaveScaffold(onClickOfItem = { route -> navController.navigate(route) }, backStackEntry = backStackEntry) { padding ->
                     XpenzaveNavGraph(
                         startDestination = Screen.Authentication.route,
-                        navController = navController
+                        navController = navController,
+                        paddingValues = padding
                     )
                 }
             }

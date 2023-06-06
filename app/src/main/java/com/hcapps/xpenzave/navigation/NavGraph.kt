@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -14,7 +15,11 @@ import com.hcapps.xpenzave.presentation.stats.StateScreen
 import com.hcapps.xpenzave.util.Screen
 
 @Composable
-fun XpenzaveNavGraph(startDestination: String, navController: NavHostController) {
+fun XpenzaveNavGraph(
+    startDestination: String,
+    navController: NavHostController,
+    paddingValues: PaddingValues
+) {
     NavHost(navController = navController, startDestination = startDestination) {
 
         authenticationRoute {
@@ -22,7 +27,7 @@ fun XpenzaveNavGraph(startDestination: String, navController: NavHostController)
             navController.navigate(Screen.Settings.route)
         }
 
-        homeRoute()
+        homeRoute(paddingValues)
 
         settingsRoute(navigateToAuth = {
             navController.popBackStack()
@@ -44,9 +49,9 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.homeRoute() {
+fun NavGraphBuilder.homeRoute(paddingValues: PaddingValues) {
     composable(route = Screen.Home.route) {
-        HomeScreen()
+        HomeScreen(paddingValues)
     }
 }
 
