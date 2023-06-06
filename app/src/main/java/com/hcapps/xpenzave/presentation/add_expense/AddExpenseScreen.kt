@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
@@ -37,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -46,6 +48,8 @@ import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.add_expense.Category.Companion.dummies
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
+import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
+import com.hcapps.xpenzave.presentation.home.component.AddExpenseButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 
@@ -70,7 +74,9 @@ fun AddExpense() {
 
             item(span = { GridItemSpan(3) }) {
                 AmountSection(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal =  12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
                     amount = "",
                     onAmountChange = {}
                 )
@@ -78,7 +84,9 @@ fun AddExpense() {
 
             item(span = { GridItemSpan(3) }) {
                 DateSection(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
                 ) {
 
                 }
@@ -175,7 +183,9 @@ fun AdditionalInfoCard(
         colors = CardDefaults.cardColors(cardColor)
     ) {
         Column(
-            modifier = modifier.padding(12.dp).padding(top = 12.dp),
+            modifier = modifier
+                .padding(12.dp)
+                .padding(top = 12.dp),
             verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
             SelectCategoryComponent()
@@ -185,10 +195,16 @@ fun AdditionalInfoCard(
                     .padding(horizontal = 6.dp)
                     .background(MaterialTheme.colorScheme.background),
                 checked = false,
-                onCheckedChange = { checked -> }
+                onCheckedChange = { _ -> }
             )
             AddPhotoSection(modifier = Modifier.padding(horizontal = 6.dp))
             MoreDetailsSection(modifier = Modifier.padding(horizontal = 6.dp))
+            XpenzaveButton(
+                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
+                title = stringResource(R.string.add)
+            ) {
+                
+            }
         }
     }
 }
@@ -279,9 +295,17 @@ fun AddBillEachMonth(
 
 @Composable
 fun AddPhotoSection(modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(22.dp)
+    ) {
         Text(text = "Add Photo", style = MaterialTheme.typography.titleMedium)
-
+        AddExpenseButton(
+            modifier = Modifier.shadow(1.dp, shape = CircleShape),
+            buttonColor = MaterialTheme.colorScheme.onPrimary,
+            iconColor = MaterialTheme.colorScheme.primary,
+            onClickOfAddExpense = {}
+        )
     }
 }
 

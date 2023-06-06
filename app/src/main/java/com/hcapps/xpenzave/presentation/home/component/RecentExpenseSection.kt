@@ -82,7 +82,7 @@ fun RecentExpenseSection(
 
             }
         } else {
-            AddExpenseButton(
+            AddExpenseContainer(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 onClickOfAddExpense = onClickOfAddExpense

@@ -17,4 +17,5 @@
     <string name="add_this_bill_each_month">Add This Bill Each Month</string>
     <string name="enter_here">Enter here…</string>
     <string name="select_category">Select Category</string>
+    <string name="add">Add</string>
 </resources>
