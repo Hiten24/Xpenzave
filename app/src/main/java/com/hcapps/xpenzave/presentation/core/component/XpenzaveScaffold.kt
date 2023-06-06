@@ -22,7 +22,7 @@ private val bottomBarItems = listOf(
     BottomBarItem(icon =Icons.Outlined.Article, label = "Article", route = Screen.Home.route, description = "Article"),
     BottomBarItem(icon =Icons.Outlined.QueryStats, label = "Stats", route = Screen.Stats.route, description = "Stats"),
     BottomBarItem(icon =Icons.Outlined.Settings, label = "Settings", route = Screen.Settings.route, description = "Settings"),
-    BottomBarItem(icon =Icons.Outlined.Add, label = "Expense", route = Screen.Expense.route, description = "Expense")
+    BottomBarItem(icon =Icons.Outlined.Add, label = "Expense", route = Screen.AddExpense.route, description = "Expense")
 )
 
 private val bottomBarScreenList = listOf(

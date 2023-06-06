@@ -28,7 +28,12 @@ fun XpenzaveNavGraph(
             navController.navigate(Screen.Settings.route)
         }
 
-        homeRoute(paddingValues)
+        homeRoute(
+            paddingValues,
+            navigateToEditBudget = {
+                navController.navigate(Screen.EditBudget.route)
+            }
+        )
 
         settingsRoute(navigateToAuth = {
             navController.popBackStack()
@@ -39,9 +44,13 @@ fun XpenzaveNavGraph(
 
         expenseRoute()
 
-        editBudget()
+        editBudget(
+            navigateUp = { navController.navigateUp() }
+        )
 
-        addExpense()
+        addExpense(
+            navigateUp = { navController.navigateUp() }
+        )
 
     }
 }
@@ -52,9 +61,9 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.homeRoute(paddingValues: PaddingValues) {
+fun NavGraphBuilder.homeRoute(paddingValues: PaddingValues, navigateToEditBudget: () -> Unit) {
     composable(route = Screen.Home.route) {
-        HomeScreen(paddingValues)
+        HomeScreen(paddingValues, navigateToEditBudget)
     }
 }
 
@@ -76,14 +85,18 @@ fun NavGraphBuilder.expenseRoute() {
     }
 }
 
-fun NavGraphBuilder.editBudget() {
+fun NavGraphBuilder.editBudget(
+    navigateUp: () -> Unit
+) {
     composable(route = Screen.EditBudget.route) {
-        EditBudgetScreen()
+        EditBudgetScreen(navigateUp = navigateUp)
     }
 }
 
-fun NavGraphBuilder.addExpense() {
+fun NavGraphBuilder.addExpense(
+    navigateUp: () -> Unit
+) {
     composable(route = Screen.AddExpense.route) {
-        AddExpense()
+        AddExpense(navigateUp = navigateUp)
     }
 }

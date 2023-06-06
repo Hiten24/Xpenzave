@@ -59,14 +59,16 @@ import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AddExpense() {
+fun AddExpense(
+    navigateUp: () -> Unit
+) {
 
     var addBillEachMonthSwitchState by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { AddExpenseTopBar(
-            onClickOfNavigationIcon = {}
-        )  }
+        topBar = {
+            AddExpenseTopBar(onClickOfNavigationIcon = navigateUp)
+        }
     ) {
         LazyVerticalGrid(
             modifier = Modifier
