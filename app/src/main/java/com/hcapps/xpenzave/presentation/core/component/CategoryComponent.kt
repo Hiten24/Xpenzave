@@ -92,17 +92,17 @@ data class CategoryStyle(
         private const val unFocusedBorderColorAlpha = 0.1f
         private const val unFocusedIconColorAlpha = 0.6f
         @Composable
-        fun defaultCategoryStyle() = CategoryStyle(
-            borderWidth = BorderWidth,
-            borderColor = MaterialTheme.colorScheme.primary.copy(alpha = unFocusedBorderColorAlpha),
-            selectedBorderColor = MaterialTheme.colorScheme.primary,
-            iconColor = MaterialTheme.colorScheme.primary.copy(alpha = unFocusedIconColorAlpha),
-            selectedIconColor = MaterialTheme.colorScheme.primary,
-            textColor = MaterialTheme.colorScheme.primary.copy(alpha = unFocusedIconColorAlpha),
-            selectedColorText = MaterialTheme.colorScheme.primary,
-            backgroundColor = MaterialTheme.colorScheme.background,
-            textStyle = MaterialTheme.typography.bodyLarge,
-            iconSize = 32.dp
-        )
+        fun defaultCategoryStyle(
+            borderWidth: Dp = BorderWidth,
+            borderColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = unFocusedBorderColorAlpha),
+            selectedBorderColor: Color = MaterialTheme.colorScheme.primary,
+            iconColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = unFocusedIconColorAlpha),
+            selectedIconColor: Color = MaterialTheme.colorScheme.primary,
+            textColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = unFocusedIconColorAlpha),
+            selectedColorText: Color = MaterialTheme.colorScheme.primary,
+            backgroundColor: Color = MaterialTheme.colorScheme.background,
+            textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+            iconSize: Dp = 32.dp
+        ) = CategoryStyle(borderWidth, borderColor, selectedBorderColor, iconColor, selectedIconColor, textColor, selectedColorText, backgroundColor, iconSize, textStyle)
     }
 }

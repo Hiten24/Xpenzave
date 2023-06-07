@@ -16,12 +16,13 @@ fun XpenzaveTabRow(
     modifier: Modifier = Modifier,
     selectedIndex: Int,
     onSelectionChange: (Int) -> Unit,
-    items: List<String>
+    items: List<String>,
+    containerColor: Color = MaterialTheme.colorScheme.surface
 ) {
     TabRow(
         selectedTabIndex = selectedIndex,
         modifier = modifier.clip(Shapes().small),
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = containerColor,
         divider = {
             Divider(color = Color.Transparent)
         }

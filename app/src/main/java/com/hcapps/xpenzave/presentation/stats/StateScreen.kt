@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.presentation.core.component.XpenzaveTabRow
 import com.hcapps.xpenzave.presentation.expense_log.ExpenseLogSection
@@ -38,7 +40,8 @@ fun StateScreen() {
         topBar = {
             ExpenseLogTopBar(
                 onClickOfCompare = {},
-                onClickOfCalender = {}
+                onClickOfCalender = {},
+                containerColor = MaterialTheme.colorScheme.background
             )
         }
     ) { paddingValue ->
@@ -72,7 +75,8 @@ fun StateScreen() {
 @Composable
 fun ExpenseLogTopBar(
     onClickOfCompare: () -> Unit,
-    onClickOfCalender: () -> Unit
+    onClickOfCalender: () -> Unit,
+    containerColor: Color = MaterialTheme.colorScheme.surface
 ) {
     TopAppBar(
         title = {
@@ -83,16 +87,15 @@ fun ExpenseLogTopBar(
                 Icon(
                     imageVector = Icons.Outlined.Scale,
                     contentDescription = "Calender of Month",
-//                    tint = MaterialTheme.colorScheme.primary.copy(0.6f)
                 )
             }
             IconButton(onClick = onClickOfCalender) {
                 Icon(
                     imageVector = Icons.Outlined.CalendarMonth,
                     contentDescription = "Calender of Month",
-//                    tint = MaterialTheme.colorScheme.primary.copy(0.5f)
                 )
             }
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor)
     )
 }

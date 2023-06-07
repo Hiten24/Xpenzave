@@ -1,13 +1,11 @@
 package com.hcapps.xpenzave.presentation.expense_log
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FilterList
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLog
@@ -21,7 +19,6 @@ fun ExpenseLogSection() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
     ) {
 
         MonthHeader(
@@ -41,7 +38,7 @@ fun ExpenseLogSection() {
             expensesOfMonth = dummyExpensesOfTheDay(),
             headerStyle = ExpenseDateHeaderStyle
                 .defaultExpenseDateHeaderStyle()
-                .copy(headerBackgroundColor = MaterialTheme.colorScheme.background)
+//                .copy(headerBackgroundColor = MaterialTheme.colorScheme.background)
         )
     }
 }
