@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.home.component.BudgetProgress
 import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
-import com.hcapps.xpenzave.presentation.home.state.dummyExpensesOfTheDay
 
 @Composable
 fun HomeScreen(
@@ -66,7 +65,7 @@ fun HomeScreen(
             onClickOfSeeAll = {},
             onClickOfDateHeader = {},
             onClickOfExpenseItem = {},
-            expensesOfMonth = dummyExpensesOfTheDay(),
+            expensesOfMonth = emptyList(),
             onClickOfAddExpense = {}
         )
 
