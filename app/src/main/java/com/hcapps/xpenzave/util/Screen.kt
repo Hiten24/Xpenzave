@@ -14,4 +14,8 @@ sealed class Screen(val route: String) {
 
     object AddExpense: Screen(route = "add_expense")
 
+    object CompareSelector: Screen(route = "compare_month_selector")
+
+    object CompareResult: Screen(route = "compare_result")
+
 }
