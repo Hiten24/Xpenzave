@@ -41,8 +41,6 @@ fun XpenzaveNavGraph(
 
         statsRoute()
 
-        expenseRoute()
-
         editBudget(
             navigateUp = { navController.navigateUp() }
         )
@@ -78,7 +76,6 @@ fun NavGraphBuilder.statsRoute() {
     }
 }
 
-fun NavGraphBuilder.editBudget() {
 
 fun NavGraphBuilder.editBudget(
     navigateUp: () -> Unit
