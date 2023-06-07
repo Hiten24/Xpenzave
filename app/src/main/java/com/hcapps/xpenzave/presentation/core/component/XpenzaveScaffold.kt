@@ -29,7 +29,7 @@ private val bottomBarScreenList = listOf(
     Screen.Home.route,
     Screen.Stats.route,
     Screen.Settings.route,
-    Screen.Expense.route,
+//    Screen.AddExpense.route,
 )
 
 @Composable

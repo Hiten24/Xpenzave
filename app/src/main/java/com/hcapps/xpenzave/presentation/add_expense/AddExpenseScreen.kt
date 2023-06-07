@@ -1,35 +1,31 @@
 package com.hcapps.xpenzave.presentation.add_expense
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.LocalPizza
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Switch
@@ -39,77 +35,68 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
+import com.hcapps.xpenzave.presentation.add_expense.Category.Companion.dummies
+import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
+import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
+import com.hcapps.xpenzave.presentation.home.component.LargeButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddExpense(
-    navigateUp: () -> Unit
+    navigateUP: () -> Unit
 ) {
-
-    var addBillEachMonthSwitchState by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            AddExpenseTopBar(onClickOfNavigationIcon = navigateUp)
+            AddExpenseTopBar(onClickOfNavigationIcon = navigateUP)
         }
     ) {
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = it.calculateTopPadding())
-                .padding(22.dp),
+                .background(MaterialTheme.colorScheme.background)
+                .padding(top = it.calculateTopPadding()),
             columns = GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(22.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = PaddingValues(top = 24.dp, start = 12.dp, end = 12.dp, bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
 
-            item(span = { GridItemSpan(3) }) { AmountSection(amount = "", onAmountChange = {}) }
-
-            item(span = { GridItemSpan(3) }) { DateSection {
-
-            } }
-
             item(span = { GridItemSpan(3) }) {
-                Text(
-                    text = stringResource(R.string.select_category),
-                    style = MaterialTheme.typography.titleMedium
+                AmountSection(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
+                    amount = "",
+                    onAmountChange = {}
                 )
             }
 
-            items(
-                items = CategoryData.dummies(),
-                span = { GridItemSpan(1) }
-            ) { category ->
-                Category(category = category)
+            item(span = { GridItemSpan(3) }) {
+                DateSection(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                ) {
+
+                }
             }
 
-            item(span = { GridItemSpan(3) }) { AddBillEachMonth(
-                checked = addBillEachMonthSwitchState,
-                onCheckedChange = { checked ->
-                    addBillEachMonthSwitchState = checked
-                }
-            ) }
-
-            item(span = { GridItemSpan(3) }) { AddPhotoSection() }
-
-            item(span = { GridItemSpan(3) }) { MoreDetailsSection() }
+            item(span = { GridItemSpan(3) }) {
+                AdditionalInfoCard(modifier = Modifier.fillMaxWidth())
+            }
 
         }
     }
@@ -137,7 +124,7 @@ fun AddExpenseTopBar(
         navigationIcon = {
             IconButton(onClick = onClickOfNavigationIcon) {
                 Icon(
-                    imageVector = Icons.Outlined.ArrowBack,
+                    imageVector = Icons.Outlined.Close,
                     contentDescription = "Back Arrow",
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
@@ -149,10 +136,11 @@ fun AddExpenseTopBar(
 
 @Composable
 fun AmountSection(
+    modifier: Modifier = Modifier,
     amount: String,
     onAmountChange: (String) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier) {
         Text(
             text = stringResource(R.string.amount),
             style = MaterialTheme.typography.titleMedium
@@ -188,12 +176,80 @@ fun AmountSection(
 }
 
 @Composable
+fun AdditionalInfoCard(
+    modifier: Modifier = Modifier,
+    cardColor: Color = MaterialTheme.colorScheme.surface
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(cardColor)
+    ) {
+        Column(
+            modifier = modifier
+                .padding(12.dp)
+                .padding(top = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(22.dp)
+        ) {
+            SelectCategoryComponent()
+            AddBillEachMonth(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 6.dp)
+                    .background(MaterialTheme.colorScheme.background),
+                checked = false,
+                onCheckedChange = { _ -> }
+            )
+            AddPhotoSection(modifier = Modifier.padding(horizontal = 6.dp))
+            MoreDetailsSection(modifier = Modifier.padding(horizontal = 6.dp))
+            XpenzaveButton(
+                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
+                title = stringResource(R.string.add)
+            ) {
+
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectCategoryComponent(
+    modifier: Modifier = Modifier,
+    categories: List<Category> = dummies()
+) {
+    val chunkedCategories = categories.chunked(3)
+    Column(modifier = modifier) {
+
+        Text(
+            text = "Select Category",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(start = 6.dp)
+        )
+
+        Spacer(modifier = Modifier.height(22.dp))
+
+        chunkedCategories.forEach { columnCategories ->
+            Row(modifier = modifier.fillMaxWidth()) {
+                columnCategories.forEach { category ->
+                    CategoryComponent(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(6.dp),
+                        category = category
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun DateSection(
+    modifier: Modifier = Modifier,
     date: String = "Tuesday, 25 September",
     onClickOfCalenderIcon: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -213,54 +269,14 @@ fun DateSection(
 }
 
 @Composable
-fun Category(modifier: Modifier = Modifier, category: CategoryData) {
-
-    var isSelected by remember { mutableStateOf(category.isSelected) }
-
-    val borderColorAlpha = if (isSelected) 1f else 0.1f
-    val iconColorAlpha = if (isSelected) 1f else 0.6f
-
-    OutlinedCard(
-        modifier = modifier
-            .aspectRatio(1f)
-            .clip(shape = Shapes().small)
-            .clickable(
-                interactionSource = MutableInteractionSource(),
-                indication = null
-            ) { isSelected = !isSelected },
-        border = BorderStroke(BorderWidth, MaterialTheme.colorScheme.primary.copy(alpha = borderColorAlpha))
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                modifier = Modifier.size(32.dp),
-                imageVector = category.icon,
-                contentDescription = "Icon",
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = iconColorAlpha)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = category.name,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = iconColorAlpha)
-            )
-        }
-    }
-}
-
-@Composable
 fun AddBillEachMonth(
+    modifier: Modifier = Modifier,
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .clip(Shapes().small)
-            .background(MaterialTheme.colorScheme.surface)
             .border(
                 width = BorderWidth,
                 color = MaterialTheme.colorScheme.primary.copy(alpha = headerBorderAlpha),
@@ -281,15 +297,23 @@ fun AddBillEachMonth(
 
 @Composable
 fun AddPhotoSection(modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(22.dp)
+    ) {
         Text(text = "Add Photo", style = MaterialTheme.typography.titleMedium)
-        // Add Expense button
+        LargeButton(
+            modifier = Modifier.shadow(1.dp, shape = CircleShape),
+            buttonColor = MaterialTheme.colorScheme.onPrimary,
+            iconColor = MaterialTheme.colorScheme.primary,
+            onClickOfAddExpense = {}
+        )
     }
 }
 
 @Composable
-fun MoreDetailsSection() {
-    Column(modifier = Modifier.fillMaxWidth()) {
+fun MoreDetailsSection(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Text(text = "More Details", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(18.dp))
         TextField(
@@ -309,60 +333,3 @@ fun MoreDetailsSection() {
         )
     }
 }
-
-
-@Preview
-@Composable
-fun PreviewAmountSection() {
-    AmountSection("") {}
-}
-
-@Preview
-@Composable
-fun PreviewDateSection() {
-    DateSection {}
-}
-
-@Preview
-@Composable
-fun PreviewSelectCategorySection() {
-//    SelectCategorySection()
-}
-
-@Preview
-@Composable
-fun PreviewCategory() {
-    Category(category = CategoryData("Pizza", Icons.Outlined.LocalPizza, false))
-}
-
-@Preview
-@Composable
-fun PreviewAddBillEachMonth() {
-    AddBillEachMonth(false) {}
-}
-
-@Preview
-@Composable
-fun PreviewAddPhotoSection() {
-    AddPhotoSection()
-}
-
-@Preview
-@Composable
-fun PreviewMoreDetailsSection() {
-    MoreDetailsSection()
-}
-
-@Preview
-@Composable
-fun PreviewTopBar() {
-    AddExpenseTopBar(onClickOfNavigationIcon = {})
-}
-
-
-
-/*@Preview
-@Composable
-fun PreviewAddExpense() {
-    AddExpense()
-}*/
