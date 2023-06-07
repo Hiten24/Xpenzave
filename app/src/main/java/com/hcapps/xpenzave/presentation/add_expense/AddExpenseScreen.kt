@@ -49,7 +49,7 @@ import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.add_expense.Category.Companion.dummies
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
 import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
-import com.hcapps.xpenzave.presentation.home.component.AddExpenseButton
+import com.hcapps.xpenzave.presentation.home.component.LargeButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 
@@ -302,7 +302,7 @@ fun AddPhotoSection(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         Text(text = "Add Photo", style = MaterialTheme.typography.titleMedium)
-        AddExpenseButton(
+        LargeButton(
             modifier = Modifier.shadow(1.dp, shape = CircleShape),
             buttonColor = MaterialTheme.colorScheme.onPrimary,
             iconColor = MaterialTheme.colorScheme.primary,
