@@ -1,5 +1,7 @@
 package com.hcapps.xpenzave.util
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalDensity
 import io.appwrite.extensions.gson
 import java.lang.reflect.Type
 
@@ -15,4 +17,6 @@ fun <T> valueToString(value: T): String {
     return gson.toJson(value)
 }
 
+@Composable
+fun pixelsToDp(pixels: Int) = with(LocalDensity.current) { pixels.toDp() }
 
