@@ -32,7 +32,7 @@ import com.hcapps.xpenzave.presentation.compare.result.component.graph.rememberG
 
 @Composable
 fun CategoryExpensesGraph(
-    categories: List<CategoryGraph> = emptyList()
+    categories: List<CategoryData> = emptyList()
 ) {
 
     val graphState = rememberGraphState()
@@ -74,8 +74,11 @@ fun CategoryExpensesGraph(
 @Composable
 private fun GraphIndicator(
     modifier: Modifier,
-    category: CategoryGraph
+    category: CategoryData
 ) {
+
+    val selectedExpense = category.expense.getOrNull(0) ?: ExpenseData.emptyExpense()
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -83,14 +86,14 @@ private fun GraphIndicator(
         Column {
             Text(
                 modifier = Modifier.align(Alignment.End),
-                text = "150 $",
+                text = "${selectedExpense.totalSpendingOfMonth} $",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "/ 1000 $",
+                text = "/ ${selectedExpense.budgetOfMonth} $",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
             )
@@ -98,12 +101,12 @@ private fun GraphIndicator(
 
         Spacer(modifier = Modifier.width(24.dp))
 
-        GraphProgress(percentage = category.percentage)
+        GraphProgress(percentage = category.expense.getOrNull(0)?.percentage ?: 0)
 
         Spacer(modifier = Modifier.width(24.dp))
 
         Text(
-            text = "${category.percentage}%",
+            text = "${category.expense.getOrNull(0)?.percentage}%",
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.primary
@@ -149,11 +152,11 @@ fun PreviewGraphProgress() {
 @Preview
 @Composable
 fun PreviewCategoryExpensesGraph() {
-    CategoryExpensesGraph(categories = CategoryGraph.defaultCategoryGraphs())
+    CategoryExpensesGraph(categories = CategoryData.defaultCategoryGraphs())
 }
 
 @Preview
 @Composable
 fun PreviewGraphIndicator() {
-    GraphIndicator(modifier = Modifier.fillMaxWidth(), CategoryGraph("Category", 10))
+    GraphIndicator(modifier = Modifier.fillMaxWidth(), CategoryData.dummyCategory())
 }

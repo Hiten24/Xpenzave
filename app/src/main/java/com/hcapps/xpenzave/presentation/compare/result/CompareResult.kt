@@ -34,8 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
-import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryExpensesGraph
-import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryGraph
+import com.hcapps.xpenzave.presentation.compare.result.component.compare_garph.CompareResultCard
+import com.hcapps.xpenzave.presentation.compare.result.component.comprea_expense_category_graph.CompareCategoryExpensesGraph
+import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +68,7 @@ fun CompareResult(
 
             item { Spacer(modifier = Modifier.height(12.dp)) }
 
-            /*item {
+            item {
                 CompareResultCard(
                     title = "Budget",
                     firstProgress = 0.8f,
@@ -90,10 +91,9 @@ fun CompareResult(
                     secondDate = "Oct 2019"
                 )
             }
-*/
             item {
-                CategoryExpensesGraph(
-                    categories = CategoryGraph.defaultCategoryGraphs()
+                CompareCategoryExpensesGraph(
+                    categories = CategoryData.defaultCompareCategoryGraphs()
                 )
             }
 
@@ -118,7 +118,7 @@ fun CompareHeader(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            HeaderItem(month = "Sept", year = "2019")
+            HeaderItem(month = "Sept", year = "2019", indicatorColor = MaterialTheme.colorScheme.inversePrimary)
             Divider(modifier = Modifier
                 .height(26.dp)
                 .width(1.dp))

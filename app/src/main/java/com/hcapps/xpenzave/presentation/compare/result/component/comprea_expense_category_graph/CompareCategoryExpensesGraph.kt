@@ -19,13 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.compare.result.CompareIndicator
-import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryGraph
+import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryData
+import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.ExpenseData
 import com.hcapps.xpenzave.presentation.compare.result.component.graph.Graph
 import com.hcapps.xpenzave.presentation.compare.result.component.graph.rememberGraphState
 
 @Composable
 fun CompareCategoryExpensesGraph(
-    categories: List<CategoryGraph> = emptyList()
+    categories: List<CategoryData> = emptyList()
 ) {
 
     val graphState = rememberGraphState()
@@ -56,8 +57,7 @@ fun CompareCategoryExpensesGraph(
 
             CompareGraphIndicator(
                 modifier = Modifier.fillMaxWidth(),
-                "1000 $",
-                "1250 $"
+                expenseData = categories[graphState.selectedGraphBar].expense
             )
         }
     }
@@ -66,16 +66,18 @@ fun CompareCategoryExpensesGraph(
 @Composable
 private fun CompareGraphIndicator(
     modifier: Modifier = Modifier,
-    value1: String,
-    value2: String
+    expenseData: List<ExpenseData>
 ) {
     Row(modifier = modifier) {
         CompareValue(
             modifier = Modifier.weight(1f),
             indicatorColor = MaterialTheme.colorScheme.inversePrimary,
-            value = value1
+            value = expenseData.getOrNull(0)?.totalSpendingOfMonth.toString() + "$"
         )
-        CompareValue(modifier = Modifier.weight(1f), value = value2)
+        CompareValue(
+            modifier = Modifier.weight(1f),
+            value = expenseData.getOrNull(0)?.totalSpendingOfMonth.toString() + "$"
+        )
     }
 }
 
@@ -102,11 +104,11 @@ private fun CompareValue(
 @Preview
 @Composable
 fun PreviewCompareGraphIndicator() {
-    CompareGraphIndicator(value1 = "1000 $", value2 = "1250 $")
+    CompareGraphIndicator(expenseData = emptyList())
 }
 
 @Preview
 @Composable
 fun PreviewCategoryExpensesGraph() {
-    CompareCategoryExpensesGraph(categories = CategoryGraph.defaultCategoryGraphs())
+    CompareCategoryExpensesGraph(categories = CategoryData.defaultCategoryGraphs())
 }

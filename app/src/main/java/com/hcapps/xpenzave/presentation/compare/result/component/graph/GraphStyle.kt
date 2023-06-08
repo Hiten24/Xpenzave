@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 data class GraphStyle(
     val barSize: Dp = 120.dp,
     val barColor: Color,
+    val secondBarColor: Color,
     val barWidth: Dp = 8.dp,
     val selectedIndicatorColor: Color,
     val selectorBorderTint: Color,
@@ -27,7 +28,8 @@ data class GraphStyle(
             selectedIndicatorColor: Color = MaterialTheme.colorScheme.surface,
             selectorBorderTint: Color = MaterialTheme.colorScheme.primary,
             textStyle: TextStyle = MaterialTheme.typography.labelLarge,
-            barSelectorWidth: Dp = 48.dp
+            barSelectorWidth: Dp = 48.dp,
+            secondBarColor: Color = MaterialTheme.colorScheme.inversePrimary
         ) = GraphStyle(
             barSize = barSize,
             barColor = barColor,
@@ -36,7 +38,8 @@ data class GraphStyle(
             selectorBorderTint = selectorBorderTint,
             spaceBetweenGraphBar = spaceBetweenGraphBar,
             textStyle = textStyle,
-            barSelectorWidth = barSelectorWidth
+            barSelectorWidth = barSelectorWidth,
+            secondBarColor = secondBarColor
         )
     }
 }

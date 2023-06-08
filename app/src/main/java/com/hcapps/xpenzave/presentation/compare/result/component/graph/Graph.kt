@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,14 +26,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryGraph
+import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryData
 import com.hcapps.xpenzave.util.vertical
 
 @Composable
 fun Graph(
     modifier: Modifier = Modifier,
     style: GraphStyle = GraphStyle.defaultGraphStyle(),
-    items: List<CategoryGraph>,
+    items: List<CategoryData>,
     state: GraphState,
     onSelect: (index: Int) -> Unit
 ) {
@@ -44,8 +46,7 @@ fun Graph(
         items.forEachIndexed { index, item ->
             item {
                 GraphBarSelector(
-                    name = item.name,
-                    percentage = item.percentage,
+                    category = item,
                     isSelected = index == state.selectedGraphBar,
                     onSelect = { onSelect(index) },
                     style = style
@@ -58,10 +59,9 @@ fun Graph(
 @Composable
 private fun GraphBarSelector(
     modifier: Modifier = Modifier,
-    name: String,
     style: GraphStyle,
     isSelected: Boolean,
-    percentage: Int,
+    category: CategoryData,
     onSelect: () -> Unit
 ) {
 
@@ -75,7 +75,6 @@ private fun GraphBarSelector(
             .background(backgroundColor, CircleShape)
             .border(2.dp, borderColor, CircleShape)
             .height(style.barSelectorWidth)
-//            .padding(vertical = 14.dp, horizontal = 4.dp)
             .padding(start = 16.dp, end = 4.dp)
             .clickable(
                 interactionSource = MutableInteractionSource(),
@@ -84,11 +83,18 @@ private fun GraphBarSelector(
         contentAlignment = Alignment.Center
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            GraphBar(percentage = percentage, style = style)
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                category.expense.forEachIndexed { index, expenseData ->
+                    val barColor = if (index == 1) style.secondBarColor else style.barColor
+                    GraphBar(percentage = expenseData.percentage, style = style, color = barColor)
+                }
+            }
+
             Spacer(modifier = Modifier.width(12.dp))
+
             Text(
                 modifier = Modifier.width(80.dp),
-                text = name,
+                text = category.categoryName,
                 style = style.textStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -101,7 +107,8 @@ private fun GraphBarSelector(
 fun GraphBar(
     modifier: Modifier = Modifier,
     percentage: Int = 100,
-    style: GraphStyle
+    style: GraphStyle,
+    color: Color = MaterialTheme.colorScheme.primary
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Box(
@@ -115,7 +122,7 @@ fun GraphBar(
                 modifier = Modifier
                     .fillMaxWidth(percentage / 100f) // bar container is rotated to vertically
                     .fillMaxHeight()
-                    .background(style.barColor, CircleShape)
+                    .background(color, CircleShape)
                     .align(Alignment.CenterEnd)
             )
         }
@@ -126,7 +133,7 @@ fun GraphBar(
 @Composable
 fun PreviewGraph() {
     Graph(
-        items = CategoryGraph.defaultCategoryGraphs(),
+        items = CategoryData.defaultCategoryGraphs(),
         state = rememberGraphState(),
         onSelect = {}
     )
@@ -136,10 +143,9 @@ fun PreviewGraph() {
 @Composable
 fun PreviewGraphBarContainer() {
     GraphBarSelector(
-        name = "Category",
         isSelected = true,
-        percentage = 100,
-        style = GraphStyle.defaultGraphStyle()
+        style = GraphStyle.defaultGraphStyle(),
+        category = CategoryData.dummyCategory()
     ) {
 
     }
