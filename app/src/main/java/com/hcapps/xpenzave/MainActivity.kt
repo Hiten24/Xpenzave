@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
                 val backStackEntry = navController.currentBackStackEntryAsState()
                 XpenzaveScaffold(onClickOfItem = { route -> navController.navigate(route) }, backStackEntry = backStackEntry) { padding ->
                     XpenzaveNavGraph(
-                        startDestination = Screen.CompareSelector.route,
+                        startDestination = Screen.CompareResult.route,
                         navController = navController,
                         paddingValues = padding
                     )

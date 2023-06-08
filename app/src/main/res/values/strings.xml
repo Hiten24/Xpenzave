@@ -19,4 +19,5 @@
     <string name="select_category">Select Category</string>
     <string name="add">Add</string>
     <string name="compare">Compare</string>
+    <string name="expenses_category">Expenses / Category</string>
 </resources>

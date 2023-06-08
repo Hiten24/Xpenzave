@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.hcapps.xpenzave.presentation.add_expense.AddExpense
 import com.hcapps.xpenzave.presentation.auth.AuthenticationScreen
-import com.hcapps.xpenzave.presentation.compare.CompareResult
+import com.hcapps.xpenzave.presentation.compare.result.CompareResult
 import com.hcapps.xpenzave.presentation.compare.CompareSelector
 import com.hcapps.xpenzave.presentation.edit_budget.EditBudgetScreen
 import com.hcapps.xpenzave.presentation.home.HomeScreen
@@ -45,10 +45,12 @@ fun XpenzaveNavGraph(
         })
 
         compareSelector(
-            navigateUp = { navController.navigateUp() }
+            onNavigateUp = { navController.navigateUp() }
         )
 
-        compareResult()
+        compareResult(
+            onNavigateUp = { navController.navigateUp() }
+        )
 
     }
 }
@@ -89,14 +91,14 @@ fun NavGraphBuilder.addExpense(onNavigateUp: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.compareSelector(navigateUp: () -> Unit) {
+fun NavGraphBuilder.compareSelector(onNavigateUp: () -> Unit) {
     composable(route = Screen.CompareSelector.route) {
-        CompareSelector(navigateUp)
+        CompareSelector(onNavigateUp)
     }
 }
 
-fun NavGraphBuilder.compareResult() {
-    composable(route = Screen.AddExpense.route) {
-        CompareResult()
+fun NavGraphBuilder.compareResult(onNavigateUp: () -> Unit) {
+    composable(route = Screen.CompareResult.route) {
+        CompareResult(onNavigateUp)
     }
 }
