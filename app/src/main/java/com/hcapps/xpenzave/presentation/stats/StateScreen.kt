@@ -1,9 +1,8 @@
 package com.hcapps.xpenzave.presentation.stats
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
@@ -30,7 +29,9 @@ import com.hcapps.xpenzave.presentation.general_stats.GeneralSection
 private val statsSection = listOf("General", "Expense Log")
 
 @Composable
-fun StateScreen() {
+fun StateScreen(
+    paddingValues: PaddingValues
+) {
 
     var tabState by remember { mutableStateOf(0) }
 
@@ -41,22 +42,21 @@ fun StateScreen() {
                 onClickOfCalender = {}
             )
         }
-    ) { paddingValue ->
+    ) { topBarPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(topBarPadding)
+                .padding(paddingValues)
                 .padding(16.dp),
         ) {
             XpenzaveTabRow(
                 modifier = Modifier
-                    .padding(paddingValue)
                     .shadow(elevation = 2.dp, shape = MaterialTheme.shapes.small),
                 items = statsSection,
                 selectedIndex = tabState,
                 onSelectionChange = { tabState = it }
             )
-
-            Spacer(modifier = Modifier.height(22.dp))
 
             if (tabState == 0) {
                 GeneralSection()

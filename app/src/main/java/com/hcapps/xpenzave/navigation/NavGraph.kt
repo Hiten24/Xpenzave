@@ -36,7 +36,7 @@ fun XpenzaveNavGraph(
             navController.navigate(Screen.Authentication.route)
         })
 
-        statsRoute()
+        statsRoute(paddingValues)
 
         editBudget()
 
@@ -73,9 +73,9 @@ fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.statsRoute() {
+fun NavGraphBuilder.statsRoute(paddingValues: PaddingValues) {
     composable(route = Screen.Stats.route) {
-        StateScreen()
+        StateScreen(paddingValues)
     }
 }
 
