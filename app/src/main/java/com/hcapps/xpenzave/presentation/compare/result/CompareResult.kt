@@ -34,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
-import com.hcapps.xpenzave.presentation.compare.result.component.compare_garph.CompareResultCard
 import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryExpensesGraph
 import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryGraph
 
@@ -68,7 +67,7 @@ fun CompareResult(
 
             item { Spacer(modifier = Modifier.height(12.dp)) }
 
-            item {
+            /*item {
                 CompareResultCard(
                     title = "Budget",
                     firstProgress = 0.8f,
@@ -91,7 +90,7 @@ fun CompareResult(
                     secondDate = "Oct 2019"
                 )
             }
-
+*/
             item {
                 CategoryExpensesGraph(
                     categories = CategoryGraph.defaultCategoryGraphs()

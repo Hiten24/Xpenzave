@@ -43,7 +43,7 @@ fun Graph(
     ) {
         items.forEachIndexed { index, item ->
             item {
-                GraphBarContainer(
+                GraphBarSelector(
                     name = item.name,
                     percentage = item.percentage,
                     isSelected = index == state.selectedGraphBar,
@@ -56,7 +56,7 @@ fun Graph(
 }
 
 @Composable
-private fun GraphBarContainer(
+private fun GraphBarSelector(
     modifier: Modifier = Modifier,
     name: String,
     style: GraphStyle,
@@ -74,20 +74,31 @@ private fun GraphBarContainer(
             .rotate(90f)
             .background(backgroundColor, CircleShape)
             .border(2.dp, borderColor, CircleShape)
-            .padding(vertical = 14.dp, horizontal = 4.dp)
-            .padding(start = 12.dp)
+            .height(style.barSelectorWidth)
+//            .padding(vertical = 14.dp, horizontal = 4.dp)
+            .padding(start = 16.dp, end = 4.dp)
             .clickable(
                 interactionSource = MutableInteractionSource(),
                 indication = null
-            ) { onSelect() }
+            ) { onSelect() },
+        contentAlignment = Alignment.Center
     ) {
-        GraphBar(name = name, percentage = percentage, style = style)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            GraphBar(percentage = percentage, style = style)
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                modifier = Modifier.width(80.dp),
+                text = name,
+                style = style.textStyle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 
 @Composable
 fun GraphBar(
-    name: String,
     modifier: Modifier = Modifier,
     percentage: Int = 100,
     style: GraphStyle
@@ -108,14 +119,6 @@ fun GraphBar(
                     .align(Alignment.CenterEnd)
             )
         }
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            modifier = Modifier.width(80.dp),
-            text = name,
-            style = style.textStyle,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }
 
@@ -132,7 +135,7 @@ fun PreviewGraph() {
 @Preview
 @Composable
 fun PreviewGraphBarContainer() {
-    GraphBarContainer(
+    GraphBarSelector(
         name = "Category",
         isSelected = true,
         percentage = 100,
@@ -145,5 +148,5 @@ fun PreviewGraphBarContainer() {
 @Preview
 @Composable
 fun PreviewGraphBar() {
-    GraphBar(name = "Category", style = GraphStyle.defaultGraphStyle())
+    GraphBar(style = GraphStyle.defaultGraphStyle())
 }

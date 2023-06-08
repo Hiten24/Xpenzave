@@ -14,7 +14,8 @@ data class GraphStyle(
     val selectedIndicatorColor: Color,
     val selectorBorderTint: Color,
     val spaceBetweenGraphBar: Dp = 8.dp,
-    val textStyle: TextStyle
+    val textStyle: TextStyle,
+    val barSelectorWidth: Dp = 48.dp
 ) {
     companion object {
         @Composable
@@ -25,7 +26,17 @@ data class GraphStyle(
             spaceBetweenGraphBar: Dp = 8.dp,
             selectedIndicatorColor: Color = MaterialTheme.colorScheme.surface,
             selectorBorderTint: Color = MaterialTheme.colorScheme.primary,
-            textStyle: TextStyle = MaterialTheme.typography.labelLarge
-        ) = GraphStyle(barSize, barColor, barWidth, selectedIndicatorColor, selectorBorderTint, spaceBetweenGraphBar, textStyle)
+            textStyle: TextStyle = MaterialTheme.typography.labelLarge,
+            barSelectorWidth: Dp = 48.dp
+        ) = GraphStyle(
+            barSize = barSize,
+            barColor = barColor,
+            barWidth = barWidth,
+            selectedIndicatorColor = selectedIndicatorColor,
+            selectorBorderTint = selectorBorderTint,
+            spaceBetweenGraphBar = spaceBetweenGraphBar,
+            textStyle = textStyle,
+            barSelectorWidth = barSelectorWidth
+        )
     }
 }
