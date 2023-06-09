@@ -32,15 +32,18 @@ import com.hcapps.xpenzave.presentation.general_stats.GeneralSection
 private val statsSection = listOf("General", "Expense Log")
 
 @Composable
-fun StateScreen() {
+fun StateScreen(
+    navigateToCompare: () -> Unit,
+    navigateToCalendar: () -> Unit
+) {
 
     var tabState by remember { mutableStateOf(0) }
 
     Scaffold(
         topBar = {
             ExpenseLogTopBar(
-                onClickOfCompare = {},
-                onClickOfCalender = {},
+                onClickOfCompare = navigateToCompare,
+                onClickOfCalender = navigateToCalendar,
                 containerColor = MaterialTheme.colorScheme.background
             )
         }

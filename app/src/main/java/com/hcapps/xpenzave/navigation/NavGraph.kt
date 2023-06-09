@@ -39,7 +39,10 @@ fun XpenzaveNavGraph(
             navController.navigate(Screen.Authentication.route)
         })
 
-        statsRoute()
+        statsRoute(
+            navigateToCompare = { navController.navigate(Screen.Compare.route) },
+            navigateToCalendar = {}
+        )
 
         editBudget(
             navigateUp = { navController.navigateUp() }
@@ -70,9 +73,9 @@ fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.statsRoute() {
+fun NavGraphBuilder.statsRoute(navigateToCompare: () -> Unit, navigateToCalendar: () -> Unit) {
     composable(route = Screen.Stats.route) {
-        StateScreen()
+        StateScreen(navigateToCompare, navigateToCalendar)
     }
 }
 
