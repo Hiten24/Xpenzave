@@ -43,7 +43,7 @@ fun XpenzaveNavGraph(
 
         statsRoute(
             paddingValues,
-            navigateToCompare = { navController.navigate(Screen.Compare.route) },
+            navigateToCompare = { navController.navigate(Screen.CompareSelector.route) },
             navigateToCalendar = {}
         )
 
