@@ -30,7 +30,9 @@ private val statsSection = listOf("General", "Expense Log")
 
 @Composable
 fun StateScreen(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigateToCompare: () -> Unit,
+    navigateToCalendar: () -> Unit
 ) {
 
     var tabState by remember { mutableStateOf(0) }
@@ -38,8 +40,9 @@ fun StateScreen(
     Scaffold(
         topBar = {
             ExpenseLogTopBar(
-                onClickOfCompare = {},
-                onClickOfCalender = {}
+                onClickOfCompare = navigateToCompare,
+                onClickOfCalender = navigateToCalendar,
+                containerColor = MaterialTheme.colorScheme.background
             )
         }
     ) { topBarPadding ->
@@ -72,7 +75,8 @@ fun StateScreen(
 @Composable
 fun ExpenseLogTopBar(
     onClickOfCompare: () -> Unit,
-    onClickOfCalender: () -> Unit
+    onClickOfCalender: () -> Unit,
+    containerColor: Color = MaterialTheme.colorScheme.surface
 ) {
     TopAppBar(
         title = {
@@ -83,16 +87,15 @@ fun ExpenseLogTopBar(
                 Icon(
                     imageVector = Icons.Outlined.Scale,
                     contentDescription = "Calender of Month",
-//                    tint = MaterialTheme.colorScheme.primary.copy(0.6f)
                 )
             }
             IconButton(onClick = onClickOfCalender) {
                 Icon(
                     imageVector = Icons.Outlined.CalendarMonth,
                     contentDescription = "Calender of Month",
-//                    tint = MaterialTheme.colorScheme.primary.copy(0.5f)
                 )
             }
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor)
     )
 }

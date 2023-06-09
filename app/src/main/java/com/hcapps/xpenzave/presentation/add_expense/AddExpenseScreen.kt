@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.add_expense.Category.Companion.dummies
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
+import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
+import com.hcapps.xpenzave.presentation.core.component.CategoryStyle.Companion.defaultCategoryStyle
 import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
 import com.hcapps.xpenzave.presentation.home.component.LargeButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
@@ -56,18 +58,18 @@ import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddExpense(
-    navigateUP: () -> Unit
+    navigateUp: () -> Unit
 ) {
 
     Scaffold(
         topBar = {
-            AddExpenseTopBar(onClickOfNavigationIcon = navigateUP)
+            AddExpenseTopBar(onClickOfNavigationIcon = navigateUp)
         }
     ) {
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(top = it.calculateTopPadding()),
             columns = GridCells.Fixed(3),
             contentPadding = PaddingValues(top = 24.dp, start = 12.dp, end = 12.dp, bottom = 24.dp),
@@ -95,7 +97,32 @@ fun AddExpense(
             }
 
             item(span = { GridItemSpan(3) }) {
-                AdditionalInfoCard(modifier = Modifier.fillMaxWidth())
+                AdditionalInfoCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    cardColor = MaterialTheme.colorScheme.background
+                ) {
+                    SelectCategoryComponent(
+                        categoryStyle = defaultCategoryStyle(backgroundColor = MaterialTheme.colorScheme.surface)
+                    )
+                    AddBillEachMonth(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 6.dp)
+                            .background(
+                                MaterialTheme.colorScheme.surface,
+                                MaterialTheme.shapes.small
+                            ),
+                        checked = false,
+                        onCheckedChange = { }
+                    )
+                    AddPhotoSection(modifier = Modifier.padding(horizontal = 6.dp))
+                    MoreDetailsSection(modifier = Modifier.padding(horizontal = 6.dp))
+                    XpenzaveButton(
+                        modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
+                        title = stringResource(R.string.add),
+                        onClickOfButton = {}
+                    )
+                }
             }
 
         }
@@ -178,7 +205,8 @@ fun AmountSection(
 @Composable
 fun AdditionalInfoCard(
     modifier: Modifier = Modifier,
-    cardColor: Color = MaterialTheme.colorScheme.surface
+    cardColor: Color = MaterialTheme.colorScheme.surface,
+    content: @Composable () -> Unit
 ) {
     Card(
         modifier = modifier,
@@ -190,23 +218,7 @@ fun AdditionalInfoCard(
                 .padding(top = 12.dp),
             verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
-            SelectCategoryComponent()
-            AddBillEachMonth(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 6.dp)
-                    .background(MaterialTheme.colorScheme.background),
-                checked = false,
-                onCheckedChange = { _ -> }
-            )
-            AddPhotoSection(modifier = Modifier.padding(horizontal = 6.dp))
-            MoreDetailsSection(modifier = Modifier.padding(horizontal = 6.dp))
-            XpenzaveButton(
-                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
-                title = stringResource(R.string.add)
-            ) {
-
-            }
+            content()
         }
     }
 }
@@ -214,7 +226,8 @@ fun AdditionalInfoCard(
 @Composable
 fun SelectCategoryComponent(
     modifier: Modifier = Modifier,
-    categories: List<Category> = dummies()
+    categories: List<Category> = dummies(),
+    categoryStyle: CategoryStyle = defaultCategoryStyle()
 ) {
     val chunkedCategories = categories.chunked(3)
     Column(modifier = modifier) {
@@ -234,7 +247,8 @@ fun SelectCategoryComponent(
                         modifier = Modifier
                             .weight(1f)
                             .padding(6.dp),
-                        category = category
+                        category = category,
+                        style = categoryStyle
                     )
                 }
             }

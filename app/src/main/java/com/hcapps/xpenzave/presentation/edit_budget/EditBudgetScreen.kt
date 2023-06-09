@@ -40,7 +40,9 @@ import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
 import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
 
 @Composable
-fun EditBudgetScreen() {
+fun EditBudgetScreen(
+    navigateUp: () -> Unit
+) {
 
     var budgetValue by remember {
         mutableStateOf("")
@@ -67,9 +69,7 @@ fun EditBudgetScreen() {
                 year = "2019",
                 icon = Icons.Outlined.Close,
                 style = MonthHeaderStyle.defaultMonthHeaderStyle(iconColor = MaterialTheme.colorScheme.onSurface),
-                onClickOfIcon = {
-
-                }
+                onClickOfIcon = navigateUp
             )
 
             BudgetTextField(
@@ -157,5 +157,5 @@ fun PreviewBudgetTextField() {
 @Preview
 @Composable
 fun PreviewEditBudgetScreen() {
-    EditBudgetScreen()
+    EditBudgetScreen() {}
 }

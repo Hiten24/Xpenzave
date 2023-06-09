@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FilterList
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -44,7 +43,7 @@ fun ExpenseLogSection() {
             expensesOfMonth = dummyExpensesOfTheDay(),
             headerStyle = ExpenseDateHeaderStyle
                 .defaultExpenseDateHeaderStyle()
-                .copy(headerBackgroundColor = MaterialTheme.colorScheme.background)
+//                .copy(headerBackgroundColor = MaterialTheme.colorScheme.background)
         )
     }
 }

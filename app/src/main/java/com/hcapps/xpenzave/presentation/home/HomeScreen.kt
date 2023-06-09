@@ -23,10 +23,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.presentation.home.component.BudgetProgressCard
 import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
+import com.hcapps.xpenzave.presentation.home.state.dummyExpensesOfTheDay
 
 @Composable
 fun HomeScreen(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    navigateToEditBudget: () -> Unit
 ) {
     val context = LocalContext.current
     Column(modifier = Modifier.fillMaxSize()) {
@@ -36,7 +38,7 @@ fun HomeScreen(
                 .fillMaxHeight(0.45f)
                 .padding(16.dp),
             onClickOfCalendar = { Toast.makeText(context, "Changing Month", Toast.LENGTH_SHORT).show() },
-            onClickOfEditBudget = { Toast.makeText(context, "Editing Budget", Toast.LENGTH_SHORT).show() }
+            onClickOfEditBudget = navigateToEditBudget
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -49,7 +51,7 @@ fun HomeScreen(
             onClickOfSeeAll = {},
             onClickOfDateHeader = {},
             onClickOfExpenseItem = {},
-            expensesOfMonth = emptyList(),
+            expensesOfMonth = dummyExpensesOfTheDay(),
             onClickOfAddExpense = {}
         )
 

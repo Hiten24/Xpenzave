@@ -29,20 +29,31 @@ fun XpenzaveNavGraph(
             navController.navigate(Screen.Settings.route)
         }
 
-        homeRoute(paddingValues)
+        homeRoute(
+            paddingValues,
+            navigateToEditBudget = {
+                navController.navigate(Screen.EditBudget.route)
+            }
+        )
 
         settingsRoute(navigateToAuth = {
             navController.popBackStack()
             navController.navigate(Screen.Authentication.route)
         })
 
-        statsRoute(paddingValues)
+        statsRoute(
+            paddingValues,
+            navigateToCompare = { navController.navigate(Screen.Compare.route) },
+            navigateToCalendar = {}
+        )
 
-        editBudget()
+        editBudget(
+            navigateUp = { navController.navigateUp() }
+        )
 
-        addExpense(onNavigateUp = {
-            navController.navigateUp()
-        })
+        addExpense(
+            navigateUp = { navController.navigateUp() }
+        )
 
         compareSelector(
             onNavigateUp = { navController.navigateUp() }
@@ -61,9 +72,9 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.homeRoute(paddingValues: PaddingValues) {
+fun NavGraphBuilder.homeRoute(paddingValues: PaddingValues, navigateToEditBudget: () -> Unit) {
     composable(route = Screen.Home.route) {
-        HomeScreen(paddingValues)
+        HomeScreen(paddingValues, navigateToEditBudget)
     }
 }
 
@@ -73,21 +84,26 @@ fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.statsRoute(paddingValues: PaddingValues) {
+fun NavGraphBuilder.statsRoute(paddingValues: PaddingValues, navigateToCompare: () -> Unit, navigateToCalendar: () -> Unit) {
     composable(route = Screen.Stats.route) {
-        StateScreen(paddingValues)
+        StateScreen(paddingValues, navigateToCompare, navigateToCalendar)
     }
 }
 
-fun NavGraphBuilder.editBudget() {
+
+fun NavGraphBuilder.editBudget(
+    navigateUp: () -> Unit
+) {
     composable(route = Screen.EditBudget.route) {
-        EditBudgetScreen()
+        EditBudgetScreen(navigateUp = navigateUp)
     }
 }
 
-fun NavGraphBuilder.addExpense(onNavigateUp: () -> Unit) {
+fun NavGraphBuilder.addExpense(
+    navigateUp: () -> Unit
+) {
     composable(route = Screen.AddExpense.route) {
-        AddExpense(onNavigateUp)
+        AddExpense(navigateUp = navigateUp)
     }
 }
 
