@@ -12,6 +12,7 @@ import com.hcapps.xpenzave.presentation.calendar.CalendarScreen
 import com.hcapps.xpenzave.presentation.compare.CompareSelector
 import com.hcapps.xpenzave.presentation.compare.result.CompareResult
 import com.hcapps.xpenzave.presentation.edit_budget.EditBudgetScreen
+import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailScreen
 import com.hcapps.xpenzave.presentation.home.HomeScreen
 import com.hcapps.xpenzave.presentation.settings.SettingsScreen
 import com.hcapps.xpenzave.presentation.stats.StateScreen
@@ -66,6 +67,8 @@ fun XpenzaveNavGraph(
         )
 
         calendar(onNavigateUp = { navController.navigateUp() })
+
+        expenseDetail()
 
     }
 }
@@ -132,5 +135,11 @@ fun NavGraphBuilder.compareResult(onNavigateUp: () -> Unit) {
 fun NavGraphBuilder.calendar(onNavigateUp: () -> Unit) {
     composable(route = Screen.Calendar.route) {
         CalendarScreen(onNavigateUp)
+    }
+}
+
+fun NavGraphBuilder.expenseDetail() {
+    composable(route = Screen.ExpenseDetail.route) {
+        ExpenseDetailScreen()
     }
 }
