@@ -7,24 +7,19 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun XpenzaveTabRow(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedIndex: Int,
+    onSelectionChange: (Int) -> Unit,
+    items: List<String>
 ) {
-    var selectedState by remember {
-        mutableStateOf(0)
-    }
     TabRow(
-        selectedTabIndex = selectedState,
+        selectedTabIndex = selectedIndex,
         modifier = modifier.clip(Shapes().small),
         containerColor = MaterialTheme.colorScheme.background,
         divider = {
@@ -32,18 +27,15 @@ fun XpenzaveTabRow(
         }
     ) {
 
-        XpenzaveTab(
-            text = "General",
-            selected = selectedState == 0
-        ) {
-            if (selectedState != 0) selectedState = 0
+        items.forEachIndexed { index, item ->
+            XpenzaveTab(
+                text = item,
+                selected = selectedIndex == index
+            ) {
+                onSelectionChange(index)
+            }
         }
-        XpenzaveTab(
-            text = "Expense Log",
-            selected = selectedState == 1
-        ) {
-            if (selectedState != 1) selectedState = 1
-        }
+
     }
 }
 
@@ -64,16 +56,4 @@ fun XpenzaveTab(
             Text(text = text)
         }
     )
-}
-
-@Preview
-@Composable
-fun PreviewTab() {
-//    XpenzaveTab("General", false, onClick = {})
-}
-
-@Preview
-@Composable
-fun PreviewTanBar() {
-    XpenzaveTabRow()
 }

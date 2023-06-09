@@ -2,21 +2,16 @@ package com.hcapps.xpenzave.presentation.expense_log
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.FilterList
-import androidx.compose.material.icons.outlined.Scale
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLog
 import com.hcapps.xpenzave.presentation.core.component.MonthHeader
 import com.hcapps.xpenzave.presentation.home.component.ExpenseDateHeaderStyle
@@ -28,7 +23,8 @@ fun ExpenseLogSection() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surface),
+        verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
 
         MonthHeader(
@@ -51,33 +47,4 @@ fun ExpenseLogSection() {
                 .copy(headerBackgroundColor = MaterialTheme.colorScheme.background)
         )
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ExpenseLogTopBar(
-    onClickOfCompare: () -> Unit,
-    onClickOfCalender: () -> Unit
-) {
-    TopAppBar(
-        title = {
-            Text(text = "Stats")
-        },
-        actions = {
-            IconButton(onClick = onClickOfCompare) {
-                Icon(
-                    imageVector = Icons.Outlined.Scale,
-                    contentDescription = "Calender of Month",
-//                    tint = MaterialTheme.colorScheme.primary.copy(0.6f)
-                )
-            }
-            IconButton(onClick = onClickOfCalender) {
-                Icon(
-                    imageVector = Icons.Outlined.CalendarMonth,
-                    contentDescription = "Calender of Month",
-//                    tint = MaterialTheme.colorScheme.primary.copy(0.5f)
-                )
-            }
-        }
-    )
 }

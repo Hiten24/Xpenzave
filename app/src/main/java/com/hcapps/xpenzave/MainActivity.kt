@@ -28,13 +28,13 @@ class MainActivity : ComponentActivity() {
             XpenzaveTheme {
                 val navController = rememberNavController()
                 LaunchedEffect(key1 = Unit) {
-//                    navController.popBackStack()
-//                    navController.navigate(getStartDestination(dataStore))
+                    navController.popBackStack()
+                    navController.navigate(getStartDestination(dataStore))
                 }
                 val backStackEntry = navController.currentBackStackEntryAsState()
                 XpenzaveScaffold(onClickOfItem = { route -> navController.navigate(route) }, backStackEntry = backStackEntry) { padding ->
                     XpenzaveNavGraph(
-                        startDestination = Screen.CompareResult.route,
+                        startDestination = Screen.Authentication.route,
                         navController = navController,
                         paddingValues = padding
                     )
