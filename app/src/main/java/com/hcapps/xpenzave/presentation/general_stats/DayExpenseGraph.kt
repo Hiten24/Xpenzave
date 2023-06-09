@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,9 +36,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hcapps.xpenzave.R
+import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -130,10 +133,14 @@ val data = listOf(
 
 @Composable
 fun DayExpenseGraph(
-    data: List<Pair<Int, Double>>
+    data: List<Pair<Int, Double>>,
+    elevation: Dp = DefaultCardElevation,
+    cardColor: Color = MaterialTheme.colorScheme.surface
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(elevation),
+        colors = CardDefaults.cardColors(cardColor)
     ) {
         Column(
             modifier = Modifier

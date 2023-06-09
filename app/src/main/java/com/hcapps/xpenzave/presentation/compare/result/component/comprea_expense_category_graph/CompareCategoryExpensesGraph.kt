@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.compare.result.CompareIndicator
@@ -23,16 +25,21 @@ import com.hcapps.xpenzave.presentation.compare.result.component.expense_categor
 import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.ExpenseData
 import com.hcapps.xpenzave.presentation.compare.result.component.graph.Graph
 import com.hcapps.xpenzave.presentation.compare.result.component.graph.rememberGraphState
+import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
 
 @Composable
 fun CompareCategoryExpensesGraph(
-    categories: List<CategoryData> = emptyList()
+    categories: List<CategoryData> = emptyList(),
+    elevation: Dp = DefaultCardElevation,
+    cardColor: Color = MaterialTheme.colorScheme.surface
 ) {
 
     val graphState = rememberGraphState()
 
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(elevation),
+        colors = CardDefaults.cardColors(cardColor)
     ) {
         Column(
             modifier = Modifier

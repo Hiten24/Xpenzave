@@ -56,7 +56,8 @@ fun XpenzaveNavGraph(
         )
 
         compareSelector(
-            onNavigateUp = { navController.navigateUp() }
+            onNavigateUp = { navController.navigateUp() },
+            navigateToResult = { navController.navigate(Screen.CompareResult.route) }
         )
 
         compareResult(
@@ -107,9 +108,15 @@ fun NavGraphBuilder.addExpense(
     }
 }
 
-fun NavGraphBuilder.compareSelector(onNavigateUp: () -> Unit) {
+fun NavGraphBuilder.compareSelector(
+    onNavigateUp: () -> Unit,
+    navigateToResult: () -> Unit
+) {
     composable(route = Screen.CompareSelector.route) {
-        CompareSelector(onNavigateUp)
+        CompareSelector(
+            navigateCompareResult = navigateToResult,
+            navigateUp = onNavigateUp
+        )
     }
 }
 

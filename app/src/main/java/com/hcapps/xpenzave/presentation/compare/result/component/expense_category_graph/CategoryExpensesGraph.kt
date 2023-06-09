@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -29,16 +30,21 @@ import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.compare.result.component.graph.Graph
 import com.hcapps.xpenzave.presentation.compare.result.component.graph.rememberGraphState
+import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
 
 @Composable
 fun CategoryExpensesGraph(
-    categories: List<CategoryData> = emptyList()
+    categories: List<CategoryData> = emptyList(),
+    cardColor: Color = MaterialTheme.colorScheme.surface,
+    cardElevation: Dp = DefaultCardElevation
 ) {
 
     val graphState = rememberGraphState()
 
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(cardElevation),
+        colors = CardDefaults.cardColors(cardColor)
     ) {
         Column(
             modifier = Modifier

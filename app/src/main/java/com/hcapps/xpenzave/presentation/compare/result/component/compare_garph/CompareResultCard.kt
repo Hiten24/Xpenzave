@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,8 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.presentation.compare.result.CompareIndicator
+import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
 
 @Composable
 fun CompareResultCard(
@@ -31,9 +34,15 @@ fun CompareResultCard(
     firstValue: String,
     secondValue: String,
     firstDate: String,
-    secondDate: String
+    secondDate: String,
+    elevation: Dp = DefaultCardElevation,
+    cardColor: Color = MaterialTheme.colorScheme.surface
 ) {
-    Card(modifier = modifier.fillMaxWidth()) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(elevation),
+        colors = CardDefaults.cardColors(cardColor)
+    ) {
 
         Column(
             modifier = Modifier.padding(horizontal = 22.dp, vertical = 28.dp),

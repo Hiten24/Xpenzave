@@ -24,12 +24,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.home.BudgetCardHeader
+import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
 
 @Composable
 fun BudgetProgressCard(
     modifier: Modifier = Modifier,
     cardBackgroundColor: Color = MaterialTheme.colorScheme.surface,
-    cardElevation: Dp = 4.dp,
+    cardElevation: Dp = DefaultCardElevation,
     onClickOfEditBudget: () -> Unit,
     onClickOfCalendar: () -> Unit
 ) {
