@@ -18,7 +18,10 @@ import com.hcapps.xpenzave.presentation.home.state.dummyExpensesOfTheDay
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ExpenseLogSection() {
+fun ExpenseLogSection(
+    navigateToFiler: () -> Unit,
+    navigateToDetails: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -31,14 +34,12 @@ fun ExpenseLogSection() {
             month = "September",
             year = "2019",
             icon = Icons.Outlined.FilterList,
-            onClickOfIcon = {
-
-            }
+            onClickOfIcon = navigateToFiler
         )
 
         ExpenseLog(
             onClickOfDateHeader = { /*TODO*/ },
-            onClickOfExpenseItem = { /*TODO*/ },
+            onClickOfExpenseItem = navigateToDetails,
             expensesOfMonth = dummyExpensesOfTheDay(),
             headerStyle = ExpenseDateHeaderStyle
                 .defaultExpenseDateHeaderStyle()

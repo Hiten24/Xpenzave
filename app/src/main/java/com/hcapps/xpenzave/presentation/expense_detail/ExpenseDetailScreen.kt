@@ -38,7 +38,9 @@ import com.hcapps.xpenzave.R
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ExpenseDetailScreen() {
+fun ExpenseDetailScreen(
+    navigateUp: () -> Unit
+) {
     Scaffold(
         topBar = {
             LargeTopAppBar(
@@ -58,7 +60,7 @@ fun ExpenseDetailScreen() {
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = navigateUp) {
                         Icon(imageVector = Icons.Outlined.Close, contentDescription = "Arrow Back")
                     }
                 }
@@ -157,5 +159,5 @@ fun DetailsItem(
 @Preview(showBackground = true)
 @Composable
 fun PreviewExpenseDetailScreen() {
-    ExpenseDetailScreen()
+    ExpenseDetailScreen() {}
 }
