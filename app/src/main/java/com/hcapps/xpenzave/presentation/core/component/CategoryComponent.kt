@@ -17,10 +17,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,14 +31,19 @@ import com.hcapps.xpenzave.ui.theme.BorderWidth
 fun CategoryComponent(
     modifier: Modifier = Modifier,
     category: Category,
-    style: CategoryStyle = CategoryStyle.defaultCategoryStyle()
+    style: CategoryStyle = CategoryStyle.defaultCategoryStyle(),
+    onSelect: (category: Category) -> Unit
 ) {
 
-    var isSelected by remember { mutableStateOf(category.isSelected) }
+    val isSelected = category.isSelected
 
     val borderColor = if (isSelected) style.selectedBorderColor else style.borderColor
     val iconColor = if (isSelected) style.selectedIconColor else style.iconColor
     val textColor = if (isSelected) style.selectedColorText else style.textColor
+
+    val onClickOfOutlinedCard: () -> Unit = {
+        onSelect(category.copy(isSelected = !isSelected))
+    }
 
     OutlinedCard(
         modifier = modifier
@@ -50,8 +51,9 @@ fun CategoryComponent(
             .clip(shape = Shapes().small)
             .clickable(
                 interactionSource = MutableInteractionSource(),
-                indication = null
-            ) { isSelected = !isSelected },
+                indication = null,
+                onClick = onClickOfOutlinedCard
+            ),
         border = BorderStroke(style.borderWidth, borderColor),
         colors = CardDefaults.cardColors(containerColor = style.backgroundColor)
     ) {
