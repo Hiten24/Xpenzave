@@ -12,14 +12,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 data class Category(
     val name: String,
     val icon: ImageVector,
-    val isSelected: Boolean
+    var isSelected: Boolean
 ) {
     companion object {
         fun dummies() = listOf(
             Category(
                 name = "Bills",
                 icon = Icons.Outlined.Receipt,
-                isSelected = true
+                isSelected = false
             ),
             Category(
                 name = "Shopping",

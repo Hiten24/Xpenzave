@@ -22,4 +22,6 @@ sealed class Screen(val route: String) {
 
     object ExpenseDetail: Screen(route = "expense_detail")
 
+    object Filter: Screen(route = "filter")
+
 }
