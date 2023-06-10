@@ -1,4 +1,4 @@
-package com.hcapps.xpenzave.data.source.remote.repository
+package com.hcapps.xpenzave.data.source.remote.repository.auth
 
 import androidx.activity.ComponentActivity
 import com.hcapps.xpenzave.util.ResponseState

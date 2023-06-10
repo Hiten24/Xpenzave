@@ -2,10 +2,10 @@ package com.hcapps.xpenzave.presentation.add_expense
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DirectionsCar
-import androidx.compose.material.icons.outlined.Medication
+import androidx.compose.material.icons.outlined.DragIndicator
+import androidx.compose.material.icons.outlined.Mood
 import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material.icons.outlined.Restaurant
-import androidx.compose.material.icons.outlined.Savings
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -27,7 +27,7 @@ data class Category(
                 isSelected = false
             ),
             Category(
-                name = "Food",
+                name = "Clothes",
                 icon = Icons.Outlined.Restaurant,
                 isSelected = false
             ),
@@ -37,13 +37,13 @@ data class Category(
                 isSelected = false
             ),
             Category(
-                name = "Investment",
-                icon = Icons.Outlined.Savings,
+                name = "Fun",
+                icon = Icons.Outlined.Mood,
                 isSelected = false
             ),
             Category(
-                name = "Medication",
-                icon = Icons.Outlined.Medication,
+                name = "Other",
+                icon = Icons.Outlined.DragIndicator,
                 isSelected = false
             )
         )

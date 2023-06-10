@@ -3,7 +3,7 @@ package com.hcapps.xpenzave.presentation.settings
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.source.remote.repository.AuthRepository
+import com.hcapps.xpenzave.data.source.remote.repository.auth.AuthRepository
 import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.util.ResponseState
 import com.hcapps.xpenzave.util.SettingsDataStore

@@ -1,7 +1,9 @@
 package com.hcapps.xpenzave.di
 
-import com.hcapps.xpenzave.data.source.remote.repository.AuthRepository
-import com.hcapps.xpenzave.data.source.remote.repository.AuthRepositoryImpl
+import com.hcapps.xpenzave.data.source.remote.repository.auth.AuthRepository
+import com.hcapps.xpenzave.data.source.remote.repository.auth.AuthRepositoryImpl
+import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
+import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,5 +17,10 @@ abstract class RepositoryModule {
     abstract fun provideAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    abstract fun provideDatabaseRepository(
+        databaseRepositoryImpl: DatabaseRepositoryImpl
+    ): DatabaseRepository
 
 }

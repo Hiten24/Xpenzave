@@ -4,7 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.source.remote.repository.AuthRepository
+import com.hcapps.xpenzave.data.source.remote.repository.auth.AuthRepository
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent
 import com.hcapps.xpenzave.presentation.auth.event.AuthScreenState
 import com.hcapps.xpenzave.presentation.core.UIEvent

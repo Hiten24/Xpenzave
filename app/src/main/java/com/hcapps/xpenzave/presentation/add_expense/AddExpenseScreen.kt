@@ -45,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.add_expense.Category.Companion.dummies
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
@@ -58,7 +59,8 @@ import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddExpense(
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    viewModel: AddExpenseViewModel = hiltViewModel()
 ) {
 
     Scaffold(
