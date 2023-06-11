@@ -1,6 +1,10 @@
 package com.hcapps.xpenzave.presentation.add_expense
 
 import android.annotation.SuppressLint
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -30,21 +36,29 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.add_expense.Category.Companion.dummies
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
@@ -60,6 +74,8 @@ import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 fun AddExpense(
     navigateUp: () -> Unit
 ) {
+
+    var image by remember { mutableStateOf<Uri?>(null) }
 
     Scaffold(
         topBar = {
@@ -115,7 +131,10 @@ fun AddExpense(
                         checked = false,
                         onCheckedChange = { }
                     )
-                    AddPhotoSection(modifier = Modifier.padding(horizontal = 6.dp))
+                    AddPhotoSection(
+                        modifier = Modifier.padding(horizontal = 6.dp),
+                        image = image
+                    ) { uri -> image = uri }
                     MoreDetailsSection(modifier = Modifier.padding(horizontal = 6.dp))
                     XpenzaveButton(
                         modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
@@ -310,18 +329,66 @@ fun AddBillEachMonth(
 }
 
 @Composable
-fun AddPhotoSection(modifier: Modifier = Modifier) {
+fun AddPhotoSection(
+    modifier: Modifier = Modifier,
+    image: Uri? = null,
+    onImageSelect: (image: Uri?) -> Unit
+) {
+
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = onImageSelect
+    )
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         Text(text = "Add Photo", style = MaterialTheme.typography.titleMedium)
-        LargeButton(
-            modifier = Modifier.shadow(1.dp, shape = CircleShape),
-            buttonColor = MaterialTheme.colorScheme.onPrimary,
-            iconColor = MaterialTheme.colorScheme.primary,
-            onClickOfAddExpense = {}
-        )
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            if (image == null) {
+                LargeButton(
+                    modifier = Modifier.shadow(1.dp, shape = CircleShape),
+                    buttonColor = MaterialTheme.colorScheme.onPrimary,
+                    iconColor = MaterialTheme.colorScheme.primary,
+                    onClickOfAddExpense = {
+                        singlePhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
+                )
+            } else {
+                Card(
+                    modifier = Modifier.size(100.dp),
+                    elevation = CardDefaults.elevatedCardElevation(2.dp)
+                ) {
+                    AsyncImage(
+                        model = image,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = "Uploaded Bill"
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            image?.let {
+                TextButton(
+                    onClick = { onImageSelect(null) },
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(
+                        text = "Clear",
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+        }
+
     }
 }
 

@@ -101,6 +101,8 @@ dependencies {
     // gson
     implementation ("com.google.code.gson:gson:2.9.1")
 
+    // coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     testImplementation ("junit:junit:4.13.2")
 
