@@ -8,9 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.hcapps.xpenzave.presentation.add_expense.AddExpense
 import com.hcapps.xpenzave.presentation.auth.AuthenticationScreen
-import com.hcapps.xpenzave.presentation.compare.result.CompareResult
+import com.hcapps.xpenzave.presentation.calendar.CalendarScreen
 import com.hcapps.xpenzave.presentation.compare.CompareSelector
+import com.hcapps.xpenzave.presentation.compare.result.CompareResult
 import com.hcapps.xpenzave.presentation.edit_budget.EditBudgetScreen
+import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailScreen
+import com.hcapps.xpenzave.presentation.filter.FilterScreen
 import com.hcapps.xpenzave.presentation.home.HomeScreen
 import com.hcapps.xpenzave.presentation.settings.SettingsScreen
 import com.hcapps.xpenzave.presentation.stats.StateScreen
@@ -44,7 +47,9 @@ fun XpenzaveNavGraph(
         statsRoute(
             paddingValues,
             navigateToCompare = { navController.navigate(Screen.CompareSelector.route) },
-            navigateToCalendar = {}
+            navigateToCalendar = { navController.navigate(Screen.Calendar.route) },
+            navigateToFilter = { navController.navigate(Screen.Filter.route) },
+            navigateToDetails = { navController.navigate(Screen.ExpenseDetail.route) }
         )
 
         editBudget(
@@ -63,6 +68,14 @@ fun XpenzaveNavGraph(
         compareResult(
             onNavigateUp = { navController.navigateUp() }
         )
+
+        calendar(onNavigateUp = { navController.navigateUp() })
+
+        expenseDetail(onNavigateUp = { navController.navigateUp() })
+
+        filter(onNavigateUp = {
+            navController.navigateUp()
+        })
 
     }
 }
@@ -85,9 +98,21 @@ fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.statsRoute(paddingValues: PaddingValues, navigateToCompare: () -> Unit, navigateToCalendar: () -> Unit) {
+fun NavGraphBuilder.statsRoute(
+    paddingValues: PaddingValues,
+    navigateToCompare: () -> Unit,
+    navigateToCalendar: () -> Unit,
+    navigateToFilter: () -> Unit,
+    navigateToDetails: () -> Unit
+) {
     composable(route = Screen.Stats.route) {
-        StateScreen(paddingValues, navigateToCompare, navigateToCalendar)
+        StateScreen(
+            paddingValues,
+            navigateToCompare,
+            navigateToCalendar,
+            navigateToFilter,
+            navigateToDetails
+        )
     }
 }
 
@@ -123,5 +148,25 @@ fun NavGraphBuilder.compareSelector(
 fun NavGraphBuilder.compareResult(onNavigateUp: () -> Unit) {
     composable(route = Screen.CompareResult.route) {
         CompareResult(onNavigateUp)
+    }
+}
+
+fun NavGraphBuilder.calendar(onNavigateUp: () -> Unit) {
+    composable(route = Screen.Calendar.route) {
+        CalendarScreen(onNavigateUp)
+    }
+}
+
+fun NavGraphBuilder.expenseDetail(
+    onNavigateUp: () -> Unit
+) {
+    composable(route = Screen.ExpenseDetail.route) {
+        ExpenseDetailScreen(navigateUp = onNavigateUp)
+    }
+}
+
+fun NavGraphBuilder.filter(onNavigateUp: () -> Unit) {
+    composable(route = Screen.Filter.route) {
+        FilterScreen(navigateUp = onNavigateUp)
     }
 }
