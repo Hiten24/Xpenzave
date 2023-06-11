@@ -13,7 +13,8 @@ android {
 
     defaultConfig {
         applicationId = "com.hcapps.xpenzave"
-        minSdk = 24
+//        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -103,6 +104,10 @@ dependencies {
 
     // coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+    
+    // date picker
+    implementation ("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
+    implementation ("com.maxkeppeler.sheets-compose-dialogs:calendar:1.0.2")
 
     testImplementation ("junit:junit:4.13.2")
 

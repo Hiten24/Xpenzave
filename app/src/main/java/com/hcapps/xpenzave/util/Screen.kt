@@ -18,4 +18,10 @@ sealed class Screen(val route: String) {
 
     object CompareResult: Screen(route = "compare_result")
 
+    object Calendar: Screen(route = "calendar")
+
+    object ExpenseDetail: Screen(route = "expense_detail")
+
+    object Filter: Screen(route = "filter")
+
 }

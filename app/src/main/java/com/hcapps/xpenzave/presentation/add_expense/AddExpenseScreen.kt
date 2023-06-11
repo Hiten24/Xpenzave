@@ -268,7 +268,7 @@ fun SelectCategoryComponent(
                             .padding(6.dp),
                         category = category,
                         style = categoryStyle
-                    )
+                    ) {}
                 }
             }
         }
