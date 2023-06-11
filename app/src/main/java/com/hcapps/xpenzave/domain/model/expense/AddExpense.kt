@@ -9,6 +9,7 @@ data class ExpenseData(
     val details: String = "",
     val date: String = "10-06-2023 11:11:00.000",
     val categoryId: String = ID.unique(),
+    val addThisExpenseToEachMonth: Boolean = false,
     val day: Int = 10,
     val month: Int = 6,
     val year: Int = 2023

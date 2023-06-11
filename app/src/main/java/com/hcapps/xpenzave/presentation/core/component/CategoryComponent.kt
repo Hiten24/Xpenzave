@@ -1,8 +1,6 @@
 package com.hcapps.xpenzave.presentation.core.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,10 +15,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,17 +22,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.hcapps.xpenzave.presentation.add_expense.Category
+import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.ui.theme.BorderWidth
+import com.hcapps.xpenzave.util.clickWithNoEffect
 
 @Composable
 fun CategoryComponent(
     modifier: Modifier = Modifier,
     category: Category,
-    style: CategoryStyle = CategoryStyle.defaultCategoryStyle()
+    style: CategoryStyle = CategoryStyle.defaultCategoryStyle(),
+    isSelected: Boolean = false,
+    onSelect: (id: String) -> Unit
 ) {
-
-    var isSelected by remember { mutableStateOf(category.isSelected) }
 
     val borderColor = if (isSelected) style.selectedBorderColor else style.borderColor
     val iconColor = if (isSelected) style.selectedIconColor else style.iconColor
@@ -48,10 +43,7 @@ fun CategoryComponent(
         modifier = modifier
             .aspectRatio(1f)
             .clip(shape = Shapes().small)
-            .clickable(
-                interactionSource = MutableInteractionSource(),
-                indication = null
-            ) { isSelected = !isSelected },
+            .clickWithNoEffect { onSelect(category.id) },
         border = BorderStroke(style.borderWidth, borderColor),
         colors = CardDefaults.cardColors(containerColor = style.backgroundColor)
     ) {
@@ -74,8 +66,8 @@ fun CategoryComponent(
             )
         }
     }
-}
 
+}
 data class CategoryStyle(
     val borderWidth: Dp,
     val borderColor: Color,

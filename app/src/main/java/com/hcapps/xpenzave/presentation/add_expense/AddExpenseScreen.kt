@@ -1,6 +1,6 @@
 package com.hcapps.xpenzave.presentation.add_expense
 
-import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.PriorityHigh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,7 +36,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,13 +47,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
-import com.hcapps.xpenzave.presentation.add_expense.Category.Companion.dummies
+import com.hcapps.xpenzave.domain.model.category.Category
+import com.hcapps.xpenzave.domain.model.category.Category.Companion.dummies
+import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.*
+import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle.Companion.defaultCategoryStyle
@@ -57,21 +65,32 @@ import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
 import com.hcapps.xpenzave.presentation.home.component.LargeButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
+import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddExpense(
     navigateUp: () -> Unit,
     viewModel: AddExpenseViewModel = hiltViewModel()
 ) {
 
-    var amount by viewModel.amount
-    var moreDetails by viewModel.moreDetails
-    val date by viewModel.date
-    var addBillToEachMonth by viewModel.addBillToEachMonth
+    val state by viewModel.state
+    val context = LocalContext.current
+    var loading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.uiEventFlow.collectLatest { event ->
+            when (event) {
+                is UIEvent.Loading -> { loading = event.loading }
+                is UIEvent.ShowMessage -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+                is UIEvent.Error -> {}
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -83,7 +102,7 @@ fun AddExpense(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(top = paddingValues.calculateTopPadding()),
+                .padding(paddingValues),
             columns = GridCells.Fixed(3),
             contentPadding = PaddingValues(top = 24.dp, start = 12.dp, end = 12.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(22.dp)
@@ -94,8 +113,11 @@ fun AddExpense(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    amount = amount,
-                    onAmountChange = { amount = it }
+                    amount = state.amount,
+                    error = state.amountError,
+                    onAmountChange = {
+                        viewModel.onEvent(EnterAmount(it))
+                    }
                 )
             }
 
@@ -104,10 +126,8 @@ fun AddExpense(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    date = date.toLocalDate()
-                ) {
-
-                }
+                    date = state.date.toLocalDate()
+                ) {}
             }
 
             item(span = { GridItemSpan(3) }) {
@@ -117,7 +137,9 @@ fun AddExpense(
                 ) {
 
                     SelectCategoryComponent(
-                        categoryStyle = defaultCategoryStyle(backgroundColor = MaterialTheme.colorScheme.surface)
+                        categoryStyle = defaultCategoryStyle(backgroundColor = MaterialTheme.colorScheme.surface),
+                        selected = state.category,
+                        onSelect = { viewModel.onEvent(SelectCategory(it)) }
                     )
 
                     AddBillEachMonth(
@@ -128,25 +150,25 @@ fun AddExpense(
                                 MaterialTheme.colorScheme.surface,
                                 MaterialTheme.shapes.small
                             ),
-                        checked = addBillToEachMonth,
-                        onCheckedChange = { addBillToEachMonth = it }
+                        checked = state.eachMonth,
+                        onCheckedChange = { viewModel.onEvent(ChangeAddBillEachMonth) }
                     )
 
                     AddPhotoSection(modifier = Modifier.padding(horizontal = 6.dp))
 
                     MoreDetailsSection(
                         modifier = Modifier.padding(horizontal = 6.dp),
-                        value = moreDetails,
-                        onValueChange = { moreDetails = it }
+                        value = state.details,
+                        onValueChange = { viewModel.onEvent(EnterDetails(it)) }
                     )
 
                     XpenzaveButton(
                         modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
                         title = stringResource(R.string.add),
-                        onClickOfButton = {
-                            viewModel.addExpense()
-                        }
-                    )
+                        loading = loading
+                    ) {
+                        viewModel.addExpense()
+                    }
                 }
             }
 
@@ -190,7 +212,8 @@ fun AddExpenseTopBar(
 fun AmountSection(
     modifier: Modifier = Modifier,
     amount: String,
-    onAmountChange: (String) -> Unit
+    onAmountChange: (String) -> Unit,
+    error: String? = null
 ) {
     Column(modifier = modifier) {
         Text(
@@ -203,14 +226,7 @@ fun AmountSection(
             value = amount,
             onValueChange = onAmountChange,
             textStyle = MaterialTheme.typography.headlineLarge,
-            colors = TextFieldDefaults.colors(
-                focusedPlaceholderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                focusedTextColor = MaterialTheme.colorScheme.primary,
-                unfocusedTextColor = MaterialTheme.colorScheme.primary,
-                unfocusedContainerColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent
-            ),
+            isError = error != null,
             placeholder = {
                 Text(
                     text = stringResource(R.string.enter),
@@ -222,7 +238,22 @@ fun AmountSection(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
-            )
+            ),
+            trailingIcon = {
+                 error?.let { Icon(imageVector = Icons.Outlined.PriorityHigh, contentDescription = null) }
+            },
+            colors = TextFieldDefaults.colors(
+                focusedPlaceholderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                focusedTextColor = MaterialTheme.colorScheme.primary,
+                unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                unfocusedContainerColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent
+            ),
+            supportingText = {
+                error?.let { Text(text = it, color = MaterialTheme.colorScheme.error) }
+            }
         )
     }
 }
@@ -252,7 +283,9 @@ fun AdditionalInfoCard(
 fun SelectCategoryComponent(
     modifier: Modifier = Modifier,
     categories: List<Category> = dummies(),
-    categoryStyle: CategoryStyle = defaultCategoryStyle()
+    categoryStyle: CategoryStyle = defaultCategoryStyle(),
+    onSelect: (id: String) -> Unit,
+    selected: String
 ) {
     val chunkedCategories = categories.chunked(3)
     Column(modifier = modifier) {
@@ -266,17 +299,25 @@ fun SelectCategoryComponent(
         Spacer(modifier = Modifier.height(22.dp))
 
         chunkedCategories.forEach { columnCategories ->
+
             Row(modifier = modifier.fillMaxWidth()) {
+
                 columnCategories.forEach { category ->
+
                     CategoryComponent(
                         modifier = Modifier
                             .weight(1f)
                             .padding(6.dp),
                         category = category,
-                        style = categoryStyle
+                        style = categoryStyle,
+                        isSelected = category.id == selected,
+                        onSelect = onSelect,
                     )
+
                 }
+
             }
+
         }
     }
 }
@@ -376,7 +417,8 @@ fun MoreDetailsSection(
                 Text(text = stringResource(R.string.enter_here))
             },
             value = value,
-            onValueChange = onValueChange
+            onValueChange = onValueChange,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
         )
     }
 }
