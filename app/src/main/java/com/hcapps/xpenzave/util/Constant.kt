@@ -14,4 +14,6 @@ object Constant {
     const val AUTH_LOGIN_SCREEN = 1
     const val AUTH_REGISTER_SCREEN = 2
 
+    const val APP_WRITE_DATE_FORMAT = "dd-MM-yyyy HH:mm:ss.SSS"
+
 }

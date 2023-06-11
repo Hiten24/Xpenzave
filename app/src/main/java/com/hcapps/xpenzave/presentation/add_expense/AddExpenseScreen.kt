@@ -35,6 +35,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,6 +57,9 @@ import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
 import com.hcapps.xpenzave.presentation.home.component.LargeButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -63,16 +68,22 @@ fun AddExpense(
     viewModel: AddExpenseViewModel = hiltViewModel()
 ) {
 
+    var amount by viewModel.amount
+    var moreDetails by viewModel.moreDetails
+    val date by viewModel.date
+    var addBillToEachMonth by viewModel.addBillToEachMonth
+
     Scaffold(
         topBar = {
             AddExpenseTopBar(onClickOfNavigationIcon = navigateUp)
         }
-    ) {
+    ) { paddingValues ->
+
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(top = it.calculateTopPadding()),
+                .padding(top = paddingValues.calculateTopPadding()),
             columns = GridCells.Fixed(3),
             contentPadding = PaddingValues(top = 24.dp, start = 12.dp, end = 12.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(22.dp)
@@ -83,8 +94,8 @@ fun AddExpense(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    amount = "",
-                    onAmountChange = {}
+                    amount = amount,
+                    onAmountChange = { amount = it }
                 )
             }
 
@@ -92,7 +103,8 @@ fun AddExpense(
                 DateSection(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
+                        .padding(horizontal = 12.dp),
+                    date = date.toLocalDate()
                 ) {
 
                 }
@@ -103,9 +115,11 @@ fun AddExpense(
                     modifier = Modifier.fillMaxWidth(),
                     cardColor = MaterialTheme.colorScheme.background
                 ) {
+
                     SelectCategoryComponent(
                         categoryStyle = defaultCategoryStyle(backgroundColor = MaterialTheme.colorScheme.surface)
                     )
+
                     AddBillEachMonth(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -114,15 +128,24 @@ fun AddExpense(
                                 MaterialTheme.colorScheme.surface,
                                 MaterialTheme.shapes.small
                             ),
-                        checked = false,
-                        onCheckedChange = { }
+                        checked = addBillToEachMonth,
+                        onCheckedChange = { addBillToEachMonth = it }
                     )
+
                     AddPhotoSection(modifier = Modifier.padding(horizontal = 6.dp))
-                    MoreDetailsSection(modifier = Modifier.padding(horizontal = 6.dp))
+
+                    MoreDetailsSection(
+                        modifier = Modifier.padding(horizontal = 6.dp),
+                        value = moreDetails,
+                        onValueChange = { moreDetails = it }
+                    )
+
                     XpenzaveButton(
                         modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
                         title = stringResource(R.string.add),
-                        onClickOfButton = {}
+                        onClickOfButton = {
+                            viewModel.addExpense()
+                        }
                     )
                 }
             }
@@ -261,16 +284,20 @@ fun SelectCategoryComponent(
 @Composable
 fun DateSection(
     modifier: Modifier = Modifier,
-    date: String = "Tuesday, 25 September",
+    date: LocalDate,
     onClickOfCalenderIcon: () -> Unit
 ) {
+
+    val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.ENGLISH)
+    val month = date.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH)
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = date,
+            text = "$dayOfWeek, ${date.dayOfMonth} $month",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary
         )
@@ -328,7 +355,11 @@ fun AddPhotoSection(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MoreDetailsSection(modifier: Modifier = Modifier) {
+fun MoreDetailsSection(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(text = "More Details", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(18.dp))
@@ -344,8 +375,8 @@ fun MoreDetailsSection(modifier: Modifier = Modifier) {
             placeholder = {
                 Text(text = stringResource(R.string.enter_here))
             },
-            value = "",
-            onValueChange = {}
+            value = value,
+            onValueChange = onValueChange
         )
     }
 }
