@@ -5,16 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.source.remote.APP_WRITE_DATE_TIME_FORMAT
 import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
+import com.hcapps.xpenzave.data.source.remote.repository.storage.StorageRepository
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.expense.ExpenseData
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent
-import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.ChangeAddBillEachMonth
-import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.EnterAmount
-import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.EnterDetails
-import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.SelectCategory
+import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.AddBillEachMonthChange
+import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.AmountChange
+import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.CategoryChange
+import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.DetailsChange
+import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.PhotoChange
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseState
 import com.hcapps.xpenzave.presentation.core.UIEvent
-import com.hcapps.xpenzave.presentation.core.UIEvent.Loading
+import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -25,7 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddExpenseViewModel @Inject constructor(
-    private val databaseRepository: DatabaseRepository
+    private val databaseRepository: DatabaseRepository,
+    private val storageRepository: StorageRepository
 ): ViewModel() {
 
     val state = mutableStateOf(AddExpenseState())
@@ -35,21 +38,39 @@ class AddExpenseViewModel @Inject constructor(
 
     fun onEvent(event: AddExpenseEvent) {
         when (event) {
-            is EnterAmount -> {
+            is AmountChange -> {
                 state.value = state.value.copy(amount = event.amount)
             }
-            is SelectCategory -> {
+            is CategoryChange -> {
                state.value = state.value.copy(category = event.category)
             }
-            is EnterDetails -> {
+            is DetailsChange -> {
                 state.value = state.value.copy(details = event.detail)
             }
-            is ChangeAddBillEachMonth -> {
+            is AddBillEachMonthChange -> {
                 state.value = state.value.copy(
                     eachMonth = !state.value.eachMonth
                 )
             }
+            is PhotoChange -> {
+                state.value = state.value.copy(photo = event.photo)
+                event.photo?.let { uploadPhoto(event.Path) }
+            }
+            is AddExpenseEvent.ClearPhoto -> {
+                state.value = state.value.copy(photo = null)
+                state.value.uploadedPhoto?.fileId?.let { deletePhoto(it) }
+            }
         }
+    }
+
+    private fun loading(loading: Boolean) {
+        state.value = state.value.copy(
+            addButtonState = ButtonState(loading = loading)
+        )
+    }
+
+    private fun enabledButton(enable: Boolean) {
+        state.value = state.value.copy(addButtonState = ButtonState(enabled = enable))
     }
 
     private fun clearState() {
@@ -61,12 +82,46 @@ class AddExpenseViewModel @Inject constructor(
         return (amount != null && amount != 0.0)
     }
 
+    private fun uploadPhoto(path: String) = viewModelScope.launch {
+        enabledButton(false)
+        state.value = state.value.copy(uploadPhotoProgress = true)
+        when (val response = storageRepository.createFile(path)) {
+            is RequestState.Success -> {
+                Timber.i("name: ${response.data.name}, id: ${response.data.fileId}")
+                state.value = state.value.copy(uploadedPhoto = response.data)
+                enabledButton(true)
+                state.value = state.value.copy(uploadPhotoProgress = false)
+            }
+            is RequestState.Error -> {
+                Timber.e(response.error)
+                enabledButton(true)
+                state.value = state.value.copy(uploadPhotoProgress = false)
+            }
+            else -> {}
+        }
+    }
+
+    private fun deletePhoto(fileId: String) = viewModelScope.launch {
+        loading(true)
+        when (val response = storageRepository.deleteFile(fileId)) {
+            is RequestState.Success -> {
+                state.value = state.value.copy(uploadedPhoto = null)
+                loading(false)
+            }
+            is RequestState.Error -> {
+                Timber.e(response.error)
+                loading(false)
+            }
+            else -> {}
+        }
+    }
+
     fun addExpense() = viewModelScope.launch {
         if (validate().not()) {
             state.value = state.value.copy(amountError = "Amount can't be empty.")
             return@launch
         }
-        _uiEventFlow.emit(Loading(true))
+        loading(true)
         val expense = ExpenseData(
             amount = state.value.amount.toDoubleOrNull() ?: 0.0,
             details = state.value.details,
@@ -75,15 +130,16 @@ class AddExpenseViewModel @Inject constructor(
             day = state.value.date.dayOfMonth,
             month = state.value.date.monthValue,
             year = state.value.date.year,
-            addThisExpenseToEachMonth = state.value.eachMonth
+            addThisExpenseToEachMonth = state.value.eachMonth,
+            photo = state.value.uploadedPhoto?.fileId
         )
-        when (val response = databaseRepository.addExpense(expense)) {
+        when (databaseRepository.addExpense(expense)) {
             is RequestState.Success -> {
-                _uiEventFlow.emit(Loading(false))
+                loading(false)
                 clearState()
             }
             is RequestState.Error -> {
-                _uiEventFlow.emit(Loading(false))
+                loading(false)
             }
             else -> Unit
         }

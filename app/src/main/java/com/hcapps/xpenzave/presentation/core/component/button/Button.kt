@@ -1,4 +1,4 @@
-package com.hcapps.xpenzave.presentation.core.component
+package com.hcapps.xpenzave.presentation.core.component.button
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,19 +20,19 @@ import com.hcapps.xpenzave.ui.theme.ButtonHeight
 fun XpenzaveButton(
     modifier: Modifier = Modifier,
     title: String,
-    loading: Boolean = false,
+    state: ButtonState = ButtonState(),
     onClickOfButton: () -> Unit
 ) {
     Button(
         modifier = modifier
             .fillMaxWidth()
             .height(ButtonHeight),
-        enabled = !loading,
+        enabled = state.enabled && state.loading.not(),
         onClick = onClickOfButton,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = Shapes().small
     ) {
-        if (loading.not()) {
+        if (state.loading.not()) {
             Text(text = title)
         } else {
             CircularProgressIndicator(

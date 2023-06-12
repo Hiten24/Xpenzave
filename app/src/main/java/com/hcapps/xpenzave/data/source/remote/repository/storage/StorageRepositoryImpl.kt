@@ -1,6 +1,8 @@
 package com.hcapps.xpenzave.data.source.remote.repository.storage
 
 import android.content.Context
+import com.hcapps.xpenzave.domain.model.RequestState
+import com.hcapps.xpenzave.domain.model.storage.UploadedPhoto
 import com.hcapps.xpenzave.util.Constant
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.appwrite.Client
@@ -33,20 +35,22 @@ class StorageRepositoryImpl @Inject constructor(
         storage = Storage(client)
     }
 
-    override suspend fun createFile(path: String) {
-        storage.createFile(
-            bucketId = bucketId,
-            fileId = ID.unique(),
-            file = InputFile.fromPath(path),
-            permissions = listOf(),
-            onProgress = { progress ->
-                Timber.i("id: ${progress.id}")
-                Timber.i("progress: ${progress.progress}")
-                Timber.i("chunksUploaded: ${progress.chunksUploaded}")
-                Timber.i("sizeUploaded: ${progress.sizeUploaded}")
-                Timber.i("chunksTotal: ${progress.chunksTotal}")
-            }
-        )
+    override suspend fun createFile(path: String): RequestState<UploadedPhoto> {
+        return try {
+            val file = storage.createFile(
+                bucketId = bucketId,
+                fileId = ID.unique(),
+                file = InputFile.fromPath(path),
+                onProgress = { progress ->
+                    Timber.i("progress: ${progress.progress}")
+                }
+            )
+            RequestState.Success(
+                UploadedPhoto(fileId = file.id, name = file.name, bucket = file.bucketId)
+            )
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
     }
 
     override suspend fun getFile(fileId: String): ByteArray? {
@@ -58,11 +62,12 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteFile(fileId: String) {
-        try {
-            storage.deleteFile(bucketId, this.fileId)
+    override suspend fun deleteFile(fileId: String): RequestState<Boolean> {
+        return try {
+            storage.deleteFile(bucketId, fileId)
+            RequestState.Success(true)
         } catch (e: Exception) {
-            e.printStackTrace()
+            RequestState.Error(e)
         }
     }
 }

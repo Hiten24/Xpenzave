@@ -1,14 +1,14 @@
 package com.hcapps.xpenzave.presentation.add_expense
 
-import android.annotation.SuppressLint
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -30,6 +30,7 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.PriorityHigh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,23 +45,17 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -76,10 +71,11 @@ import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle.Companion.defaultCategoryStyle
-import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
+import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
 import com.hcapps.xpenzave.presentation.home.component.LargeButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
+import com.hcapps.xpenzave.util.getActualPathOfImage
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -93,12 +89,11 @@ fun AddExpense(
 
     val state by viewModel.state
     val context = LocalContext.current
-    var loading by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEventFlow.collectLatest { event ->
             when (event) {
-                is UIEvent.Loading -> { loading = event.loading }
+                is UIEvent.Loading -> {  }
                 is UIEvent.ShowMessage -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
@@ -106,8 +101,6 @@ fun AddExpense(
             }
         }
     }
-
-    var image by remember { mutableStateOf<Uri?>(null) }
 
     Scaffold(
         topBar = {
@@ -133,7 +126,7 @@ fun AddExpense(
                     amount = state.amount,
                     error = state.amountError,
                     onAmountChange = {
-                        viewModel.onEvent(EnterAmount(it))
+                        viewModel.onEvent(AmountChange(it))
                     }
                 )
             }
@@ -156,7 +149,7 @@ fun AddExpense(
                     SelectCategoryComponent(
                         categoryStyle = defaultCategoryStyle(backgroundColor = MaterialTheme.colorScheme.surface),
                         selected = state.category,
-                        onSelect = { viewModel.onEvent(SelectCategory(it)) }
+                        onSelect = { viewModel.onEvent(CategoryChange(it)) }
                     )
 
                     AddBillEachMonth(
@@ -168,24 +161,27 @@ fun AddExpense(
                                 MaterialTheme.shapes.small
                             ),
                         checked = state.eachMonth,
-                        onCheckedChange = { viewModel.onEvent(ChangeAddBillEachMonth) }
+                        onCheckedChange = { viewModel.onEvent(AddBillEachMonthChange) }
                     )
 
                     AddPhotoSection(
                         modifier = Modifier.padding(horizontal = 6.dp),
-                        image = image
-                    ) { uri -> image = uri }
+                        image = state.photo,
+                        progress = state.uploadPhotoProgress,
+                        onImageSelect = { uri -> viewModel.onEvent(PhotoChange(uri, context.getActualPathOfImage(uri))) },
+                        onClearPhoto = { viewModel.onEvent(ClearPhoto) }
+                    )
 
                     MoreDetailsSection(
                         modifier = Modifier.padding(horizontal = 6.dp),
                         value = state.details,
-                        onValueChange = { viewModel.onEvent(EnterDetails(it)) }
+                        onValueChange = { viewModel.onEvent(DetailsChange(it)) }
                     )
 
                     XpenzaveButton(
                         modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
                         title = stringResource(R.string.add),
-                        loading = loading
+                        state = state.addButtonState
                     ) {
                         viewModel.addExpense()
                     }
@@ -403,7 +399,9 @@ fun AddBillEachMonth(
 fun AddPhotoSection(
     modifier: Modifier = Modifier,
     image: Uri? = null,
-    onImageSelect: (image: Uri?) -> Unit
+    onImageSelect: (image: Uri?) -> Unit,
+    onClearPhoto: () -> Unit,
+    progress: Boolean = false
 ) {
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
@@ -433,12 +431,22 @@ fun AddPhotoSection(
                     modifier = Modifier.size(100.dp),
                     elevation = CardDefaults.elevatedCardElevation(2.dp)
                 ) {
-                    AsyncImage(
-                        model = image,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Uploaded Bill"
-                    )
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        AsyncImage(
+                            model = image,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "Uploaded Bill"
+                        )
+                        if (progress) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(22.dp),
+                                strokeWidth = 2.dp,
+                                strokeCap = StrokeCap.Round
+                            )
+                        }
+                    }
                 }
             }
 
@@ -446,11 +454,11 @@ fun AddPhotoSection(
 
             image?.let {
                 TextButton(
-                    onClick = { onImageSelect(null) },
+                    onClick = onClearPhoto,
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text(
-                        text = "Clear",
+                        text = stringResource(R.string.clear),
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Medium

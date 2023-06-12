@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.core.component.MonthHeader
 import com.hcapps.xpenzave.presentation.core.component.MonthHeaderStyle
-import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
+import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
 import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
 
 @Composable
