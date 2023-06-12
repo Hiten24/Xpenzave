@@ -14,4 +14,6 @@ interface DatabaseRepository {
 
     suspend fun addExpense(expense: ExpenseData): ExpenseResponse
 
+    suspend fun getExpense(id: String): RequestState<Response<ExpenseData>>
+
 }

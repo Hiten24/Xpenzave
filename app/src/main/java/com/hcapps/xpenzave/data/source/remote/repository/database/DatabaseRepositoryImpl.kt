@@ -2,6 +2,7 @@ package com.hcapps.xpenzave.data.source.remote.repository.database
 
 import com.hcapps.xpenzave.domain.model.CategoryDataResponse
 import com.hcapps.xpenzave.domain.model.RequestState
+import com.hcapps.xpenzave.domain.model.Response
 import com.hcapps.xpenzave.domain.model.expense.ExpenseData
 import com.hcapps.xpenzave.domain.model.toModel
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_CATEGORY_COLLECTION_ID
@@ -47,10 +48,22 @@ class DatabaseRepositoryImpl @Inject constructor(
                 nestedType = ExpenseData::class.java
             )
             val expenseModel = response.toModel(response.data)
-            Timber.i("response \n $expenseModel")
             RequestState.Success(expenseModel)
         } catch (e: Exception) {
-            Timber.e(e)
+            RequestState.Error(e)
+        }
+    }
+
+    override suspend fun getExpense(id: String): RequestState<Response<ExpenseData>> {
+        return try {
+            val response = database.getDocument(
+                databaseId = databaseId,
+                collectionId = expenseCollectionId,
+                documentId = id,
+                nestedType = ExpenseData::class.java
+            )
+            RequestState.Success(response.toModel(response.data))
+        } catch (e: Exception) {
             RequestState.Error(e)
         }
     }
