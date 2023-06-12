@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
@@ -25,10 +28,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -43,7 +49,12 @@ import com.hcapps.xpenzave.presentation.compare.result.component.expense_categor
 fun CompareResult(
     onNavigateUp: () -> Unit
 ) {
+
+    val lazyState = rememberLazyListState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -53,51 +64,66 @@ fun CompareResult(
                     IconButton(onClick = onNavigateUp) {
                         Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = "Back Arrow")
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         }
     ) { paddingValue ->
-        LazyColumn(
+
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(paddingValue),
-            contentPadding = PaddingValues(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(paddingValue)
         ) {
-            item { CompareHeader(modifier = Modifier.fillMaxWidth()) }
-
-            item { Spacer(modifier = Modifier.height(12.dp)) }
-
-            item {
-                CompareResultCard(
-                    title = "Budget",
-                    firstProgress = 0.8f,
-                    secondProgress = 1f,
-                    firstValue = "1000",
-                    secondValue = "1025",
-                    firstDate = "Sept 2019",
-                    secondDate = "Oct 2019"
-                )
-            }
-
-            item {
-                CompareResultCard(
-                    title = "Expense",
-                    firstProgress = 0.8f,
-                    secondProgress = 1f,
-                    firstValue = "1000",
-                    secondValue = "1025",
-                    firstDate = "Sept 2019",
-                    secondDate = "Oct 2019"
-                )
-            }
-            item {
-                CompareCategoryExpensesGraph(
-                    categories = CategoryData.defaultCompareCategoryGraphs()
-                )
-            }
-
+            CompareHeader(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp))
+            CompareResultContent(
+                modifier = Modifier.fillMaxWidth(),
+                lazyState
+            )
         }
+    }
+}
+
+@Composable
+fun CompareResultContent(modifier: Modifier = Modifier, lazyState: LazyListState) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        state = lazyState
+    ) {
+
+        item { Spacer(modifier = Modifier.height(12.dp)) }
+
+        item {
+            CompareResultCard(
+                title = "Budget",
+                firstProgress = 0.8f,
+                secondProgress = 1f,
+                firstValue = "1000",
+                secondValue = "1025",
+                firstDate = "Sept 2019",
+                secondDate = "Oct 2019"
+            )
+        }
+
+        item {
+            CompareResultCard(
+                title = "Expense",
+                firstProgress = 0.8f,
+                secondProgress = 1f,
+                firstValue = "1000",
+                secondValue = "1025",
+                firstDate = "Sept 2019",
+                secondDate = "Oct 2019"
+            )
+        }
+        item {
+            CompareCategoryExpensesGraph(
+                categories = CategoryData.defaultCompareCategoryGraphs()
+            )
+        }
+
     }
 }
 

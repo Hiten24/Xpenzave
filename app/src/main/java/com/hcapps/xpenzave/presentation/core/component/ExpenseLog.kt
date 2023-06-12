@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material3.Card
@@ -40,11 +42,12 @@ fun ExpenseLog(
     spaceBetweenItem: Dp = 12.dp,
     onClickOfDateHeader: () -> Unit,
     onClickOfExpenseItem: () -> Unit,
+    lazyState: LazyListState = rememberLazyListState(),
     headerStyle: ExpenseDateHeaderStyle = ExpenseDateHeaderStyle.defaultExpenseDateHeaderStyle(),
     itemStyle: ExpenseItemStyle = ExpenseItemStyle.defaultExpenseItemStyle(),
     expensesOfMonth: List<ExpensesOfTheDay> = emptyList()
 ) {
-    LazyColumn(modifier = modifier.fillMaxSize()) {
+    LazyColumn(modifier = modifier.fillMaxSize(), state = lazyState) {
 
         items(expensesOfMonth) { expenseOfTheDay: ExpensesOfTheDay ->
             DateHeaderItem(

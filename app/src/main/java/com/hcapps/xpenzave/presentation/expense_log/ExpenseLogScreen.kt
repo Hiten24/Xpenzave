@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material3.MaterialTheme
@@ -20,7 +21,8 @@ import com.hcapps.xpenzave.presentation.home.state.dummyExpensesOfTheDay
 @Composable
 fun ExpenseLogSection(
     navigateToFiler: () -> Unit,
-    navigateToDetails: () -> Unit
+    navigateToDetails: () -> Unit,
+    expenseLogLazyState: LazyListState
 ) {
     Column(
         modifier = Modifier
@@ -41,6 +43,7 @@ fun ExpenseLogSection(
             onClickOfDateHeader = { /*TODO*/ },
             onClickOfExpenseItem = navigateToDetails,
             expensesOfMonth = dummyExpensesOfTheDay(),
+            lazyState = expenseLogLazyState,
             headerStyle = ExpenseDateHeaderStyle
                 .defaultExpenseDateHeaderStyle()
                 .copy(headerBackgroundColor = MaterialTheme.colorScheme.surface)
