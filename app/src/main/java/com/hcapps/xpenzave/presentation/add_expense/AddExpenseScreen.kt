@@ -1,6 +1,5 @@
 package com.hcapps.xpenzave.presentation.add_expense
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -8,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -67,9 +67,9 @@ import com.hcapps.xpenzave.presentation.core.component.CategoryStyle.Companion.d
 import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
 import com.hcapps.xpenzave.presentation.home.component.LargeButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
+import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddExpense(
     navigateUp: () -> Unit
@@ -81,70 +81,97 @@ fun AddExpense(
         topBar = {
             AddExpenseTopBar(onClickOfNavigationIcon = navigateUp)
         }
-    ) {
-        LazyVerticalGrid(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(top = it.calculateTopPadding()),
-            columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(top = 24.dp, start = 12.dp, end = 12.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(22.dp)
-        ) {
+    ) { paddingValue ->
 
-            item(span = { GridItemSpan(3) }) {
-                AmountSection(
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(paddingValue)
+        ) {
+            AddExpenseContent(
+                modifier = Modifier.fillMaxSize().padding(bottom = ButtonHeight),
+                image = image
+            ) { uri -> image = uri }
+
+            Box(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).align(Alignment.BottomCenter)) {
+                XpenzaveButton(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    amount = "",
-                    onAmountChange = {}
+                        .padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
+                    title = stringResource(R.string.add),
+                    onClickOfButton = {}
                 )
             }
+        }
+    }
+}
 
-            item(span = { GridItemSpan(3) }) {
-                DateSection(
+@Composable
+fun AddExpenseContent(
+    modifier: Modifier = Modifier,
+    image: Uri?,
+    onImageSelect: (Uri?) -> Unit
+) {
+    LazyVerticalGrid(
+        modifier = modifier,
+        columns = GridCells.Fixed(3),
+        contentPadding = PaddingValues(top = 24.dp, start = 12.dp, end = 12.dp, bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(22.dp)
+    ) {
+
+        item(span = { GridItemSpan(3) }) {
+            AmountSection(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                amount = "",
+                onAmountChange = {}
+            )
+        }
+
+        item(span = { GridItemSpan(3) }) {
+            DateSection(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+            ) {
+
+            }
+        }
+
+        item(span = { GridItemSpan(3) }) {
+            AdditionalInfoCard(
+                modifier = Modifier.fillMaxWidth(),
+                cardColor = MaterialTheme.colorScheme.background
+            ) {
+                SelectCategoryComponent(
+                    categoryStyle = defaultCategoryStyle(backgroundColor = MaterialTheme.colorScheme.surface)
+                )
+                AddBillEachMonth(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
-                ) {
-
-                }
+                        .padding(horizontal = 6.dp)
+                        .background(
+                            MaterialTheme.colorScheme.surface,
+                            MaterialTheme.shapes.small
+                        ),
+                    checked = false,
+                    onCheckedChange = { }
+                )
+                AddPhotoSection(
+                    modifier = Modifier.padding(horizontal = 6.dp),
+                    image = image,
+                    onImageSelect = onImageSelect
+                )
+                MoreDetailsSection(modifier = Modifier.padding(horizontal = 6.dp))
+                /*XpenzaveButton(
+                    modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
+                    title = stringResource(R.string.add),
+                    onClickOfButton = {}
+                )*/
             }
-
-            item(span = { GridItemSpan(3) }) {
-                AdditionalInfoCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    cardColor = MaterialTheme.colorScheme.background
-                ) {
-                    SelectCategoryComponent(
-                        categoryStyle = defaultCategoryStyle(backgroundColor = MaterialTheme.colorScheme.surface)
-                    )
-                    AddBillEachMonth(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 6.dp)
-                            .background(
-                                MaterialTheme.colorScheme.surface,
-                                MaterialTheme.shapes.small
-                            ),
-                        checked = false,
-                        onCheckedChange = { }
-                    )
-                    AddPhotoSection(
-                        modifier = Modifier.padding(horizontal = 6.dp),
-                        image = image
-                    ) { uri -> image = uri }
-                    MoreDetailsSection(modifier = Modifier.padding(horizontal = 6.dp))
-                    XpenzaveButton(
-                        modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
-                        title = stringResource(R.string.add),
-                        onClickOfButton = {}
-                    )
-                }
-            }
-
         }
+
     }
 }
 
