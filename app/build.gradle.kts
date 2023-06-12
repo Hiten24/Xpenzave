@@ -2,9 +2,9 @@
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("dagger.hilt.android.plugin")
+    kotlin("android")
     kotlin("kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -79,6 +79,12 @@ dependencies {
     implementation ("androidx.compose.material3:material3:1.1.0")
     implementation("androidx.core:core-ktx:1.10.1")
 
+    // lifecycle
+    implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+
+
     // material icons
     implementation ("androidx.compose.material:material-icons-extended:1.4.3")
 
@@ -93,7 +99,7 @@ dependencies {
     kapt ("com.google.dagger:hilt-compiler:2.44.2")
     implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
 
-    // data store
+    // DataStore
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
     // appwrite

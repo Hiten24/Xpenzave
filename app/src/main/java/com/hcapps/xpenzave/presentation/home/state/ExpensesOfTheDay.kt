@@ -24,28 +24,28 @@ fun dummyExpensesOfTheDay(): List<ExpensesOfTheDay> {
             "1st",
             "Sunday",
             listOf(
-                Expense(Icons.Outlined.Receipt, title = "Bills", 500, "$"),
-                Expense(Icons.Outlined.ShoppingBag, title = "Shopping", 200, "$"),
-                Expense(Icons.Outlined.Restaurant, title = "Dinner", 800, "$"),
+                Expense(icon = Icons.Outlined.Receipt, title = "Bills", value = 500, symbol = "$"),
+                Expense(icon = Icons.Outlined.ShoppingBag, title = "Shopping", value = 200, symbol = "$"),
+                Expense(icon = Icons.Outlined.Restaurant, title = "Dinner", value = 800, symbol = "$"),
             )
         ),
         ExpensesOfTheDay(
             "2st",
             "Monday",
             listOf(
-                Expense(Icons.Outlined.LocalCafe, title = "Breakfast", 200, "$"),
-                Expense(Icons.Outlined.Savings, title = "Investment", 1000, "$")
+                Expense(icon = Icons.Outlined.LocalCafe, title = "Breakfast", value = 200, symbol = "$"),
+                Expense(icon = Icons.Outlined.Savings, title = "Investment", value = 1000, symbol = "$"),
             )
         ),
         ExpensesOfTheDay(
             "3rd",
             "Tuesday",
             listOf(
-                Expense(Icons.Outlined.Medication, title = "Medication", 100, "$"),
-                Expense(Icons.Outlined.PhoneIphone, title = "Iphone 14 Pro Max", 1200, "$"),
-                Expense(Icons.Outlined.DirectionsCar, title = "Transportation", 150, "$"),
-                Expense(Icons.Outlined.Villa, title = "Vacation", 1500, "$"),
-                Expense(Icons.Outlined.DragHandle, title = "Others", 50, "$"),
+                Expense(icon = Icons.Outlined.Medication, title = "Medication", value = 100, symbol = "$"),
+                Expense(icon = Icons.Outlined.PhoneIphone, title = "Iphone 14 Pro Max", value = 1200, symbol = "$"),
+                Expense(icon = Icons.Outlined.DirectionsCar, title = "Transportation", value = 150, symbol = "$"),
+                Expense(icon = Icons.Outlined.Villa, title = "Vacation", value = 1500, symbol = "$"),
+                Expense(icon = Icons.Outlined.DragHandle, title = "Others", value = 50, symbol = "$"),
             )
         )
     )

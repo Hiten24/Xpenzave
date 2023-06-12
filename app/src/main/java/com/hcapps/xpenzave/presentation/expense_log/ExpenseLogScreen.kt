@@ -9,19 +9,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLog
 import com.hcapps.xpenzave.presentation.core.component.MonthHeader
 import com.hcapps.xpenzave.presentation.home.component.ExpenseDateHeaderStyle
-import com.hcapps.xpenzave.presentation.home.state.dummyExpensesOfTheDay
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ExpenseLogSection(
     navigateToFiler: () -> Unit,
-    navigateToDetails: () -> Unit
+    navigateToDetails: () -> Unit,
+    viewModel: ExpenseLogViewModel = hiltViewModel()
 ) {
+
+    val state by viewModel.state
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -31,8 +36,7 @@ fun ExpenseLogSection(
         MonthHeader(
             modifier = Modifier
                 .fillMaxWidth(),
-            month = "September",
-            year = "2019",
+            date = state.date,
             icon = Icons.Outlined.FilterList,
             onClickOfIcon = navigateToFiler
         )
@@ -40,7 +44,7 @@ fun ExpenseLogSection(
         ExpenseLog(
             onClickOfDateHeader = { /*TODO*/ },
             onClickOfExpenseItem = navigateToDetails,
-            expensesOfMonth = dummyExpensesOfTheDay(),
+            expenses = state.expenses,
             headerStyle = ExpenseDateHeaderStyle
                 .defaultExpenseDateHeaderStyle()
                 .copy(headerBackgroundColor = MaterialTheme.colorScheme.surface)

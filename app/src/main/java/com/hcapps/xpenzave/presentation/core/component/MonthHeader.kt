@@ -16,12 +16,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.hcapps.xpenzave.presentation.defaultDisplayName
+import java.time.LocalDate
 
 @Composable
 fun MonthHeader(
     modifier: Modifier = Modifier,
-    month: String,
-    year: String,
+    date: LocalDate,
     icon: ImageVector,
     style: MonthHeaderStyle = MonthHeaderStyle.defaultMonthHeaderStyle(),
     onClickOfIcon: () -> Unit
@@ -32,13 +33,13 @@ fun MonthHeader(
     ) {
         Column {
             Text(
-                text = month,
+                text = date.month.defaultDisplayName(),
                 style = style.monthTextStyle.copy(fontWeight = style.fontWeight),
                 color = style.monthTextColor
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = year,
+                text = date.year.toString(),
                 style = style.yearTextStyle,
                 color = style.yearTextColor
             )

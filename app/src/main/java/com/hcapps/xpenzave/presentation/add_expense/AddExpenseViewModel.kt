@@ -133,12 +133,13 @@ class AddExpenseViewModel @Inject constructor(
             addThisExpenseToEachMonth = state.value.eachMonth,
             photo = state.value.uploadedPhoto?.fileId
         )
-        when (databaseRepository.addExpense(expense)) {
+        when (val response = databaseRepository.addExpense(expense)) {
             is RequestState.Success -> {
                 loading(false)
                 clearState()
             }
             is RequestState.Error -> {
+                Timber.e(response.error)
                 loading(false)
             }
             else -> Unit

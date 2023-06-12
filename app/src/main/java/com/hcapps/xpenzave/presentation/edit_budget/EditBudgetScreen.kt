@@ -38,6 +38,7 @@ import com.hcapps.xpenzave.presentation.core.component.MonthHeader
 import com.hcapps.xpenzave.presentation.core.component.MonthHeaderStyle
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
 import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
+import java.time.LocalDate
 
 @Composable
 fun EditBudgetScreen(
@@ -65,8 +66,7 @@ fun EditBudgetScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                month = "September",
-                year = "2019",
+                date = LocalDate.now(),
                 icon = Icons.Outlined.Close,
                 style = MonthHeaderStyle.defaultMonthHeaderStyle(iconColor = MaterialTheme.colorScheme.onSurface),
                 onClickOfIcon = navigateUp

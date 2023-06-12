@@ -4,17 +4,19 @@ import com.hcapps.xpenzave.domain.model.CategoryDataResponse
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.Response
 import com.hcapps.xpenzave.domain.model.expense.ExpenseData
+import com.hcapps.xpenzave.domain.model.expense.toExpenseDomainData
 import com.hcapps.xpenzave.domain.model.toModel
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_CATEGORY_COLLECTION_ID
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_DATABASE_ID
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_EXPENSE_COLLECTION_ID
 import io.appwrite.ID
+import io.appwrite.Query
 import io.appwrite.services.Databases
 import timber.log.Timber
 import javax.inject.Inject
 
 class DatabaseRepositoryImpl @Inject constructor(
-    private val database: Databases
+    private val database: Databases,
 ): DatabaseRepository {
 
     private val databaseId = APP_WRITE_DATABASE_ID
@@ -34,6 +36,21 @@ class DatabaseRepositoryImpl @Inject constructor(
             RequestState.Success(mappedResponse)
         } catch (e: Exception) {
             Timber.e(e)
+            RequestState.Error(e)
+        }
+    }
+
+    override suspend fun getCategoriesByMont(month: Int): ExpensesResponse {
+        return try {
+            val response = database.listDocuments(
+                databaseId = databaseId,
+                collectionId = expenseCollectionId,
+                queries = listOf(Query.orderAsc("day"), Query.equal("month", month)),
+                nestedType = ExpenseData::class.java
+            )
+            val expenses = response.documents.map { it.toModel(it.data) }.map { it.toExpenseDomainData() }
+            RequestState.Success(expenses)
+        } catch (e: Exception) {
             RequestState.Error(e)
         }
     }

@@ -48,8 +48,7 @@ fun CalendarScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
                 .padding(top = 16.dp),
-            month = "September",
-            year = "2019",
+            date = LocalDate.now(),
             icon = Icons.Outlined.Close,
             onClickOfIcon = navigateUp
         )

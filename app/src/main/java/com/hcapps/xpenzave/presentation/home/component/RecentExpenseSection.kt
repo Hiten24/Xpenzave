@@ -46,7 +46,7 @@ fun RecentExpenseSection(
         if (expensesOfMonth.isNotEmpty()) {
             ExpenseLog(
                 modifier = Modifier.fillMaxSize(),
-                expensesOfMonth = expensesOfMonth,
+//                expensesOfMonth = expensesOfMonth,
                 onClickOfDateHeader = onClickOfDateHeader,
                 onClickOfExpenseItem = onClickOfExpenseItem,
                 spaceBetweenItem = spaceBetweenItem

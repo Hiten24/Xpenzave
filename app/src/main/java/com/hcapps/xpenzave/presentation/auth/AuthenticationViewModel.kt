@@ -4,14 +4,13 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcapps.xpenzave.data.datastore.DataSore
 import com.hcapps.xpenzave.data.source.remote.repository.auth.AuthRepository
+import com.hcapps.xpenzave.domain.model.User
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent
 import com.hcapps.xpenzave.presentation.auth.event.AuthScreenState
 import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.util.ResponseState
-import com.hcapps.xpenzave.util.SettingsDataStore
-import com.hcapps.xpenzave.util.SettingsDataStore.Companion.SETTINGS_IS_LOGGED_IN_KEY
-import com.hcapps.xpenzave.util.SettingsDataStore.Companion.USER_EMAIL_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -21,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val settingsDataStore: SettingsDataStore
+    private val dataStore: DataSore
 ) : ViewModel() {
 
     var authScreenState = mutableStateOf(AuthScreenState())
@@ -62,8 +61,8 @@ class AuthenticationViewModel @Inject constructor(
         val password = authScreenState.value.password
         when (val response = authRepository.createAccountWithCredentials(email, password)) {
             is ResponseState.Success -> {
-                settingsDataStore.saveBoolean(SETTINGS_IS_LOGGED_IN_KEY, true)
-                settingsDataStore.saveString(USER_EMAIL_KEY, response.data.email)
+                val user = response.data
+                dataStore.saveUser(User(userId = user.id, email = user.email, currencyCode = null))
                 showLoading(false)
                 onSuccess()
             }
@@ -87,8 +86,8 @@ class AuthenticationViewModel @Inject constructor(
         val password = authScreenState.value.password
         when (val response = authRepository.loginWithCredentials(email, password)) {
             is ResponseState.Success -> {
-                settingsDataStore.saveBoolean(SETTINGS_IS_LOGGED_IN_KEY, true)
-                settingsDataStore.saveString(USER_EMAIL_KEY, email)
+                val user = response.data
+                dataStore.saveUser(User(userId = user.userId, email = email, currencyCode = null))
                 showLoading(false)
                 onSuccess()
             }
