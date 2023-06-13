@@ -72,10 +72,12 @@ import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle.Companion.defaultCategoryStyle
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
+import com.hcapps.xpenzave.presentation.core.component.calendar.SelectDateTimeDialog
 import com.hcapps.xpenzave.presentation.home.component.LargeButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 import com.hcapps.xpenzave.util.getActualPathOfImage
+import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -89,6 +91,7 @@ fun AddExpense(
 
     val state by viewModel.state
     val context = LocalContext.current
+    val dateState = rememberSheetState()
 
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEventFlow.collectLatest { event ->
@@ -137,7 +140,7 @@ fun AddExpense(
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
                     date = state.date.toLocalDate()
-                ) {}
+                ) { dateState.show() }
             }
 
             item(span = { GridItemSpan(3) }) {
@@ -190,6 +193,13 @@ fun AddExpense(
 
         }
     }
+
+    SelectDateTimeDialog(
+        dateState = dateState,
+        selectedDateTime = state.date,
+        onSelectDateTime = { viewModel.onEvent(DateTimeChange(it)) }
+    )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

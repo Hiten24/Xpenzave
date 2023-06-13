@@ -60,6 +60,9 @@ class AddExpenseViewModel @Inject constructor(
                 state.value = state.value.copy(photo = null)
                 state.value.uploadedPhoto?.fileId?.let { deletePhoto(it) }
             }
+            is AddExpenseEvent.DateTimeChange -> {
+                state.value = state.value.copy(date = event.dateTime)
+            }
         }
     }
 
@@ -145,22 +148,6 @@ class AddExpenseViewModel @Inject constructor(
             else -> Unit
         }
 
-    }
-
-    fun getCategories() = viewModelScope.launch {
-        when (val response = databaseRepository.getCategories()) {
-            is RequestState.Success -> {
-                Timber.i("----------------------------- Category -----------------------------")
-                response.data.forEach { category ->
-                    Timber.i("${category.id} - ${category.data}")
-                }
-                Timber.i("--------------------------------------------------------------------")
-            }
-            is RequestState.Error -> {
-                Timber.e(response.error)
-            }
-            else -> Unit
-        }
     }
 
 }
