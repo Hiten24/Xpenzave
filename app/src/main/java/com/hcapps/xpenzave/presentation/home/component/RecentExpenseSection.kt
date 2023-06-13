@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
@@ -31,7 +32,8 @@ fun RecentExpenseSection(
     onClickOfDateHeader: () -> Unit,
     onClickOfExpenseItem: () -> Unit,
     onClickOfAddExpense: () -> Unit,
-    expensesOfMonth: List<ExpensesOfTheDay> = emptyList()
+    expensesOfMonth: List<ExpensesOfTheDay> = emptyList(),
+    expenseLazyState: LazyListState
 ) {
     Column(
         modifier = modifier
@@ -49,7 +51,8 @@ fun RecentExpenseSection(
                 expensesOfMonth = expensesOfMonth,
                 onClickOfDateHeader = onClickOfDateHeader,
                 onClickOfExpenseItem = onClickOfExpenseItem,
-                spaceBetweenItem = spaceBetweenItem
+                spaceBetweenItem = spaceBetweenItem,
+                lazyState = expenseLazyState
             )
         } else {
             AddExpenseContainer(

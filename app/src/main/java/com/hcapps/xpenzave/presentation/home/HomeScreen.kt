@@ -11,32 +11,43 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.presentation.home.component.BudgetProgressCard
 import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
 import com.hcapps.xpenzave.presentation.home.state.dummyExpensesOfTheDay
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
     navigateToEditBudget: () -> Unit
 ) {
+
     val context = LocalContext.current
+    val lazyListState = rememberLazyListState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     Column(modifier = Modifier.fillMaxSize()) {
         BudgetProgressCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.45f)
-                .padding(16.dp),
+                .padding(16.dp)
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             onClickOfCalendar = { Toast.makeText(context, "Changing Month", Toast.LENGTH_SHORT).show() },
             onClickOfEditBudget = navigateToEditBudget
         )
@@ -52,7 +63,8 @@ fun HomeScreen(
             onClickOfDateHeader = {},
             onClickOfExpenseItem = {},
             expensesOfMonth = dummyExpensesOfTheDay(),
-            onClickOfAddExpense = {}
+            onClickOfAddExpense = {},
+            expenseLazyState = lazyListState
         )
 
     }

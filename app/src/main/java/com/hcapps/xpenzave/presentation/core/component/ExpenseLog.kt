@@ -152,7 +152,8 @@ fun PreviewRecentExpenseSection() {
         onClickOfSeeAll = {},
         onClickOfDateHeader = {},
         onClickOfExpenseItem = {},
-        onClickOfAddExpense = {}
+        onClickOfAddExpense = {},
+        expenseLazyState = rememberLazyListState()
     )
 }
 

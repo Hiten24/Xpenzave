@@ -70,6 +70,7 @@ import com.hcapps.xpenzave.ui.theme.BorderWidth
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpense(
     navigateUp: () -> Unit
@@ -89,11 +90,16 @@ fun AddExpense(
             .padding(paddingValue)
         ) {
             AddExpenseContent(
-                modifier = Modifier.fillMaxSize().padding(bottom = ButtonHeight),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = ButtonHeight),
                 image = image
             ) { uri -> image = uri }
 
-            Box(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).align(Alignment.BottomCenter)) {
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
+                .align(Alignment.BottomCenter)) {
                 XpenzaveButton(
                     modifier = Modifier
                         .fillMaxWidth()
