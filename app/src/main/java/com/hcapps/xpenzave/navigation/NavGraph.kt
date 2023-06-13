@@ -49,7 +49,6 @@ fun XpenzaveNavGraph(
             navigateToCompare = { navController.navigate(Screen.CompareSelector.route) },
             navigateToCalendar = { navController.navigate(Screen.Calendar.route) },
             navigateToFilter = { navController.navigate(Screen.Filter.route) },
-            navigateToDetails = { navController.navigate(Screen.ExpenseDetail.route) }
         )
 
         editBudget(
@@ -103,7 +102,6 @@ fun NavGraphBuilder.statsRoute(
     navigateToCompare: () -> Unit,
     navigateToCalendar: () -> Unit,
     navigateToFilter: () -> Unit,
-    navigateToDetails: () -> Unit
 ) {
     composable(route = Screen.Stats.route) {
         StateScreen(
@@ -111,7 +109,6 @@ fun NavGraphBuilder.statsRoute(
             navigateToCompare,
             navigateToCalendar,
             navigateToFilter,
-            navigateToDetails
         )
     }
 }

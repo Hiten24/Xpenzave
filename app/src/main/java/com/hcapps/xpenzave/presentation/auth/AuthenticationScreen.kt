@@ -58,6 +58,7 @@ fun AuthenticationScreen(
             when (event) {
                 is UIEvent.Error -> Toast.makeText(context, event.error.message, Toast.LENGTH_SHORT).show()
                 is UIEvent.ShowMessage -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                is UIEvent.Loading -> {}
             }
         }
     }

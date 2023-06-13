@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
-import com.hcapps.xpenzave.presentation.add_expense.Category
+import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
 
@@ -116,7 +116,7 @@ private fun FilterCategory(
                         category = category,
                         style = categoryStyle,
                     ) {
-                        onSelectCategory(it)
+//                        onSelectCategory(it)
                     }
                 }
             }

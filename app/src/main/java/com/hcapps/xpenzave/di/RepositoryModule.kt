@@ -1,7 +1,11 @@
 package com.hcapps.xpenzave.di
 
-import com.hcapps.xpenzave.data.source.remote.repository.AuthRepository
-import com.hcapps.xpenzave.data.source.remote.repository.AuthRepositoryImpl
+import com.hcapps.xpenzave.data.datastore.DataStoreService
+import com.hcapps.xpenzave.data.datastore.DataStoreServiceImpl
+import com.hcapps.xpenzave.data.source.remote.repository.auth.AuthRepository
+import com.hcapps.xpenzave.data.source.remote.repository.auth.AuthRepositoryImpl
+import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
+import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepositoryImpl
 import com.hcapps.xpenzave.data.source.remote.repository.storage.StorageRepository
 import com.hcapps.xpenzave.data.source.remote.repository.storage.StorageRepositoryImpl
 import dagger.Binds
@@ -19,8 +23,18 @@ abstract class RepositoryModule {
     ): AuthRepository
 
     @Binds
+    abstract fun provideDatabaseRepository(
+        databaseRepositoryImpl: DatabaseRepositoryImpl
+    ): DatabaseRepository
+
+    @Binds
     abstract fun provideStorageRepository(
         storageRepositoryImpl: StorageRepositoryImpl
     ): StorageRepository
+
+    @Binds
+    abstract fun provideDataStore(
+        dataStoreImpl: DataStoreServiceImpl
+    ): DataStoreService
 
 }
