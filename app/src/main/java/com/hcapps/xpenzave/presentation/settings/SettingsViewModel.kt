@@ -2,9 +2,8 @@ package com.hcapps.xpenzave.presentation.settings
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.datastore.DataSore
+import com.hcapps.xpenzave.data.datastore.DataStoreService
 import com.hcapps.xpenzave.data.source.remote.repository.auth.AuthRepository
 import com.hcapps.xpenzave.domain.model.User
 import com.hcapps.xpenzave.presentation.core.UIEvent
@@ -18,13 +17,13 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val dataStore: DataSore
+    private val dataStore: DataStoreService
 ): ViewModel() {
 
     var state = mutableStateOf(SettingsState())
         private set
 
-    private val user = dataStore.getUser().asLiveData()
+    private val user = dataStore.getUser()
 
     private val _uiEventFlow = MutableSharedFlow<UIEvent>()
     val uiEventFlow = _uiEventFlow.asSharedFlow()
@@ -32,8 +31,8 @@ class SettingsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             state.value = state.value.copy(
-                email = user.value?.email ?: "",
-                currencyCode = user.value?.currencyCode ?: ""
+                email = user.email ?: "",
+                currencyCode = user.currencyCode ?: ""
             )
         }
     }
@@ -50,7 +49,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun setCurrencyPreference(currencyCode: String) = viewModelScope.launch {
-        dataStore.saveUser(user.value?.copy(currencyCode = currencyCode) ?: User())
+        dataStore.saveUser(user.copy(currencyCode = currencyCode))
     }
 
     private fun onError(error: Throwable) = viewModelScope.launch {

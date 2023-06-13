@@ -1,5 +1,7 @@
 package com.hcapps.xpenzave.data.source.remote.repository.database
 
+import com.hcapps.xpenzave.data.datastore.DataStoreService
+import com.hcapps.xpenzave.data.source.remote.repository.appwrite.AppWriteUtil.permissions
 import com.hcapps.xpenzave.domain.model.CategoryDataResponse
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.Response
@@ -12,13 +14,17 @@ import com.hcapps.xpenzave.util.Constant.APP_WRITE_EXPENSE_COLLECTION_ID
 import io.appwrite.ID
 import io.appwrite.Query
 import io.appwrite.services.Databases
+import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import javax.inject.Inject
 
 class DatabaseRepositoryImpl @Inject constructor(
     private val database: Databases,
+    dataStore: DataStoreService
 ): DatabaseRepository {
 
+    private val user  = dataStore.getUserFlow()
+    
     private val databaseId = APP_WRITE_DATABASE_ID
     private val categoryCollectionId = APP_WRITE_CATEGORY_COLLECTION_ID
     private val expenseCollectionId = APP_WRITE_EXPENSE_COLLECTION_ID
@@ -29,7 +35,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 .listDocuments(
                     databaseId,
                     categoryCollectionId,
-                    nestedType = CategoryDataResponse::class.java
+                    nestedType = CategoryDataResponse::class.java,
                 )
             val mappedResponse = response.documents.map { it.toModel(it.data) }
             Timber.i(mappedResponse.toString())
@@ -62,7 +68,8 @@ class DatabaseRepositoryImpl @Inject constructor(
                 collectionId = expenseCollectionId,
                 documentId = generateUniqueId(),
                 data = expense.copy(),
-                nestedType = ExpenseData::class.java
+                nestedType = ExpenseData::class.java,
+                permissions = permissions(user.first())
             )
             val expenseModel = response.toModel(response.data)
             RequestState.Success(expenseModel)

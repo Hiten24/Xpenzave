@@ -4,7 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.datastore.DataSore
+import com.hcapps.xpenzave.data.datastore.DataStoreService
 import com.hcapps.xpenzave.data.source.remote.repository.auth.AuthRepository
 import com.hcapps.xpenzave.domain.model.User
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val dataStore: DataSore
+    private val dataStore: DataStoreService
 ) : ViewModel() {
 
     var authScreenState = mutableStateOf(AuthScreenState())

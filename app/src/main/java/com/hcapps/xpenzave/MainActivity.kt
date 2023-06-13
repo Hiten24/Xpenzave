@@ -6,12 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.hcapps.xpenzave.data.datastore.DataSore
+import com.hcapps.xpenzave.data.datastore.DataStoreService
 import com.hcapps.xpenzave.navigation.XpenzaveNavGraph
 import com.hcapps.xpenzave.presentation.core.component.XpenzaveScaffold
 import com.hcapps.xpenzave.ui.theme.XpenzaveTheme
 import com.hcapps.xpenzave.util.Screen
-//import com.hcapps.xpenzave.util.SettingsDataStore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -22,7 +21,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var dataStore: DataSore
+    lateinit var dataStore: DataStoreService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +48,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-suspend fun getStartDestination(dataStore: DataSore): String {
+suspend fun getStartDestination(dataStore: DataStoreService): String {
     return withContext(Dispatchers.IO) {
-        val user = dataStore.getUser().first()
-        return@withContext if (user.userId == null) Screen.Authentication.route
+        val user = dataStore.getUserFlow().first()
+        return@withContext if (user.userId.isEmpty()) Screen.Authentication.route
         else Screen.Home.route
     }
 }
