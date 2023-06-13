@@ -19,9 +19,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.core.component.MonthHeader
 import com.hcapps.xpenzave.presentation.core.component.MonthHeaderStyle
@@ -42,12 +40,11 @@ import java.time.LocalDate
 
 @Composable
 fun EditBudgetScreen(
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    viewModel: EditBudgetViewModel = hiltViewModel()
 ) {
 
-    var budgetValue by remember {
-        mutableStateOf("")
-    }
+    val state by viewModel.state
 
     Column(
         modifier = Modifier
@@ -74,18 +71,19 @@ fun EditBudgetScreen(
 
             BudgetTextField(
                 modifier = Modifier.fillMaxSize(),
-                budgetValue = budgetValue,
+                budgetValue = state.amount,
                 onBudgetChange = {
-                    budgetValue = it
+                    viewModel.onAmountChange(it)
                 }
             )
         }
 
         XpenzaveButton(
             modifier = Modifier.padding(horizontal = 28.dp),
-            title = "Save"
+            title = "Save",
+            state = state.buttonState
         ) {
-
+            viewModel.updateBudget()
         }
 
     }
@@ -157,5 +155,5 @@ fun PreviewBudgetTextField() {
 @Preview
 @Composable
 fun PreviewEditBudgetScreen() {
-    EditBudgetScreen() {}
+    EditBudgetScreen({})
 }

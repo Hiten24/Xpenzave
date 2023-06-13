@@ -29,17 +29,19 @@ import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.presentation.home.component.BudgetProgressCard
 import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
 import com.hcapps.xpenzave.presentation.home.state.dummyExpensesOfTheDay
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
-    navigateToEditBudget: () -> Unit
+    navigateToEditBudget: (String) -> Unit
 ) {
 
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val date = LocalDate.now()
 
     Column(modifier = Modifier.fillMaxSize()) {
         BudgetProgressCard(
@@ -49,7 +51,7 @@ fun HomeScreen(
                 .padding(16.dp)
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             onClickOfCalendar = { Toast.makeText(context, "Changing Month", Toast.LENGTH_SHORT).show() },
-            onClickOfEditBudget = navigateToEditBudget
+            onClickOfEditBudget = { navigateToEditBudget("${date.monthValue}-${date.year}") }
         )
 
         Spacer(modifier = Modifier.height(16.dp))

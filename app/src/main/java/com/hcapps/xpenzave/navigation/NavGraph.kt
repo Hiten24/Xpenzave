@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.hcapps.xpenzave.presentation.add_expense.AddExpense
 import com.hcapps.xpenzave.presentation.auth.AuthenticationScreen
 import com.hcapps.xpenzave.presentation.calendar.CalendarScreen
@@ -18,6 +20,7 @@ import com.hcapps.xpenzave.presentation.home.HomeScreen
 import com.hcapps.xpenzave.presentation.settings.SettingsScreen
 import com.hcapps.xpenzave.presentation.stats.StateScreen
 import com.hcapps.xpenzave.util.Screen
+import com.hcapps.xpenzave.util.UiConstants
 
 @Composable
 fun XpenzaveNavGraph(
@@ -34,8 +37,8 @@ fun XpenzaveNavGraph(
 
         homeRoute(
             paddingValues,
-            navigateToEditBudget = {
-                navController.navigate(Screen.EditBudget.route)
+            navigateToEditBudget = { monthYear ->
+                navController.navigate(Screen.EditBudget.passMonthYear(monthYear))
             }
         )
 
@@ -85,7 +88,7 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.homeRoute(paddingValues: PaddingValues, navigateToEditBudget: () -> Unit) {
+fun NavGraphBuilder.homeRoute(paddingValues: PaddingValues, navigateToEditBudget: (String) -> Unit) {
     composable(route = Screen.Home.route) {
         HomeScreen(paddingValues, navigateToEditBudget)
     }
@@ -117,8 +120,15 @@ fun NavGraphBuilder.statsRoute(
 fun NavGraphBuilder.editBudget(
     navigateUp: () -> Unit
 ) {
-    composable(route = Screen.EditBudget.route) {
-        EditBudgetScreen(navigateUp = navigateUp)
+    composable(
+        route = Screen.EditBudget.route,
+        arguments = listOf(navArgument(name = UiConstants.EDIT_BUDGET_ARGUMENT_KEY) {
+            type = NavType.StringType
+            nullable = false
+            defaultValue = "" }
+        )
+    ) {
+            EditBudgetScreen(navigateUp = navigateUp)
     }
 }
 

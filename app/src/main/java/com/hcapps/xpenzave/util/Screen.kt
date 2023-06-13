@@ -1,5 +1,7 @@
 package com.hcapps.xpenzave.util
 
+import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
+
 sealed class Screen(val route: String) {
 
     object Authentication: Screen(route = "authentication_screen")
@@ -10,7 +12,9 @@ sealed class Screen(val route: String) {
 
     object Stats: Screen(route = "stats_screen")
 
-    object EditBudget: Screen(route = "edit_budget")
+    object EditBudget: Screen(route = "edit_budget?$EDIT_BUDGET_ARGUMENT_KEY={$EDIT_BUDGET_ARGUMENT_KEY}") {
+        fun passMonthYear(monthYear: String) = "edit_budget?$EDIT_BUDGET_ARGUMENT_KEY=$monthYear"
+    }
 
     object AddExpense: Screen(route = "add_expense")
 
