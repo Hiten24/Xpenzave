@@ -5,6 +5,7 @@ import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.Response
 import com.hcapps.xpenzave.domain.model.expense.ExpenseData
 import com.hcapps.xpenzave.domain.model.expense.ExpenseDomainData
+import java.time.LocalDate
 
 typealias CategoryResponse = RequestState<List<Response<CategoryDataResponse>>>
 typealias ExpensesResponse = RequestState<List<ExpenseDomainData>>
@@ -14,7 +15,7 @@ interface DatabaseRepository {
 
     suspend fun getCategories(): CategoryResponse
 
-    suspend fun getCategoriesByMont(month: Int): ExpensesResponse
+    suspend fun getCategoriesByMont(date: LocalDate): ExpensesResponse
 
     suspend fun addExpense(expense: ExpenseData): ExpenseResponse
 

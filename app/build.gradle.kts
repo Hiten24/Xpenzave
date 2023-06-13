@@ -110,11 +110,17 @@ dependencies {
 
     // coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    implementation ("androidx.compose.animation:animation:1.4.3")
+    implementation ("androidx.compose.animation:animation-graphics:1.4.3")
     
     // date picker
     implementation ("com.maxkeppeler.sheets-compose-dialogs:core:1.0.2")
     implementation ("com.maxkeppeler.sheets-compose-dialogs:calendar:1.0.2")
     implementation ("com.maxkeppeler.sheets-compose-dialogs:clock:1.0.2")
+
+    // flow layout
+    implementation ("com.google.accompanist:accompanist-flowlayout:0.30.1")
 
     testImplementation ("junit:junit:4.13.2")
 

@@ -45,7 +45,6 @@ private const val itemOfTheCompose = 1001
 fun ExpenseLog(
     modifier: Modifier = Modifier,
     spaceBetweenItem: Dp = 12.dp,
-    onClickOfDateHeader: () -> Unit,
     onClickOfExpenseItem: () -> Unit,
     headerStyle: ExpenseDateHeaderStyle = ExpenseDateHeaderStyle.defaultExpenseDateHeaderStyle(),
     itemStyle: ExpenseItemStyle = ExpenseItemStyle.defaultExpenseItemStyle(),
@@ -60,7 +59,7 @@ fun ExpenseLog(
             item(contentType = headerOfTheExpense) {
                 DateHeaderItem(
                     date = date,
-                    onClickOfDateHeader = onClickOfDateHeader,
+                    onClickOfDateHeader = {},
                     style = headerStyle
                 )
             }
@@ -77,31 +76,6 @@ fun ExpenseLog(
             }
 
         }
-
-        /*items(expenses.size) { index ->
-            DateHeaderItem(
-                date = keys[index],
-                onClickOfDateHeader = onClickOfDateHeader,
-                style = headerStyle
-            )
-
-            Spacer(modifier = Modifier.height(spaceBetweenItem))
-
-            expenses.forEach { expense: Expense ->
-                ExpenseItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onClickOfExpenseItem() }
-                        .padding(start = 8.dp),
-                    expense = expense,
-                    style = itemStyle
-                )
-
-                Spacer(modifier = Modifier.height(spaceBetweenItem))
-
-            }
-        }*/
-
     }
 }
 
@@ -181,7 +155,6 @@ fun ExpenseItem(
 fun PreviewRecentExpenseSection() {
     RecentExpenseSection(
         onClickOfSeeAll = {},
-        onClickOfDateHeader = {},
         onClickOfExpenseItem = {},
         onClickOfAddExpense = {}
     )

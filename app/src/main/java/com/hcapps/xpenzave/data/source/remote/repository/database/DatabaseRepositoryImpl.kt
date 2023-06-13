@@ -16,6 +16,7 @@ import io.appwrite.Query
 import io.appwrite.services.Databases
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
+import java.time.LocalDate
 import javax.inject.Inject
 
 class DatabaseRepositoryImpl @Inject constructor(
@@ -46,13 +47,17 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCategoriesByMont(month: Int): ExpensesResponse {
+    override suspend fun getCategoriesByMont(date: LocalDate): ExpensesResponse {
         return try {
             val response = database.listDocuments(
                 databaseId = databaseId,
                 collectionId = expenseCollectionId,
-                queries = listOf(Query.orderAsc("day"), Query.equal("month", month)),
-                nestedType = ExpenseData::class.java
+                nestedType = ExpenseData::class.java,
+                queries = listOf(
+                    Query.orderAsc("day"),
+                    Query.equal("month", date.monthValue),
+                    Query.equal("year", date.year)
+                )
             )
             val expenses = response.documents.map { it.toModel(it.data) }.map { it.toExpenseDomainData() }
             RequestState.Success(expenses)

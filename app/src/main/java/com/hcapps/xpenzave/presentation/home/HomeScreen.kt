@@ -49,7 +49,6 @@ fun HomeScreen(
                 .padding(horizontal = 16.dp)
                 .padding(bottom = paddingValues.calculateBottomPadding()),
             onClickOfSeeAll = {},
-            onClickOfDateHeader = {},
             onClickOfExpenseItem = {},
             expensesOfMonth = dummyExpensesOfTheDay(),
             onClickOfAddExpense = {}

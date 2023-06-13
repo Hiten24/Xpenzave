@@ -28,7 +28,6 @@ fun RecentExpenseSection(
     modifier: Modifier = Modifier,
     spaceBetweenItem: Dp = 12.dp,
     onClickOfSeeAll: () -> Unit,
-    onClickOfDateHeader: () -> Unit,
     onClickOfExpenseItem: () -> Unit,
     onClickOfAddExpense: () -> Unit,
     expensesOfMonth: List<ExpensesOfTheDay> = emptyList()
@@ -46,8 +45,6 @@ fun RecentExpenseSection(
         if (expensesOfMonth.isNotEmpty()) {
             ExpenseLog(
                 modifier = Modifier.fillMaxSize(),
-//                expensesOfMonth = expensesOfMonth,
-                onClickOfDateHeader = onClickOfDateHeader,
                 onClickOfExpenseItem = onClickOfExpenseItem,
                 spaceBetweenItem = spaceBetweenItem
             )
