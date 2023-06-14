@@ -48,7 +48,7 @@ import java.time.LocalDate
 private val months = listOf("Jan","Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
 @Composable
-fun SelectMonth(
+fun MonthDialog(
     selectedMonth: Int,
     selectedYear: Int,
     onDismiss: () -> Unit,

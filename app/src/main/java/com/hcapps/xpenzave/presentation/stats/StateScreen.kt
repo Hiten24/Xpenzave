@@ -37,7 +37,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.presentation.core.component.XpenzaveTabRow
-import com.hcapps.xpenzave.presentation.core.component.calendar.SelectMonth
+import com.hcapps.xpenzave.presentation.core.component.calendar.MonthDialog
 import com.hcapps.xpenzave.presentation.expense_log.ExpenseLogSection
 import com.hcapps.xpenzave.presentation.general_stats.GeneralSection
 
@@ -135,7 +135,7 @@ fun StateScreen(
     }
 
     if (dateDialogOpened) {
-        SelectMonth(
+        MonthDialog(
             selectedMonth = state.date.monthValue,
             selectedYear = state.date.year,
             onDismiss = { dateDialogOpened = false },

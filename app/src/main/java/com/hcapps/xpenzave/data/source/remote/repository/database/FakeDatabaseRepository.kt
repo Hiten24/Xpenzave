@@ -1,0 +1,52 @@
+package com.hcapps.xpenzave.data.source.remote.repository.database
+
+import com.hcapps.xpenzave.domain.model.RequestState
+import com.hcapps.xpenzave.domain.model.Response
+import com.hcapps.xpenzave.domain.model.budget.BudgetData
+import com.hcapps.xpenzave.domain.model.budget.fakeBudgetData
+import com.hcapps.xpenzave.domain.model.expense.ExpenseData
+import com.hcapps.xpenzave.domain.model.expense.fakeExpenses
+import com.hcapps.xpenzave.domain.model.expense.toExpenseDomainData
+import kotlinx.coroutines.delay
+import java.time.LocalDate
+import java.util.UUID
+import javax.inject.Inject
+
+class FakeDatabaseRepository @Inject constructor() : DatabaseRepository {
+
+    override suspend fun getCategories(): CategoryResponse {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getExpensesByMonth(date: LocalDate): ExpensesResponse {
+        return try {
+            delay(3000L)
+            val response = fakeExpenses(10).map { Response(id = UUID.randomUUID().toString(), it) }.map { it.toExpenseDomainData() }
+            RequestState.Success(response)
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
+    }
+
+    override suspend fun addExpense(expense: ExpenseData): ExpenseResponse {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getExpense(id: String): RequestState<Response<ExpenseData>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createBudget(budget: BudgetData): CreateBudgetResponse {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getBudgetByDate(date: LocalDate): RequestState<Response<BudgetData>> {
+        return try {
+            delay(3000L)
+            val toModel = Response(id = UUID.randomUUID().toString(), fakeBudgetData(date.monthValue, date.year))
+            RequestState.Success(toModel)
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
+    }
+}

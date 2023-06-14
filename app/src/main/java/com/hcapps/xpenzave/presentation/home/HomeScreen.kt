@@ -1,10 +1,7 @@
 package com.hcapps.xpenzave.presentation.home
 
-import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,36 +9,33 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.hcapps.xpenzave.presentation.core.component.calendar.MonthDialog
+import com.hcapps.xpenzave.presentation.core.component.calendar.rememberMonthState
 import com.hcapps.xpenzave.presentation.home.component.BudgetProgressCard
 import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
-import com.hcapps.xpenzave.presentation.home.state.dummyExpensesOfTheDay
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
-    navigateToEditBudget: (String) -> Unit
+    editBudget: (String) -> Unit,
+    expenseLog: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
 
-    val context = LocalContext.current
+    val state by viewModel.state
     val lazyListState = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    val date = LocalDate.now()
+    val monthSelectorState by rememberMonthState()
 
     Column(modifier = Modifier.fillMaxSize()) {
         BudgetProgressCard(
@@ -50,8 +44,13 @@ fun HomeScreen(
                 .fillMaxHeight(0.45f)
                 .padding(16.dp)
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            onClickOfCalendar = { Toast.makeText(context, "Changing Month", Toast.LENGTH_SHORT).show() },
-            onClickOfEditBudget = { navigateToEditBudget("${date.monthValue}-${date.year}") }
+            loading = state.budgetLoading,
+            date = state.date,
+            onClickOfCalendar = { monthSelectorState.show() },
+            onClickOfEditBudget = { editBudget("${state.date.monthValue}-${state.date.year}") },
+            progress = state.budgetPercentage,
+            budgetAmount = state.budgetAmount,
+            totalSpending = state.totalSpending
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -61,42 +60,25 @@ fun HomeScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .padding(bottom = paddingValues.calculateBottomPadding()),
-            onClickOfSeeAll = {},
+            onClickOfSeeAll = expenseLog,
             onClickOfExpenseItem = {},
-            expensesOfMonth = dummyExpensesOfTheDay(),
             onClickOfAddExpense = {},
-            expenseLazyState = lazyListState
+            expenseLazyState = lazyListState,
+            listOfExpense = state.recentExpenses
         )
 
     }
-}
 
-@Composable
-fun BudgetCardHeader(onClickOfCalendar: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Column {
-            Text(
-                text = "September",
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "2019",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
-            )
-        }
-        IconButton(onClick = onClickOfCalendar) {
-            Icon(
-                imageVector = Icons.Outlined.CalendarMonth,
-                contentDescription = "Calendar Month",
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-            )
-        }
+    if (monthSelectorState.opened()) {
+        MonthDialog(
+            selectedMonth = state.date.monthValue,
+            selectedYear = state.date.year,
+            onDismiss = { monthSelectorState.dismiss() },
+            onSelectMonthYear = { date ->
+                viewModel.onDateChange(date)
+                monthSelectorState.dismiss()
+            }
+        )
     }
+
 }

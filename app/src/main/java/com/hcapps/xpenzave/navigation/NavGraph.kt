@@ -39,6 +39,9 @@ fun XpenzaveNavGraph(
             paddingValues,
             navigateToEditBudget = { monthYear ->
                 navController.navigate(Screen.EditBudget.passMonthYear(monthYear))
+            },
+            navigateToExpenseLog = {
+                navController.navigate(Screen.Stats.route)
             }
         )
 
@@ -88,9 +91,17 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.homeRoute(paddingValues: PaddingValues, navigateToEditBudget: (String) -> Unit) {
+fun NavGraphBuilder.homeRoute(
+    paddingValues: PaddingValues,
+    navigateToEditBudget: (String) -> Unit,
+    navigateToExpenseLog: () -> Unit
+) {
     composable(route = Screen.Home.route) {
-        HomeScreen(paddingValues, navigateToEditBudget)
+        HomeScreen(
+            paddingValues = paddingValues,
+            editBudget = navigateToEditBudget,
+            expenseLog = navigateToExpenseLog
+        )
     }
 }
 

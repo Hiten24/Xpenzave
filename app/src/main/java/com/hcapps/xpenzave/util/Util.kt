@@ -4,9 +4,12 @@ import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore.MediaColumns
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import io.appwrite.extensions.gson
 import java.lang.reflect.Type
+import java.time.LocalDate
 
 fun <T> jsonToValue(json: String, typeOfT: Type): T {
     return gson.fromJson(json, typeOfT) as T
@@ -30,3 +33,6 @@ fun Context.getActualPathOfImage(uri: Uri?): String {
     }
     return path
 }
+
+@Composable
+fun rememberLocalDate() = remember { mutableStateOf(LocalDate.now()) }

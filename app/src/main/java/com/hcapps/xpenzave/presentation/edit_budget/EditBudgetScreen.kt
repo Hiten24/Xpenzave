@@ -115,8 +115,8 @@ fun EditBudgetScreen(
                 title = "Save",
                 state = state.buttonState
             ) {
-                viewModel.updateBudget()
-//                viewModel.dummyUpdateBudget()
+//                viewModel.updateBudget()
+                viewModel.dummyUpdateBudget()
             }
 
         }

@@ -21,3 +21,61 @@ data class ExpenseDomainData(
         )
     }
 }
+
+fun getDummyExpenseByDate(date: LocalDate): Map<LocalDate, List<ExpenseDomainData>> {
+    return if (date.monthValue == 5 && date.year == 2023) {
+        mayDummyExpense
+    } else if (date.monthValue == 6 && date.year == 2023) {
+        juneDummyExpense
+    } else if (date.monthValue == 4 && date.year == 2022) {
+        lastYearExpense
+    } else {
+        emptyMap()
+    }
+}
+
+private val lastYearExpense  = mapOf(
+    Pair(
+        LocalDate.now(),
+        listOf(
+            ExpenseDomainData.dummy(LocalDate.of(2022, 4, 30)),
+            ExpenseDomainData.dummy(LocalDate.of(2022, 4, 27)),
+            ExpenseDomainData.dummy(LocalDate.of(2022, 4, 25)),
+        )
+    )
+)
+
+private val juneDummyExpense = mapOf(
+    Pair(LocalDate.now(), listOf(ExpenseDomainData.dummy()))
+)
+
+private val mayDummyExpense = mapOf(
+    Pair(
+        LocalDate.now(),
+        listOf(
+            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 1)),
+            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 1)),
+            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 1)),
+            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 1)),
+            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 2)),
+            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 3)),
+            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 4)),
+            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 4)),
+        )
+    ),
+    Pair(
+        LocalDate.of(2023, 5, 2),
+        listOf(ExpenseDomainData.dummy(LocalDate.of(2023, 5, 2)),)
+    ),
+    Pair(
+        LocalDate.of(2023, 5, 3),
+        listOf(ExpenseDomainData.dummy(LocalDate.of(2023, 5, 3)),)
+    ),
+    Pair(
+        LocalDate.of(2023, 5, 4),
+        listOf(
+            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 4)),
+            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 4)),
+        )
+    )
+)

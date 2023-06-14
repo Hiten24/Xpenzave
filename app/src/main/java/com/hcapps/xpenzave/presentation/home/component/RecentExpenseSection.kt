@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLog
-import com.hcapps.xpenzave.presentation.home.state.ExpensesOfTheDay
+import com.hcapps.xpenzave.presentation.core.component.ExpenseLogs
 
 @Composable
 fun RecentExpenseSection(
@@ -31,31 +31,34 @@ fun RecentExpenseSection(
     onClickOfSeeAll: () -> Unit,
     onClickOfExpenseItem: () -> Unit,
     onClickOfAddExpense: () -> Unit,
-    expensesOfMonth: List<ExpensesOfTheDay> = emptyList(),
-    expenseLazyState: LazyListState
+    expenseLazyState: LazyListState,
+    listOfExpense: ExpenseLogs? = null,
 ) {
     Column(
         modifier = modifier
     ) {
 
-        if (expensesOfMonth.isNotEmpty()) {
+        if (listOfExpense.isNullOrEmpty().not()) {
             RecentExpenseHeader(modifier = Modifier.fillMaxWidth(), onClickOfSeeAll)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        if (expensesOfMonth.isNotEmpty()) {
+        if (listOfExpense.isNullOrEmpty().not()) {
             ExpenseLog(
                 modifier = Modifier.fillMaxSize(),
                 onClickOfExpenseItem = onClickOfExpenseItem,
-                lazyState = expenseLazyState
+                lazyState = expenseLazyState,
+                expenses = listOfExpense ?: emptyMap()
             )
         } else {
-            AddExpenseContainer(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                onClickOfAddExpense = onClickOfAddExpense
-            )
+            listOfExpense?.let {
+                AddExpenseContainer(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    onClickOfAddExpense = onClickOfAddExpense
+                )
+            }
         }
 
     }

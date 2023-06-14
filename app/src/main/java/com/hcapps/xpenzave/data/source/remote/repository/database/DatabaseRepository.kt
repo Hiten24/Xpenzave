@@ -17,12 +17,14 @@ interface DatabaseRepository {
 
     suspend fun getCategories(): CategoryResponse
 
-    suspend fun getCategoriesByMont(date: LocalDate): ExpensesResponse
+    suspend fun getExpensesByMonth(date: LocalDate): ExpensesResponse
 
     suspend fun addExpense(expense: ExpenseData): ExpenseResponse
 
     suspend fun getExpense(id: String): RequestState<Response<ExpenseData>>
 
     suspend fun createBudget(budget: BudgetData): CreateBudgetResponse
+
+    suspend fun getBudgetByDate(date: LocalDate): RequestState<Response<BudgetData>>
 
 }

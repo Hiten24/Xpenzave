@@ -50,7 +50,7 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCategoriesByMont(date: LocalDate): ExpensesResponse {
+    override suspend fun getExpensesByMonth(date: LocalDate): ExpensesResponse {
         return try {
             val response = database.listDocuments(
                 databaseId = databaseId,
@@ -111,6 +111,24 @@ class DatabaseRepositoryImpl @Inject constructor(
                 permissions = permissions(user.first())
             )
             RequestState.Success(response.toModel(response.data))
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
+    }
+
+    override suspend fun getBudgetByDate(date: LocalDate): RequestState<Response<BudgetData>> {
+        return try {
+            val response = database.listDocuments(
+                databaseId = databaseId,
+                collectionId = budgetCollectionId,
+                queries = listOf(
+                    Query.equal("month", date.monthValue),
+                    Query.equal("year", date.year)
+                ),
+                nestedType = BudgetData::class.java
+            ).documents.first()
+            val toModel = response.toModel(response.data)
+            RequestState.Success(toModel)
         } catch (e: Exception) {
             RequestState.Error(e)
         }
