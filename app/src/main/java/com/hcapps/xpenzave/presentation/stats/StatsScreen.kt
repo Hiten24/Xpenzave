@@ -47,7 +47,7 @@ const val TAB_GENERAL = 1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StateScreen(
+fun StatsScreen(
     paddingValues: PaddingValues,
     navigateToCompare: () -> Unit,
     navigateToFilter: () -> Unit,

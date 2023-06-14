@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                     backStackEntry = backStackEntry
                 ) { padding ->
                     XpenzaveNavGraph(
-                        startDestination = Screen.Home.route,
+                        startDestination = Screen.Stats.route,
                         navController = navController,
                         paddingValues = padding
                     )

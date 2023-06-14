@@ -18,7 +18,7 @@ import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailScreen
 import com.hcapps.xpenzave.presentation.filter.FilterScreen
 import com.hcapps.xpenzave.presentation.home.HomeScreen
 import com.hcapps.xpenzave.presentation.settings.SettingsScreen
-import com.hcapps.xpenzave.presentation.stats.StateScreen
+import com.hcapps.xpenzave.presentation.stats.StatsScreen
 import com.hcapps.xpenzave.util.Screen
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
@@ -54,8 +54,8 @@ fun XpenzaveNavGraph(
         statsRoute(
             paddingValues,
             navigateToCompare = { navController.navigate(Screen.CompareSelector.route) },
-            navigateToCalendar = { navController.navigate(Screen.Calendar.route) },
             navigateToFilter = { navController.navigate(Screen.Filter.route) },
+            navigateToDetails = {navController.navigate(Screen.ExpenseDetail.route)}
         )
 
         editBudget(
@@ -115,15 +115,15 @@ fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit) {
 fun NavGraphBuilder.statsRoute(
     paddingValues: PaddingValues,
     navigateToCompare: () -> Unit,
-    navigateToCalendar: () -> Unit,
     navigateToFilter: () -> Unit,
+    navigateToDetails: () -> Unit
 ) {
     composable(route = Screen.Stats.route) {
-        StateScreen(
-            paddingValues,
-            navigateToCompare,
-            navigateToCalendar,
-            navigateToFilter,
+        StatsScreen(
+            paddingValues = paddingValues,
+            navigateToCompare = navigateToCompare,
+            navigateToFilter = navigateToFilter,
+            navigateToDetails = navigateToDetails
         )
     }
 }

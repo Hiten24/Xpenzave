@@ -12,16 +12,24 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+/**
+ * date
+ * amoutn
+ * categoryId
+ * fileId
+ * moreDetails
+ */
+
 @HiltViewModel
 class ExpenseDetailViewModel @Inject constructor(
     private val databaseRepository: DatabaseRepository
 ): ViewModel() {
 
-    private val _state = mutableStateOf<ExpenseDetailState>(ExpenseDetailState())
+    private val _state = mutableStateOf(ExpenseDetailState())
     val state: State<ExpenseDetailState> = _state
 
     init {
-        getExpense()
+//        getExpense()
     }
 
     private fun getExpense() = viewModelScope.launch {
