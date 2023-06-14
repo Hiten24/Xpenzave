@@ -11,4 +11,5 @@ sealed class AddExpenseEvent {
     data class DateTimeChange(val dateTime: LocalDateTime): AddExpenseEvent()
     object AddBillEachMonthChange: AddExpenseEvent()
     object ClearPhoto: AddExpenseEvent()
+    object AddButtonClicked: AddExpenseEvent()
 }

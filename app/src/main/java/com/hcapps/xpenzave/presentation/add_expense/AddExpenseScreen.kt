@@ -123,13 +123,13 @@ fun AddExpense(
         Box(modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(paddingValue)
+            .padding(paddingValue),
         ) {
 
             AddExpenseContent(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = ButtonHeight),
+                    .padding(bottom = ButtonHeight + 28.dp),
                 state = state,
                 onAmountChange = { viewModel.onEvent(AmountChange(it)) },
                 onClickOfCalenderIcon = { dateState.show() },
@@ -142,12 +142,12 @@ fun AddExpense(
             )
 
             XpenzaveButton(
-                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp).align(
+                modifier = Modifier.padding(start = 32.dp, bottom = 16.dp, end = 32.dp).align(
                     Alignment.BottomCenter),
                 title = stringResource(R.string.add),
                 state = state.addButtonState
             ) {
-                viewModel.addExpense()
+                viewModel.onEvent(AddButtonClicked)
             }
 
         }

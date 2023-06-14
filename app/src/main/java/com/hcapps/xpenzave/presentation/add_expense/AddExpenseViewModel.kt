@@ -53,15 +53,24 @@ class AddExpenseViewModel @Inject constructor(
                 )
             }
             is PhotoChange -> {
-                state.value = state.value.copy(photo = event.photo)
-//                event.photo?.let { uploadPhoto(event.Path) }
+                state.value = state.value.copy(
+                    photo = event.photo,
+                    photoPath = event.Path
+                )
             }
             is AddExpenseEvent.ClearPhoto -> {
                 state.value = state.value.copy(photo = null)
-                state.value.uploadedPhoto?.fileId?.let { deletePhoto(it) }
             }
             is AddExpenseEvent.DateTimeChange -> {
                 state.value = state.value.copy(date = event.dateTime)
+            }
+            is AddExpenseEvent.AddButtonClicked -> {
+                viewModelScope.launch {
+                    loading(true)
+                    state.value.photoPath?.let { uploadPhoto(it) }
+                    addExpense()
+                    loading(false)
+                }
             }
         }
     }
@@ -70,10 +79,6 @@ class AddExpenseViewModel @Inject constructor(
         state.value = state.value.copy(
             addButtonState = ButtonState(loading = loading)
         )
-    }
-
-    private fun enabledButton(enable: Boolean) {
-        state.value = state.value.copy(addButtonState = ButtonState(enabled = enable))
     }
 
     private fun clearState() {
@@ -86,45 +91,26 @@ class AddExpenseViewModel @Inject constructor(
     }
 
     private fun uploadPhoto(path: String) = viewModelScope.launch {
-        enabledButton(false)
         state.value = state.value.copy(uploadPhotoProgress = true)
         when (val response = storageRepository.createFile(path)) {
             is RequestState.Success -> {
                 Timber.i("name: ${response.data.name}, id: ${response.data.fileId}")
                 state.value = state.value.copy(uploadedPhoto = response.data)
-                enabledButton(true)
                 state.value = state.value.copy(uploadPhotoProgress = false)
             }
             is RequestState.Error -> {
                 Timber.e(response.error)
-                enabledButton(true)
                 state.value = state.value.copy(uploadPhotoProgress = false)
             }
             else -> {}
         }
     }
 
-    private fun deletePhoto(fileId: String) = viewModelScope.launch {
-        loading(true)
-        when (val response = storageRepository.deleteFile(fileId)) {
-            is RequestState.Success -> {
-                state.value = state.value.copy(uploadedPhoto = null)
-                loading(false)
-            }
-            is RequestState.Error -> {
-                Timber.e(response.error)
-                loading(false)
-            }
-            else -> {}
-        }
-    }
-
-    fun addExpense() = viewModelScope.launch {
+    private fun addExpense() = viewModelScope.launch {
         if (validate().not()) {
             state.value = state.value.copy(amountError = "Amount can't be empty.")
             return@launch
         }
-        loading(true)
         val expense = ExpenseData(
             amount = state.value.amount.toDoubleOrNull() ?: 0.0,
             details = state.value.details,
@@ -138,12 +124,10 @@ class AddExpenseViewModel @Inject constructor(
         )
         when (val response = databaseRepository.addExpense(expense)) {
             is RequestState.Success -> {
-                loading(false)
                 clearState()
             }
             is RequestState.Error -> {
                 Timber.e(response.error)
-                loading(false)
             }
             else -> Unit
         }
