@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.domain.model.budget.BudgetDomainData
 import com.hcapps.xpenzave.domain.usecase.GetBudgetByDateUseCase
-import com.hcapps.xpenzave.domain.usecase.GetCategoriesUseCase
+import com.hcapps.xpenzave.domain.usecase.GetExpensesUseCase
 import com.hcapps.xpenzave.presentation.home.state.HomeScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getBudgetByDateUseCase: GetBudgetByDateUseCase,
-    private val getCategoriesUseCase: GetCategoriesUseCase
+    private val getExpensesUseCase: GetExpensesUseCase
 ): ViewModel() {
 
     private val _state = mutableStateOf(HomeScreenState())
@@ -49,7 +49,7 @@ class HomeViewModel @Inject constructor(
     private fun getExpensesOfMonth() = viewModelScope.launch {
         expensesLoading(true)
         try {
-            val expenses = getCategoriesUseCase.execute(state.value.date)
+            val expenses = getExpensesUseCase.execute(state.value.date)
             // calculating total expenses by adding all expenses amount
             val totalExpense = expenses.map { it.value.sumOf { it.amount } }.sumOf { it }
             // taking last day log of expenses for recent expenses

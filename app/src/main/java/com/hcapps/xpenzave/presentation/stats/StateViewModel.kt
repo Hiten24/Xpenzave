@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.domain.usecase.GetCategoriesUseCase
+import com.hcapps.xpenzave.domain.usecase.GetExpensesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatsViewModel @Inject constructor(
-    private val getCategoriesUseCase: GetCategoriesUseCase
+    private val getExpensesUseCase: GetExpensesUseCase
 ): ViewModel() {
 
     private val _state = mutableStateOf(StatsState())
@@ -36,7 +36,7 @@ class StatsViewModel @Inject constructor(
         loading(true)
         try {
             _state.value = state.value.copy(
-                expenses = getCategoriesUseCase.execute(state.value.date)
+                expenses = getExpensesUseCase.execute(state.value.date)
             )
             loading(false)
         } catch (e: Exception) {

@@ -7,7 +7,7 @@ import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
 
-class GetCategoriesUseCase @Inject constructor(
+class GetExpensesUseCase @Inject constructor(
 //    private val databaseRepository: DatabaseRepository
     private val databaseRepository: FakeDatabaseRepository
 ) {

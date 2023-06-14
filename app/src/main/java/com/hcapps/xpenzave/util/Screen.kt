@@ -2,6 +2,7 @@ package com.hcapps.xpenzave.util
 
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
+import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
 
 sealed class Screen(val route: String) {
 
@@ -28,7 +29,9 @@ sealed class Screen(val route: String) {
 
     object Calendar: Screen(route = "calendar")
 
-    object ExpenseDetail: Screen(route = "expense_detail")
+    object ExpenseDetail: Screen(route = "expense_detail?$EXPENSE_DETAIL_ARGUMENT_KEY={$EXPENSE_DETAIL_ARGUMENT_KEY}") {
+        fun passArgs(detail: String) = "expense_detail?$EXPENSE_DETAIL_ARGUMENT_KEY=$detail"
+    }
 
     object Filter: Screen(route = "filter")
 

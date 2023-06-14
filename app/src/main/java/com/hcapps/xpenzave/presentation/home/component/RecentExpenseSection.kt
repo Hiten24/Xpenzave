@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
+import com.hcapps.xpenzave.domain.model.expense.ExpenseDomainData
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLog
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLogs
 
@@ -29,7 +30,7 @@ fun RecentExpenseSection(
     modifier: Modifier = Modifier,
     spaceBetweenItem: Dp = 12.dp,
     onClickOfSeeAll: () -> Unit,
-    onClickOfExpenseItem: () -> Unit,
+    onClickOfExpenseItem: (details: ExpenseDomainData) -> Unit,
     onClickOfAddExpense: () -> Unit,
     expenseLazyState: LazyListState,
     listOfExpense: ExpenseLogs? = null,

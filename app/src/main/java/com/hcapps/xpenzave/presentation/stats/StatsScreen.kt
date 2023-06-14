@@ -1,7 +1,7 @@
 package com.hcapps.xpenzave.presentation.stats
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.animation.rememberSplineBasedDecay
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.presentation.core.component.XpenzaveTabRow
 import com.hcapps.xpenzave.presentation.core.component.calendar.MonthDialog
+import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
 import com.hcapps.xpenzave.presentation.expense_log.ExpenseLogSection
 import com.hcapps.xpenzave.presentation.general_stats.GeneralSection
 
@@ -51,7 +52,7 @@ fun StatsScreen(
     paddingValues: PaddingValues,
     navigateToCompare: () -> Unit,
     navigateToFilter: () -> Unit,
-    navigateToDetails: () -> Unit,
+    navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit,
     viewModel: StatsViewModel = hiltViewModel()
 ) {
 
@@ -120,7 +121,7 @@ fun StatsScreen(
                         TAB_EXPENSE_LOG -> {
                             ExpenseLogSection(
                                 navigateToFiler = navigateToFilter,
-                                navigateToDetails = navigateToDetails,
+                                navigateToDetails = { navigateToDetails(it.toExpenseDetailsArgs()) },
                                 date = state.date,
                                 expenses = state.expenses ?: emptyMap(),
                                 expenseLogLazyState = lazyState

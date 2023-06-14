@@ -54,7 +54,7 @@ class AddExpenseViewModel @Inject constructor(
             }
             is PhotoChange -> {
                 state.value = state.value.copy(photo = event.photo)
-                event.photo?.let { uploadPhoto(event.Path) }
+//                event.photo?.let { uploadPhoto(event.Path) }
             }
             is AddExpenseEvent.ClearPhoto -> {
                 state.value = state.value.copy(photo = null)

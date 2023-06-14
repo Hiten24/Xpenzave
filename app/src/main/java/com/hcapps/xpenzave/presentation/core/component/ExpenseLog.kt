@@ -45,7 +45,7 @@ private const val itemOfTheCompose = 1001
 @Composable
 fun ExpenseLog(
     modifier: Modifier = Modifier,
-    onClickOfExpenseItem: () -> Unit,
+    onClickOfExpenseItem: (details: ExpenseDomainData) -> Unit,
     lazyState: LazyListState = rememberLazyListState(),
     headerStyle: ExpenseDateHeaderStyle = ExpenseDateHeaderStyle.defaultExpenseDateHeaderStyle(),
     itemStyle: ExpenseItemStyle = ExpenseItemStyle.defaultExpenseItemStyle(),
@@ -70,7 +70,7 @@ fun ExpenseLog(
                 ExpenseItem(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onClickOfExpenseItem() }
+                        .clickable { onClickOfExpenseItem(expense) }
                         .padding(start = 8.dp),
                     expense = expense,
                     style = itemStyle

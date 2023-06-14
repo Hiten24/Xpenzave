@@ -1,6 +1,7 @@
 package com.hcapps.xpenzave.presentation.expense_detail
 
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,15 +27,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.hcapps.xpenzave.R
+import coil.compose.AsyncImage
+import com.hcapps.xpenzave.presentation.core.component.ZoomableImagePreview
+import timber.log.Timber
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -46,11 +52,14 @@ fun ExpenseDetailScreen(
 ) {
 
     val state by viewModel.state
+    var imagePreviewOpened by remember {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         topBar = {
             TopBar(
-                date = LocalDate.now(),
+                date = state.date ?: LocalDate.now(),
                 onClickOfNavigationIcon = navigateUp
             )
         }
@@ -68,16 +77,32 @@ fun ExpenseDetailScreen(
                 Spacer(modifier = Modifier.height(62.dp))
                 CircularProgressIndicator()
             } else {
-                ExpenseDetailContent(state = state)
+                ExpenseDetailContent(
+                    state = state,
+                    previewImage = { imagePreviewOpened = true }
+                )
             }
         }
 
     }
+
+    AnimatedVisibility(visible = imagePreviewOpened) {
+        Dialog(onDismissRequest = { imagePreviewOpened = false }) {
+            state.photo?.let {
+                ZoomableImagePreview(
+                    image = it,
+                    onCloseClicked = { imagePreviewOpened = false },
+                )
+            }
+        }
+    }
 }
+
 
 @Composable
 fun ExpenseDetailContent(
-    state: ExpenseDetailState
+    state: ExpenseDetailState,
+    previewImage: () -> Unit
 ) {
 
     state.amount?.let {
@@ -120,11 +145,13 @@ fun ExpenseDetailContent(
         DetailsItem(text = "Photos") {
             Spacer(modifier = Modifier.height(2.dp))
             Card(
-                modifier = Modifier.size(100.dp),
+                modifier = Modifier
+                    .size(100.dp)
+                    .clickable(onClick = previewImage),
                 elevation = CardDefaults.elevatedCardElevation(2.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.bill),
+                AsyncImage(
+                    model = state.photo,
                     contentDescription = "Resource Photo",
                     modifier = Modifier
                         .fillMaxSize(),
@@ -151,6 +178,7 @@ private fun TopBar(
     date: LocalDate = LocalDate.now(),
     onClickOfNavigationIcon: () -> Unit,
 ) {
+    Timber.i("date: $date")
     LargeTopAppBar(
         title = {
             Column(modifier = Modifier.padding(horizontal = 6.dp)) {

@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.hcapps.xpenzave.domain.model.expense.ExpenseDomainData
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLog
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLogs
 import com.hcapps.xpenzave.presentation.core.component.MonthHeader
@@ -21,7 +22,7 @@ import java.time.LocalDate
 @Composable
 fun ExpenseLogSection(
     navigateToFiler: () -> Unit,
-    navigateToDetails: () -> Unit,
+    navigateToDetails: (details: ExpenseDomainData) -> Unit,
     expenseLogLazyState: LazyListState,
     date: LocalDate,
     expenses: ExpenseLogs

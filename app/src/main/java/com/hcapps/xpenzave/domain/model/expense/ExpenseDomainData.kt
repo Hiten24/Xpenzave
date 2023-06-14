@@ -1,23 +1,40 @@
 package com.hcapps.xpenzave.domain.model.expense
 
+import android.os.Parcelable
 import com.hcapps.xpenzave.domain.model.category.Category
+import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.random.Random
 
+@Parcelize
 data class ExpenseDomainData(
     val id: String,
     val category: String,
     val date: LocalDate,
-    val amount: Double
-) {
+    val amount: Double,
+    val photoId: String?,
+    val moreDetail: String
+): Parcelable {
+
+    fun toExpenseDetailsArgs() = ExpenseDetailNavArgs(
+        amount = amount.toString(),
+        categoryId = category,
+        photoId = photoId,
+        moreDetails = moreDetail,
+        date = date.toString()
+    )
+
     companion object {
 
         fun dummy(date: LocalDate = LocalDate.now()) = ExpenseDomainData(
             id = UUID.randomUUID().toString(),
             category = Category.dummies().random().id,
             date = date,
-            amount = Random.nextDouble(100.0, 5000.0)
+            amount = Random.nextDouble(100.0, 5000.0),
+            photoId = null,
+            moreDetail = "Lets test this",
         )
     }
 }

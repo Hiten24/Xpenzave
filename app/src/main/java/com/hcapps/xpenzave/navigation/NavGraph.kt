@@ -14,6 +14,7 @@ import com.hcapps.xpenzave.presentation.calendar.CalendarScreen
 import com.hcapps.xpenzave.presentation.compare.CompareSelector
 import com.hcapps.xpenzave.presentation.compare.result.CompareResult
 import com.hcapps.xpenzave.presentation.edit_budget.EditBudgetScreen
+import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
 import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailScreen
 import com.hcapps.xpenzave.presentation.filter.FilterScreen
 import com.hcapps.xpenzave.presentation.home.HomeScreen
@@ -22,6 +23,8 @@ import com.hcapps.xpenzave.presentation.stats.StatsScreen
 import com.hcapps.xpenzave.util.Screen
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
+import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
+import io.appwrite.extensions.toJson
 
 @Composable
 fun XpenzaveNavGraph(
@@ -55,7 +58,7 @@ fun XpenzaveNavGraph(
             paddingValues,
             navigateToCompare = { navController.navigate(Screen.CompareSelector.route) },
             navigateToFilter = { navController.navigate(Screen.Filter.route) },
-            navigateToDetails = {navController.navigate(Screen.ExpenseDetail.route)}
+            navigateToDetails = { navController.navigate(Screen.ExpenseDetail.passArgs(it.toJson())) }
         )
 
         editBudget(
@@ -116,7 +119,7 @@ fun NavGraphBuilder.statsRoute(
     paddingValues: PaddingValues,
     navigateToCompare: () -> Unit,
     navigateToFilter: () -> Unit,
-    navigateToDetails: () -> Unit
+    navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit
 ) {
     composable(route = Screen.Stats.route) {
         StatsScreen(
@@ -186,7 +189,15 @@ fun NavGraphBuilder.calendar(onNavigateUp: () -> Unit) {
 fun NavGraphBuilder.expenseDetail(
     onNavigateUp: () -> Unit
 ) {
-    composable(route = Screen.ExpenseDetail.route) {
+    composable(
+        route = Screen.ExpenseDetail.route,
+        arguments = listOf(
+            navArgument(name = EXPENSE_DETAIL_ARGUMENT_KEY) {
+                type = NavType.StringType
+                nullable = false
+            }
+        )
+    ) {
         ExpenseDetailScreen(navigateUp = onNavigateUp)
     }
 }

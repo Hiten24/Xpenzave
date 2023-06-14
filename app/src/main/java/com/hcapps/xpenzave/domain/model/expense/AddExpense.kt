@@ -19,11 +19,33 @@ data class ExpenseData(
     val year: Int = 2023
 )
 
+fun Response<ExpenseData>.toExpenseDomainData() = ExpenseDomainData(
+    id = id,
+    category = data.categoryId,
+    date = LocalDate.of(data.year, Month.of(data.month), data.day),
+    amount = data.amount,
+    photoId = data.photo,
+    moreDetail = data.details
+)
+
+private val fakeMoreDetails = listOf(
+"Coffee from a cafe",
+"Groceries from the supermarket",
+"Dinner at a restaurant",
+"Taxi ride",
+"Movie tickets for a group",
+"Online shopping order",
+"Gym membership fee",
+"Utility bill payment",
+"Clothing purchase",
+"Concert ticket"
+)
+
 fun fakeExpenseData(date: Int, month: Int = 6, year: Int = 2023) = ExpenseData(
     amount = Random.nextInt(100, 2000).toDouble(),
     photo = null,
-    details = "",
-    date = "$date-0$month-$year 11:11:00.000",
+    details = fakeMoreDetails.getOrNull(Random.nextInt(0, fakeMoreDetails.size - 1)) ?: "",
+    date = "$date-06-$year 11:11:00.000",
     categoryId = Category.dummies().random().id,
     addThisExpenseToEachMonth = false,
     day = date,
@@ -36,10 +58,3 @@ fun fakeExpenses(size: Int = 10): List<ExpenseData> {
         fakeExpenseData(Random.nextInt(1, 30))
     }.sortedBy { it.day }
 }
-
-fun Response<ExpenseData>.toExpenseDomainData() = ExpenseDomainData(
-    id = id,
-    category = data.categoryId,
-    date = LocalDate.of(data.year, Month.of(data.month), data.day),
-    amount = data.amount
-)

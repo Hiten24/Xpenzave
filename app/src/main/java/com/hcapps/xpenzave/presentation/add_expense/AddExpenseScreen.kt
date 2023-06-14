@@ -5,8 +5,10 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +49,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,6 +66,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.hcapps.xpenzave.R
@@ -72,6 +78,7 @@ import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle.Companion.defaultCategoryStyle
+import com.hcapps.xpenzave.presentation.core.component.ZoomableImagePreview
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
 import com.hcapps.xpenzave.presentation.core.component.calendar.SelectDateTimeDialog
 import com.hcapps.xpenzave.presentation.home.component.LargeButton
@@ -94,6 +101,7 @@ fun AddExpense(
     val state by viewModel.state
     val context = LocalContext.current
     val dateState = rememberSheetState()
+    var imagePreviewOpened by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEventFlow.collectLatest { event ->
@@ -129,7 +137,8 @@ fun AddExpense(
                 onAddBillEachMonthChange = { viewModel.onEvent(AddBillEachMonthChange) },
                 onPhotoChange = { uri -> viewModel.onEvent(PhotoChange(uri, context.getActualPathOfImage(uri))) },
                 onPhotoClear = { viewModel.onEvent(ClearPhoto) },
-                onDetailChange = { viewModel.onEvent(DetailsChange(it)) }
+                onDetailChange = { viewModel.onEvent(DetailsChange(it)) },
+                previewPhoto = { imagePreviewOpened = true }
             )
 
             XpenzaveButton(
@@ -150,6 +159,17 @@ fun AddExpense(
         onSelectDateTime = { viewModel.onEvent(DateTimeChange(it)) }
     )
 
+    AnimatedVisibility(visible = imagePreviewOpened) {
+        Dialog(onDismissRequest = { imagePreviewOpened = false }) {
+            state.photo?.let {
+                ZoomableImagePreview(
+                    image = it,
+                    onCloseClicked = { imagePreviewOpened = false },
+                )
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -162,7 +182,8 @@ fun AddExpenseContent(
     onAddBillEachMonthChange: (Boolean) -> Unit,
     onPhotoChange: (Uri?) -> Unit,
     onPhotoClear: () -> Unit,
-    onDetailChange: (String) -> Unit
+    onDetailChange: (String) -> Unit,
+    previewPhoto: () -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -218,18 +239,14 @@ fun AddExpenseContent(
                     state.photo,
                     progress = state.uploadPhotoProgress,
                     onImageSelect = onPhotoChange,
-                    onClearPhoto = onPhotoClear
+                    onClearPhoto = onPhotoClear,
+                    previewPhoto = previewPhoto
                 )
                 MoreDetailsSection(
                     modifier = Modifier.padding(horizontal = 6.dp),
                     value = state.details,
                     onValueChange = onDetailChange
                 )
-                /*XpenzaveButton(
-                    modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
-                    title = stringResource(R.string.add),
-                    onClickOfButton = {}
-                )*/
             }
         }
 
@@ -445,7 +462,8 @@ fun AddPhotoSection(
     image: Uri? = null,
     onImageSelect: (image: Uri?) -> Unit,
     onClearPhoto: () -> Unit,
-    progress: Boolean = false
+    progress: Boolean = false,
+    previewPhoto: () -> Unit
 ) {
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
@@ -472,7 +490,7 @@ fun AddPhotoSection(
                 )
             } else {
                 Card(
-                    modifier = Modifier.size(100.dp),
+                    modifier = Modifier.size(100.dp).clickable(onClick = previewPhoto),
                     elevation = CardDefaults.elevatedCardElevation(2.dp)
                 ) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
