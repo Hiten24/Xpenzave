@@ -20,7 +20,7 @@ class FakeDatabaseRepository @Inject constructor() : DatabaseRepository {
 
     override suspend fun getExpensesByMonth(date: LocalDate): ExpensesResponse {
         return try {
-            delay(3000L)
+            delay(1000L)
             val response = fakeExpenses(10).map { Response(id = UUID.randomUUID().toString(), it) }.map { it.toExpenseDomainData() }
             RequestState.Success(response)
         } catch (e: Exception) {
@@ -58,7 +58,7 @@ class FakeDatabaseRepository @Inject constructor() : DatabaseRepository {
 
     override suspend fun getBudgetByDate(date: LocalDate): RequestState<Response<BudgetData>> {
         return try {
-            delay(3000L)
+            delay(1000L)
             val toModel = Response(id = UUID.randomUUID().toString(), fakeBudgetData(date.monthValue, date.year))
             RequestState.Success(toModel)
         } catch (e: Exception) {
