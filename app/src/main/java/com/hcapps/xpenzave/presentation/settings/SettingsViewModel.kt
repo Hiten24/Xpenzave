@@ -11,6 +11,7 @@ import com.hcapps.xpenzave.util.ResponseState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +24,7 @@ class SettingsViewModel @Inject constructor(
     var state = mutableStateOf(SettingsState())
         private set
 
-    private val user = dataStore.getUser()
+    private val user = dataStore.getUserFlow()
 
     private val _uiEventFlow = MutableSharedFlow<UIEvent>()
     val uiEventFlow = _uiEventFlow.asSharedFlow()
@@ -31,8 +32,8 @@ class SettingsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             state.value = state.value.copy(
-                email = user.email ?: "",
-                currencyCode = user.currencyCode ?: ""
+                email = user.first().email ?: "",
+//                currencyCode = user.currencyCode ?: ""
             )
         }
     }
@@ -49,7 +50,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun setCurrencyPreference(currencyCode: String) = viewModelScope.launch {
-        dataStore.saveUser(user.copy(currencyCode = currencyCode))
+        dataStore.saveUser(user.first().copy(currencyCode = currencyCode))
     }
 
     private fun onError(error: Throwable) = viewModelScope.launch {

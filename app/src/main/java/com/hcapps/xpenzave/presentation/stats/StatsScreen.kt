@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.Scale
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -172,12 +171,12 @@ fun ExpenseLogTopBar(
             Text(text = "Stats")
         },
         actions = {
-            IconButton(onClick = onClickOfCompare) {
+            /*IconButton(onClick = onClickOfCompare) {
                 Icon(
                     imageVector = Icons.Outlined.Scale,
                     contentDescription = "Calender of Month",
                 )
-            }
+            }*/
             IconButton(onClick = onClickOfCalender) {
                 Icon(
                     imageVector = Icons.Outlined.CalendarMonth,

@@ -16,9 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Shapes
@@ -249,7 +247,7 @@ fun RegisterBottomComponent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(modifier = Modifier.fillMaxWidth()) {
+        /*Row(modifier = Modifier.fillMaxWidth()) {
 
             FilledTonalButton(
                 onClick = { onClickOfFaceBook() },
@@ -284,7 +282,7 @@ fun RegisterBottomComponent(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-        }
+        }*/
 
     }
 }

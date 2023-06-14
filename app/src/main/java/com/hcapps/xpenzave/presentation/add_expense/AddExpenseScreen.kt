@@ -223,7 +223,7 @@ fun AddExpenseContent(
                     selected = state.category,
                     onSelect = onSelectCategory
                 )
-                AddBillEachMonth(
+                /*AddBillEachMonth(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 6.dp)
@@ -233,7 +233,7 @@ fun AddExpenseContent(
                         ),
                     checked = state.eachMonth,
                     onCheckedChange = onAddBillEachMonthChange
-                )
+                )*/
                 AddPhotoSection(
                     modifier = Modifier.padding(horizontal = 6.dp),
                     state.photo,

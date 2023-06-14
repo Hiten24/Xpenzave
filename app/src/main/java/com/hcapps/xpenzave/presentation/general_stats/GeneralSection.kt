@@ -48,7 +48,7 @@ fun GeneralSection(
             categories = categoriesBarGraphData
         )
 
-        DayExpenseGraph(data)
+//        DayExpenseGraph(data)
 
     }
 

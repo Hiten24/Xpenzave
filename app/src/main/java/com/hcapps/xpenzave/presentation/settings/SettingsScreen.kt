@@ -1,10 +1,12 @@
 package com.hcapps.xpenzave.presentation.settings
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -27,14 +29,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,11 +44,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.gson.reflect.TypeToken
 import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.presentation.settings.model.Currency
+import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.util.jsonToValue
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SettingsScreen(
+    paddingValues: PaddingValues,
     viewModel: SettingsViewModel = hiltViewModel(),
     navigateToAuth: () -> Unit
 ) {
@@ -65,7 +68,7 @@ fun SettingsScreen(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
         SettingsHeader(
             state.email,
             onCLickOfLogOut = { viewModel.logOut {
@@ -78,7 +81,11 @@ fun SettingsScreen(
                 viewModel.setCurrencyPreference(code)
                 state = state.copy(currencyCode = code)
             },
-            selectedCurrency = state.currencyCode
+            selectedCurrency = state.currencyCode,
+            onCLickOfLogOut = { viewModel.logOut {
+                Toast.makeText(context, "logging out", Toast.LENGTH_SHORT).show()
+                navigateToAuth()
+            } }
         )
     }
 }
@@ -131,27 +138,29 @@ fun SettingsTopBar(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = "Settings", style = MaterialTheme.typography.headlineMedium, color = Color.White)
-        OutlinedButton(
+        /*OutlinedButton(
             onClick = { onCLickOfLogOut() },
             shape = Shapes().small
         ) {
             Text(text = "Log Out", color = Color.White)
-        }
+        }*/
     }
 }
 
 @Composable
 fun SettingsContent(
     onSelectOfCurrency: (code: String) -> Unit,
-    selectedCurrency: String
+    selectedCurrency: String,
+    onCLickOfLogOut: () -> Unit
 ) {
 
-    var openedCurrencyDialog by remember { mutableStateOf(false) }
+//    var openedCurrencyDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 38.dp)
+            .fillMaxSize()
+            .padding(top = 38.dp, bottom = 22.dp),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         SettingItem(title = "Change Password", onClick = {}) {
             Icon(
@@ -160,7 +169,19 @@ fun SettingsContent(
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        SettingItem(title = "Use Face ID", onClick = {}) {
+
+        OutlinedButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(ButtonHeight)
+                .padding(horizontal = 24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
+            onClick = onCLickOfLogOut,
+            shape = Shapes().small
+        ) {
+            Text(text = "Log Out", color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+        }
+        /*SettingItem(title = "Use Face ID", onClick = {}) {
 
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -170,17 +191,17 @@ fun SettingsContent(
                 fontWeight = MaterialTheme.typography.labelLarge.fontWeight,
                 color = MaterialTheme.colorScheme.primary
             )
-        }
+        }*/
     }
 
-    CurrencySelectionDialog(
+    /*CurrencySelectionDialog(
         openedDialog = openedCurrencyDialog,
         onDismissRequest = { openedCurrencyDialog = false },
         onSelectOfCurrency = { code ->
             onSelectOfCurrency(code)
             openedCurrencyDialog = false
         }
-    )
+    )*/
 
 }
 

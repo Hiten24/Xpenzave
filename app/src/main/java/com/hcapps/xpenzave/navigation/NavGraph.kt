@@ -53,7 +53,7 @@ fun XpenzaveNavGraph(
         settingsRoute(navigateToAuth = {
             navController.popBackStack()
             navController.navigate(Screen.Authentication.route)
-        })
+        },paddingValues)
 
         statsRoute(
             paddingValues,
@@ -116,9 +116,9 @@ fun NavGraphBuilder.homeRoute(
     }
 }
 
-fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit) {
+fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit, paddingValues: PaddingValues) {
     composable(route = Screen.Settings.route) {
-        SettingsScreen(navigateToAuth = navigateToAuth)
+        SettingsScreen(navigateToAuth = navigateToAuth, paddingValues = paddingValues)
     }
 }
 
