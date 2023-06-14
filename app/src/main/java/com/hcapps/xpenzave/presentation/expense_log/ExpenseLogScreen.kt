@@ -25,6 +25,7 @@ fun ExpenseLogSection(
     navigateToDetails: (details: ExpenseDomainData) -> Unit,
     expenseLogLazyState: LazyListState,
     date: LocalDate,
+    filterBadge: Boolean = false,
     expenses: ExpenseLogs
 ) {
 
@@ -38,7 +39,8 @@ fun ExpenseLogSection(
             modifier = Modifier.fillMaxWidth().padding(start = 8.dp, top = 8.dp),
             date = date,
             icon = Icons.Outlined.FilterList,
-            onClickOfIcon = navigateToFiler
+            onClickOfIcon = navigateToFiler,
+            badge = filterBadge
         )
 
         ExpenseLog(

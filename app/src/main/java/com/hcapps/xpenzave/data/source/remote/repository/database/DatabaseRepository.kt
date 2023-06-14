@@ -17,7 +17,7 @@ interface DatabaseRepository {
 
     suspend fun getCategories(): CategoryResponse
 
-    suspend fun getExpensesByMonth(date: LocalDate): ExpensesResponse
+    suspend fun getExpensesByMonth(date: LocalDate, filter: List<String>): ExpensesResponse
 
     suspend fun addExpense(expense: ExpenseData): ExpenseResponse
 

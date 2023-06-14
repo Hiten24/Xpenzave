@@ -9,9 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.domain.model.expense.ExpenseDomainData
 import com.hcapps.xpenzave.domain.usecase.GetExpensesUseCase
-import com.hcapps.xpenzave.util.UiConstants.EXPENSE_ID
+import com.hcapps.xpenzave.util.UiConstants.EXPENSE_FILTER_ARGUMENT_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
+import io.appwrite.extensions.fromJson
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
@@ -27,21 +27,16 @@ class StatsViewModel @Inject constructor(
     val state: State<StatsState> = _state
 
     var expenses = mutableStateListOf<ExpenseDomainData>()
+    var appliedFilter: List<String> = emptyList()
 
     init {
-        observeDeleteExpense()
+        getFilterArgs()
     }
 
-    private fun observeDeleteExpense() = viewModelScope.launch {
-        savedStateHandle.getStateFlow<String?>(EXPENSE_ID, null).collectLatest { expenseId ->
-            expenses.removeIf { it.id == expenseId }
-            Timber.i("removed locally")
-            Timber.e("data: ${expenses.toList()}")
-        }
-    }
-
-    init {
-        getExpenses()
+    private fun getFilterArgs() {
+        val filters = savedStateHandle.get<String>(key = EXPENSE_FILTER_ARGUMENT_KEY)?.fromJson<List<String>>()
+        appliedFilter = filters ?: emptyList()
+        getExpenses(appliedFilter)
     }
 
     fun changeScreen(screen: Int) {
@@ -50,16 +45,14 @@ class StatsViewModel @Inject constructor(
 
     fun dateChange(date: LocalDate) {
         _state.value = state.value.copy(date = date)
-        getExpenses()
+        getExpenses(emptyList())
+        appliedFilter = emptyList()
     }
 
-    private fun getExpenses() = viewModelScope.launch {
+    private fun getExpenses(filter: List<String>) = viewModelScope.launch {
         loading(true)
         try {
-            expenses = getExpensesUseCase.execute(state.value.date).toMutableStateList()
-            /*_state.value = state.value.copy(
-                expenses = getExpensesUseCase.execute(state.value.date)
-            )*/
+            expenses = getExpensesUseCase.execute(state.value.date, filter).toMutableStateList()
             loading(false)
         } catch (e: Exception) {
             Timber.e(e)

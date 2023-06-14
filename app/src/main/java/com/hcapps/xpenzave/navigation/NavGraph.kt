@@ -21,6 +21,7 @@ import com.hcapps.xpenzave.presentation.home.HomeScreen
 import com.hcapps.xpenzave.presentation.settings.SettingsScreen
 import com.hcapps.xpenzave.presentation.stats.StatsScreen
 import com.hcapps.xpenzave.util.Screen
+import com.hcapps.xpenzave.util.UiConstants
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
@@ -45,7 +46,7 @@ fun XpenzaveNavGraph(
                 navController.navigate(Screen.EditBudget.passArgs(monthYear, budgetId))
             },
             navigateToExpenseLog = {
-                navController.navigate(Screen.Stats.route)
+                navController.navigate(Screen.Stats.withArgs(""))
             }
         )
 
@@ -57,7 +58,9 @@ fun XpenzaveNavGraph(
         statsRoute(
             paddingValues,
             navigateToCompare = { navController.navigate(Screen.CompareSelector.route) },
-            navigateToFilter = { navController.navigate(Screen.Filter.route) },
+            navigateToFilter = { appliedFilters ->
+                navController.navigate(Screen.Filter.withArgs(appliedFilters.toJson()))
+            },
             navigateToDetails = { navController.navigate(Screen.ExpenseDetail.passArgs(it.toJson())) }
         )
 
@@ -82,9 +85,13 @@ fun XpenzaveNavGraph(
 
         expenseDetail(onNavigateUp = { navController.navigateUp() })
 
-        filter(onNavigateUp = {
-            navController.navigateUp()
-        })
+        filter(
+            onNavigateUp = { navController.navigateUp() },
+            navigateToStateScreen = { filters ->
+                navController.popBackStack()
+                navController.navigate(Screen.Stats.withArgs(filters.toJson()))
+            }
+        )
 
     }
 }
@@ -118,10 +125,18 @@ fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit) {
 fun NavGraphBuilder.statsRoute(
     paddingValues: PaddingValues,
     navigateToCompare: () -> Unit,
-    navigateToFilter: () -> Unit,
+    navigateToFilter: (appliedFilters: Array<String>) -> Unit,
     navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit
 ) {
-    composable(route = Screen.Stats.route) {
+    composable(
+        route = Screen.Stats.route,
+        arguments = listOf(
+            navArgument(UiConstants.EXPENSE_FILTER_ARGUMENT_KEY) {
+                type = NavType.StringType
+                nullable = false
+            }
+        )
+    ) {
         StatsScreen(
             paddingValues = paddingValues,
             navigateToCompare = navigateToCompare,
@@ -202,8 +217,22 @@ fun NavGraphBuilder.expenseDetail(
     }
 }
 
-fun NavGraphBuilder.filter(onNavigateUp: () -> Unit) {
-    composable(route = Screen.Filter.route) {
-        FilterScreen(navigateUp = onNavigateUp)
+fun NavGraphBuilder.filter(
+    onNavigateUp: () -> Unit,
+    navigateToStateScreen: (filters: Array<String>) -> Unit
+) {
+    composable(
+        route = Screen.Filter.route,
+        arguments = listOf(
+            navArgument(UiConstants.EXPENSE_FILTER_ARGUMENT_KEY) {
+                type = NavType.StringType
+                nullable = false
+            }
+        )
+    ) {
+        FilterScreen(
+            navigateUp = onNavigateUp,
+            applyFilter = navigateToStateScreen
+        )
     }
 }

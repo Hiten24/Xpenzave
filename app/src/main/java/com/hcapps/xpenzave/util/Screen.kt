@@ -3,6 +3,7 @@ package com.hcapps.xpenzave.util
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
+import com.hcapps.xpenzave.util.UiConstants.EXPENSE_FILTER_ARGUMENT_KEY
 
 sealed class Screen(val route: String) {
 
@@ -12,7 +13,9 @@ sealed class Screen(val route: String) {
 
     object Settings: Screen(route = "settings_screen")
 
-    object Stats: Screen(route = "stats_screen")
+    object Stats: Screen(route = "stats_screen?$EXPENSE_FILTER_ARGUMENT_KEY={$EXPENSE_FILTER_ARGUMENT_KEY}") {
+        fun withArgs(filters: String) = "stats_screen?$EXPENSE_FILTER_ARGUMENT_KEY=$filters"
+    }
 
     object EditBudget: Screen(route = "edit_budget?$EDIT_BUDGET_ARGUMENT_KEY={$EDIT_BUDGET_ARGUMENT_KEY}&" +
             "$EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY={$EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY}") {
@@ -33,6 +36,8 @@ sealed class Screen(val route: String) {
         fun passArgs(detail: String) = "expense_detail?$EXPENSE_DETAIL_ARGUMENT_KEY=$detail"
     }
 
-    object Filter: Screen(route = "filter")
+    object Filter: Screen(route = "filter?$EXPENSE_FILTER_ARGUMENT_KEY={$EXPENSE_FILTER_ARGUMENT_KEY}") {
+        fun withArgs(filters: String) = "filter?$EXPENSE_FILTER_ARGUMENT_KEY=$filters"
+    }
 
 }

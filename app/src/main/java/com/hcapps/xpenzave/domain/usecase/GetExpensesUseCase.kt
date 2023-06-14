@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.domain.usecase
 
+import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
 import com.hcapps.xpenzave.data.source.remote.repository.database.FakeDatabaseRepository
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.expense.ExpenseDomainData
@@ -11,21 +12,17 @@ class GetExpensesUseCase @Inject constructor(
 //    private val databaseRepository: DatabaseRepository
     private val databaseRepository: FakeDatabaseRepository
 ) {
-    suspend fun execute(date: LocalDate): /*Map<LocalDate, */List<ExpenseDomainData>/*>*/ {
-        return when (val response = databaseRepository.getExpensesByMonth(date)) {
+    suspend fun execute(date: LocalDate, filter: List<String>): List<ExpenseDomainData> {
+        return when (val response = databaseRepository.getExpensesByMonth(date, filter)) {
             is RequestState.Success -> {
-                val expenses = response.data/*.groupBy { it.date }*/
-                Timber.i("expenses: $expenses")
+                val expenses = response.data
                 expenses
             }
             is RequestState.Error -> {
                 Timber.e(response.error)
                 throw(response.error)
             }
-            else -> {
-//                emptyMap()
-                emptyList()
-            }
+            else -> { emptyList() }
         }
     }
 }

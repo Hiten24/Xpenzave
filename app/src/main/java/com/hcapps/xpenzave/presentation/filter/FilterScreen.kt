@@ -17,21 +17,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
@@ -40,25 +34,11 @@ import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
 @Composable
 fun FilterScreen(
     navigateUp: () -> Unit,
+    applyFilter: (filters: Array<String>) -> Unit,
     viewModel: FilterViewModel = hiltViewModel()
 ) {
 
-    var amount by viewModel.amount
-    val categories = viewModel.categories
-    val selectedCategory = viewModel.selectedCategory
-
-    val onSelectCategory = { category: Category ->
-        val index = categories.indexOfFirst { it.name == category.name }
-        categories[index] = category
-        if (category.isSelected) {
-            if (category in selectedCategory) {
-                selectedCategory.add(category)
-            }
-        } else {
-            selectedCategory.remove(category)
-        }
-        Unit
-    }
+//    var amount by viewModel.amount
 
     Scaffold(
         topBar = {
@@ -85,14 +65,31 @@ fun FilterScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            FilterCategory(categories = categories, onSelectCategory = onSelectCategory)
-            AmountSlider(
+            FilterCategory(
+                categories = viewModel.categories,
+                selectedCategories = viewModel.selectedCategory,
+                onSelectCategory = { viewModel.onSelectChange(it) }
+            )
+
+            // beta release
+            /*AmountSlider(
                 amount.toFloat(),
                 onValueChange = { amount = it.toInt() },
                 100f..2000f
-            )
+            )*/
             Spacer(modifier = Modifier.weight(1f))
-            BottomButton()
+
+            BottomButton(
+                reset = { viewModel.onRest() },
+                apply = {
+                    if (viewModel.isFilterChanged()) {
+                        applyFilter(viewModel.getSelectedCategoriesId())
+                    } else {
+                        navigateUp()
+                    }
+                }
+            )
+
         }
     }
 }
@@ -102,7 +99,8 @@ private fun FilterCategory(
     modifier: Modifier = Modifier,
     categories: SnapshotStateList<Category>,
     categoryStyle: CategoryStyle = CategoryStyle.defaultCategoryStyle(),
-    onSelectCategory: (category: Category) -> Unit
+    selectedCategories: SnapshotStateList<String>,
+    onSelectCategory: (String) -> Unit
 ) {
     val chunkedCategories = categories.chunked(3)
     Column(modifier = modifier) {
@@ -113,10 +111,11 @@ private fun FilterCategory(
                         modifier = Modifier
                             .weight(1f)
                             .padding(6.dp),
-                        category = category,
                         style = categoryStyle,
+                        category = category,
+                        isSelected = selectedCategories.contains(category.id),
                     ) {
-//                        onSelectCategory(it)
+                        onSelectCategory(category.id)
                     }
                 }
             }
@@ -125,6 +124,35 @@ private fun FilterCategory(
 }
 
 @Composable
+private fun BottomButton(
+    modifier: Modifier = Modifier,
+    reset: () -> Unit,
+    apply: () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+    ) {
+        FilledTonalIconButton(
+            modifier = Modifier.weight(1f),
+            shape = MaterialTheme.shapes.small,
+            onClick = reset
+        ) {
+            Text(text = "Reset")
+        }
+        Spacer(modifier = Modifier.width(12.dp))
+        Button(
+            modifier = Modifier.weight(1f),
+            shape = MaterialTheme.shapes.small,
+            onClick = apply
+        ) {
+            Text(text = "Apply")
+        }
+    }
+}
+
+/*@Composable
 private fun AmountSlider(
     value: Float,
     onValueChange: (Float) -> Unit,
@@ -154,35 +182,11 @@ private fun AmountSlider(
             color = MaterialTheme.colorScheme.primary
         )
     }
-}
+}*/
 
-@Composable
-private fun BottomButton(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-    ) {
-        FilledTonalIconButton(
-            modifier = Modifier.weight(1f),
-            shape = MaterialTheme.shapes.small,
-            onClick = {}
-        ) {
-            Text(text = "Rest")
-        }
-        Spacer(modifier = Modifier.width(12.dp))
-        Button(
-            modifier = Modifier.weight(1f),
-            shape = MaterialTheme.shapes.small,
-            onClick = {  }
-        ) {
-            Text(text = "Apply")
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewFilterScreen() {
-    FilterScreen(navigateUp = {})
+    FilterScreen(navigateUp = {}, {})
 }

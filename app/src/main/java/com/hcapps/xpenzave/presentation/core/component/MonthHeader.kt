@@ -1,15 +1,25 @@
 package com.hcapps.xpenzave.presentation.core.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Badge
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -19,11 +29,13 @@ import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.presentation.defaultDisplayName
 import java.time.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonthHeader(
     modifier: Modifier = Modifier,
     date: LocalDate,
     icon: ImageVector,
+    badge: Boolean = false,
     style: MonthHeaderStyle = MonthHeaderStyle.defaultMonthHeaderStyle(),
     onClickOfIcon: () -> Unit
 ) {
@@ -44,14 +56,27 @@ fun MonthHeader(
                 color = style.yearTextColor
             )
         }
-        IconButton(onClick = onClickOfIcon) {
-            Icon(
-                imageVector = icon,
-                contentDescription = "Calendar Month",
-                tint = style.iconColor
-            )
+            Box {
+                IconButton(
+                    onClick = onClickOfIcon,
+                    modifier = Modifier.align(Center),
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = "Calendar Month",
+                        tint = style.iconColor
+                    )
+                }
+                if (badge) {
+                    Badge(
+                        modifier = Modifier
+                            .align(TopStart)
+                            .padding(top = 8.dp, start = 4.dp)
+                            .size(8.dp)
+                    )
+                }
+            }
         }
-    }
 }
 
 data class MonthHeaderStyle(

@@ -50,23 +50,32 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getExpensesByMonth(date: LocalDate): ExpensesResponse {
+    override suspend fun getExpensesByMonth(
+        date: LocalDate,
+        filter: List<String>
+    ): ExpensesResponse {
         return try {
             val response = database.listDocuments(
                 databaseId = databaseId,
                 collectionId = expenseCollectionId,
                 nestedType = ExpenseData::class.java,
-                queries = listOf(
-                    Query.orderAsc("day"),
-                    Query.equal("month", date.monthValue),
-                    Query.equal("year", date.year)
-                )
+                queries = getExpensesByMonthQuery(date, filter)
             )
             val expenses = response.documents.map { it.toModel(it.data) }.map { it.toExpenseDomainData() }
             RequestState.Success(expenses)
         } catch (e: Exception) {
             RequestState.Error(e)
         }
+    }
+
+    private fun getExpensesByMonthQuery(date: LocalDate, filter: List<String>): MutableList<String> {
+        val queries = mutableListOf(
+            Query.orderAsc("day"),
+            Query.equal("month", date.monthValue),
+            Query.equal("year", date.year)
+        )
+        if (filter.isNotEmpty()) { queries.add(Query.equal("categoryId", filter)) }
+        return queries
     }
 
     override suspend fun addExpense(expense: ExpenseData): ExpenseResponse {

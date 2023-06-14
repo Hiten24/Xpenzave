@@ -51,7 +51,7 @@ const val TAB_GENERAL = 1
 fun StatsScreen(
     paddingValues: PaddingValues,
     navigateToCompare: () -> Unit,
-    navigateToFilter: () -> Unit,
+    navigateToFilter: (appliedFilters: Array<String>) -> Unit,
     navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit,
     viewModel: StatsViewModel = hiltViewModel()
 ) {
@@ -88,7 +88,7 @@ fun StatsScreen(
                         .height(2.dp)
                 )
             }
-            viewModel.expenses.isEmpty() -> {
+            viewModel.expenses.isEmpty() && viewModel.appliedFilter.isEmpty() -> {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -120,11 +120,12 @@ fun StatsScreen(
                         TAB_GENERAL -> GeneralSection()
                         TAB_EXPENSE_LOG -> {
                             ExpenseLogSection(
-                                navigateToFiler = navigateToFilter,
+                                navigateToFiler = { navigateToFilter(viewModel.appliedFilter.toTypedArray()) },
                                 navigateToDetails = { navigateToDetails(it.toExpenseDetailsArgs()) },
                                 date = state.date,
                                 expenses = viewModel.expenses.groupBy { it.date },
-                                expenseLogLazyState = lazyState
+                                expenseLogLazyState = lazyState,
+                                filterBadge = viewModel.appliedFilter.isNotEmpty()
                             )
                         }
                     }

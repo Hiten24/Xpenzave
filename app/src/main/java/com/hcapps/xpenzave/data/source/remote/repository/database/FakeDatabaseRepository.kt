@@ -18,11 +18,12 @@ class FakeDatabaseRepository @Inject constructor() : DatabaseRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getExpensesByMonth(date: LocalDate): ExpensesResponse {
+    override suspend fun getExpensesByMonth(date: LocalDate, filter: List<String>): ExpensesResponse {
         return try {
             delay(1000L)
             val response = fakeExpenses(10).map { Response(id = UUID.randomUUID().toString(), it) }.map { it.toExpenseDomainData() }
-            RequestState.Success(response)
+            val withFilter = if (filter.isNotEmpty()) response.filter { filter.contains(it.category) } else response
+            RequestState.Success(withFilter)
         } catch (e: Exception) {
             RequestState.Error(e)
         }

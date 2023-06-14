@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         getBudgetOfTheMonth()
-        getExpensesOfMonth()
+//        getExpensesOfMonth()
     }
 
     fun onDateChange(date: LocalDate) {
@@ -49,7 +49,7 @@ class HomeViewModel @Inject constructor(
     private fun getExpensesOfMonth() = viewModelScope.launch {
         expensesLoading(true)
         try {
-            val expenses = getExpensesUseCase.execute(state.value.date)
+            val expenses = getExpensesUseCase.execute(state.value.date, emptyList())
             // calculating total expenses by adding all expenses amount
             val totalExpense = expenses.sumOf { it.amount }
             // taking last day log of expenses for recent expenses
