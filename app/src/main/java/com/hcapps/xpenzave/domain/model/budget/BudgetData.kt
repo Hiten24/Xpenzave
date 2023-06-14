@@ -19,5 +19,11 @@ fun Response<BudgetData>.toBudgetDomainData() = BudgetDomainData(
 fun fakeBudgetData(month: Int, year: Int) = BudgetData(
     month = month,
     year = year,
-    amount = Random.nextInt(1, 5) * 1000.0
+    amount = Random.nextInt(1, 10) * 1000.0
 )
+
+fun fakeBudgetListData(): List<BudgetData> {
+    return IntRange(1, 12).map {
+        fakeBudgetData(it, 2023)
+    }
+}

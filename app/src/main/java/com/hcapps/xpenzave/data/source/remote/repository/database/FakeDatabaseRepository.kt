@@ -8,6 +8,7 @@ import com.hcapps.xpenzave.domain.model.expense.ExpenseData
 import com.hcapps.xpenzave.domain.model.expense.fakeExpenses
 import com.hcapps.xpenzave.domain.model.expense.toExpenseDomainData
 import kotlinx.coroutines.delay
+import timber.log.Timber
 import java.time.LocalDate
 import java.util.UUID
 import javax.inject.Inject
@@ -36,8 +37,16 @@ class FakeDatabaseRepository @Inject constructor() : DatabaseRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun createBudget(budget: BudgetData): CreateBudgetResponse {
-        TODO("Not yet implemented")
+    override suspend fun createBudget(id: String?, budget: BudgetData): CreateBudgetResponse {
+        return try {
+            delay(3000L)
+            val response = BudgetData(budget.month, budget.year, budget.amount)
+            val msg = if (id == null) "creating budget" else "updating budget"
+            Timber.i(msg)
+            RequestState.Success(Response(id ?: UUID.randomUUID().toString(), response))
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
     }
 
     override suspend fun getBudgetByDate(date: LocalDate): RequestState<Response<BudgetData>> {

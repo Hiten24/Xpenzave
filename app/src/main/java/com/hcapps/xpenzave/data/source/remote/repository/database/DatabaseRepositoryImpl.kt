@@ -100,12 +100,12 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createBudget(budget: BudgetData): CreateBudgetResponse {
+    override suspend fun createBudget(id: String?, budget: BudgetData): CreateBudgetResponse {
         return try {
             val response = database.createDocument(
                 databaseId = databaseId,
                 collectionId = budgetCollectionId,
-                documentId = generateUniqueId(),
+                documentId = id ?: generateUniqueId(),
                 data = budget,
                 nestedType = BudgetData::class.java,
                 permissions = permissions(user.first())

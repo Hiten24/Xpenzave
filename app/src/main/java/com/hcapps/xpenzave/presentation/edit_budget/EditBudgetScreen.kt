@@ -91,7 +91,7 @@ fun EditBudgetScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    date = LocalDate.now(),
+                    date = state.date ?: LocalDate.now(),
                     icon = Icons.Outlined.Close,
                     style = MonthHeaderStyle.defaultMonthHeaderStyle(iconColor = MaterialTheme.colorScheme.onSurface),
                     onClickOfIcon = navigateUp
@@ -105,7 +105,7 @@ fun EditBudgetScreen(
                         viewModel.onAmountChange(it)
                     },
                     onKeyboardAction = {
-                        viewModel.dummyUpdateBudget()
+                        viewModel.updateBudget()
                     }
                 )
             }
@@ -116,7 +116,7 @@ fun EditBudgetScreen(
                 state = state.buttonState
             ) {
 //                viewModel.updateBudget()
-                viewModel.dummyUpdateBudget()
+                viewModel.updateBudget()
             }
 
         }

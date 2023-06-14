@@ -5,11 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
+import com.hcapps.xpenzave.data.source.remote.repository.database.FakeDatabaseRepository
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.budget.BudgetData
 import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
+import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditBudgetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val databaseRepository: DatabaseRepository
+    private val databaseRepository: FakeDatabaseRepository
 ): ViewModel() {
 
     private val _state = mutableStateOf(BudgetState())
@@ -40,8 +41,10 @@ class EditBudgetViewModel @Inject constructor(
     }
 
     private fun getMonthYearArgument() {
-        val monthYear = savedStateHandle.get<String>(key = EDIT_BUDGET_ARGUMENT_KEY)?.split("-")
-        monthYear?.let { _state.value = state.value.copy(date = LocalDate.of(it[1].toInt(), it[0].toInt(), 1)) }
+        val date = savedStateHandle.get<String>(key = EDIT_BUDGET_ARGUMENT_KEY)
+        val budgetId = savedStateHandle.get<String>(key = EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY)
+        _state.value = state.value.copy(budgetId = budgetId)
+        _state.value = state.value.copy(date = LocalDate.parse(date))
     }
 
     fun onAmountChange(amount: String) {
@@ -61,7 +64,7 @@ class EditBudgetViewModel @Inject constructor(
         if (!validate()) return@launch
         val date = state.value.date ?: LocalDate.now()
         val budget = BudgetData(date.monthValue, date.year, state.value.amount.toDouble())
-        when (val response = databaseRepository.createBudget(budget)) {
+        when (val response = databaseRepository.createBudget(state.value.budgetId, budget)) {
             is RequestState.Success -> {
                 clearState()
                 loading(false)
@@ -75,20 +78,6 @@ class EditBudgetViewModel @Inject constructor(
             }
             else -> {}
         }
-    }
-
-    fun dummyUpdateBudget() = viewModelScope.launch {
-        loading(true)
-        if (!validate()) {
-            loading(false)
-            return@launch
-        }
-        delay(3000L)
-        _uiFlow.emit(BudgetScreenFlow.SnackBar("Budget Updated Successfully"))
-        loading(false)
-        clearState()
-        delay(1000L)
-        _uiFlow.emit(BudgetScreenFlow.NavigateUp)
     }
 
     private fun loading(loading: Boolean) {

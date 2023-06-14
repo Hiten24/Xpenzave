@@ -20,7 +20,8 @@ import com.hcapps.xpenzave.presentation.home.HomeScreen
 import com.hcapps.xpenzave.presentation.settings.SettingsScreen
 import com.hcapps.xpenzave.presentation.stats.StateScreen
 import com.hcapps.xpenzave.util.Screen
-import com.hcapps.xpenzave.util.UiConstants
+import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
+import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 
 @Composable
 fun XpenzaveNavGraph(
@@ -37,8 +38,8 @@ fun XpenzaveNavGraph(
 
         homeRoute(
             paddingValues,
-            navigateToEditBudget = { monthYear ->
-                navController.navigate(Screen.EditBudget.passMonthYear(monthYear))
+            navigateToEditBudget = { monthYear, budgetId ->
+                navController.navigate(Screen.EditBudget.passArgs(monthYear, budgetId))
             },
             navigateToExpenseLog = {
                 navController.navigate(Screen.Stats.route)
@@ -93,7 +94,7 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
 
 fun NavGraphBuilder.homeRoute(
     paddingValues: PaddingValues,
-    navigateToEditBudget: (String) -> Unit,
+    navigateToEditBudget: (date: String, budgetId: String?) -> Unit,
     navigateToExpenseLog: () -> Unit
 ) {
     composable(route = Screen.Home.route) {
@@ -133,13 +134,20 @@ fun NavGraphBuilder.editBudget(
 ) {
     composable(
         route = Screen.EditBudget.route,
-        arguments = listOf(navArgument(name = UiConstants.EDIT_BUDGET_ARGUMENT_KEY) {
-            type = NavType.StringType
-            nullable = false
-            defaultValue = "" }
+        arguments = listOf(
+            navArgument(name = EDIT_BUDGET_ARGUMENT_KEY) {
+                type = NavType.StringType
+                nullable = false
+                defaultValue = ""
+            },
+            navArgument(name = EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY) {
+                type = NavType.StringType
+                nullable = true
+                defaultValue = ""
+            }
         )
     ) {
-            EditBudgetScreen(navigateUp = navigateUp)
+        EditBudgetScreen(navigateUp = navigateUp)
     }
 }
 

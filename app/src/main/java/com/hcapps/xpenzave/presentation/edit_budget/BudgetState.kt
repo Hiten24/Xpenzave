@@ -4,6 +4,7 @@ import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
 import java.time.LocalDate
 
 data class BudgetState(
+    val budgetId: String? = null,
     val amount: String = "",
     val amountError: String? = null,
     val date: LocalDate? = null,

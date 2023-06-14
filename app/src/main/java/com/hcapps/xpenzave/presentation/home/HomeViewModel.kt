@@ -29,13 +29,15 @@ class HomeViewModel @Inject constructor(
 
     fun onDateChange(date: LocalDate) {
         _state.value = state.value.copy(date = date)
+        getBudgetOfTheMonth()
+        getExpensesOfMonth()
     }
 
     private fun getBudgetOfTheMonth() = viewModelScope.launch {
         budgetLoading(true)
         try {
             val budget = getBudgetByDateUseCase.execute(state.value.date) ?: return@launch Timber.e("Something went wrong")
-            _state.value = state.value.copy(budgetAmount = budget.amount)
+            _state.value = state.value.copy(budgetAmount = budget.amount, budgetId = budget.id)
             budgetLoading(false)
         } catch (e: Exception) {
             Timber.e(e)

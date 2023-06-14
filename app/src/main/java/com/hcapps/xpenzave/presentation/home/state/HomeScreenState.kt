@@ -5,6 +5,7 @@ import com.hcapps.xpenzave.util.ExpenseLogType
 import java.time.LocalDate
 
 data class HomeScreenState(
+    val budgetId: String? = null,
     val date: LocalDate = LocalDate.now(),
     val budgetAmount: Double = 0.0,
     val totalSpending: Double = 0.0,
