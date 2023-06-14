@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.compare.result.component.compare_garph.CompareResultCard
 import com.hcapps.xpenzave.presentation.compare.result.component.comprea_expense_category_graph.CompareCategoryExpensesGraph
-import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryData
+import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryBarChartData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,7 +120,7 @@ fun CompareResultContent(modifier: Modifier = Modifier, lazyState: LazyListState
         }
         item {
             CompareCategoryExpensesGraph(
-                categories = CategoryData.defaultCompareCategoryGraphs()
+                categories = CategoryBarChartData.defaultCompareCategoryGraphs()
             )
         }
 

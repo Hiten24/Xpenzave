@@ -41,8 +41,8 @@ fun BudgetProgressCard(
     loading: Boolean = false,
     cardBackgroundColor: Color = MaterialTheme.colorScheme.surface,
     cardElevation: Dp = DefaultCardElevation,
-    onClickOfEditBudget: () -> Unit,
-    onClickOfCalendar: () -> Unit
+    onClickOfEditBudget: (() -> Unit)? = null,
+    onClickOfCalendar: (() -> Unit)? = null
 ) {
     Card(
         modifier = modifier,
@@ -52,9 +52,10 @@ fun BudgetProgressCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(16.dp)
+                .padding(bottom = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
 
             MonthHeader(
@@ -69,8 +70,8 @@ fun BudgetProgressCard(
             if (!loading) {
                 BudgetProgress(
                     progress = progress,
-                    archWidth = 130f,
-                    containerWidth = 200.dp,
+                    archWidth = 160f,
+                    containerWidth = 250.dp,
                     progressContainerColor = MaterialTheme.colorScheme.outlineVariant,
                     progressGradient = listOf(
                         MaterialTheme.colorScheme.secondary,
@@ -91,13 +92,16 @@ fun BudgetProgressCard(
 
                 Text(text = budget)
 
-                OutlinedButton(
-                    onClick = onClickOfEditBudget,
-                    shape = Shapes().small,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                ) {
-                    Text(text = stringResource(R.string.edit_budget))
+                onClickOfEditBudget?.let {
+                    OutlinedButton(
+                        onClick = it,
+                        shape = Shapes().small,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                    ) {
+                        Text(text = stringResource(R.string.edit_budget))
+                    }
                 }
+
             } else {
                 CircularProgress()
             }
@@ -108,5 +112,5 @@ fun BudgetProgressCard(
 @Preview(showBackground = true)
 @Composable
 fun PreviewMonthBudgetCard() {
-    BudgetProgressCard(onClickOfEditBudget = {}, onClickOfCalendar =  {})
+    BudgetProgressCard(onClickOfEditBudget = {}) {}
 }

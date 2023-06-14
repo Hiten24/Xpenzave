@@ -57,6 +57,7 @@ fun StatsScreen(
 ) {
 
     val state by viewModel.state
+    val generalState by viewModel.generalState
     var dateDialogOpened by remember { mutableStateOf(false) }
 
     val lazyState = rememberLazyListState()
@@ -117,7 +118,15 @@ fun StatsScreen(
                     )
 
                     when (state.tabScreen) {
-                        TAB_GENERAL -> GeneralSection()
+                        TAB_GENERAL -> {
+                            GeneralSection(
+                                budget = generalState.budget,
+                                totalSpend = generalState.totalSpend,
+                                percentage = generalState.budgetPercentage,
+                                date = state.date,
+                                categoriesBarGraphData = generalState.categoryBarChartData
+                            )
+                        }
                         TAB_EXPENSE_LOG -> {
                             ExpenseLogSection(
                                 navigateToFiler = { navigateToFilter(viewModel.appliedFilter.toTypedArray()) },

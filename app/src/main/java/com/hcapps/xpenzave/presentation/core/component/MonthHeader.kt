@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Badge
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +34,7 @@ fun MonthHeader(
     icon: ImageVector,
     badge: Boolean = false,
     style: MonthHeaderStyle = MonthHeaderStyle.defaultMonthHeaderStyle(),
-    onClickOfIcon: () -> Unit
+    onClickOfIcon: (() -> Unit)? = null
 ) {
     Row(
         modifier = modifier,
@@ -56,9 +53,10 @@ fun MonthHeader(
                 color = style.yearTextColor
             )
         }
+        onClickOfIcon?.let {
             Box {
                 IconButton(
-                    onClick = onClickOfIcon,
+                    onClick = it,
                     modifier = Modifier.align(Center),
                 ) {
                     Icon(
@@ -77,6 +75,7 @@ fun MonthHeader(
                 }
             }
         }
+    }
 }
 
 data class MonthHeaderStyle(

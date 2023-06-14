@@ -26,14 +26,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryData
+import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryBarChartData
 import com.hcapps.xpenzave.util.vertical
 
 @Composable
 fun Graph(
     modifier: Modifier = Modifier,
     style: GraphStyle = GraphStyle.defaultGraphStyle(),
-    items: List<CategoryData>,
+    items: List<CategoryBarChartData>,
     state: GraphState,
     onSelect: (index: Int) -> Unit
 ) {
@@ -46,7 +46,7 @@ fun Graph(
         items.forEachIndexed { index, item ->
             item {
                 GraphBarSelector(
-                    category = item,
+                    bar = item,
                     isSelected = index == state.selectedGraphBar,
                     onSelect = { onSelect(index) },
                     style = style
@@ -61,7 +61,7 @@ private fun GraphBarSelector(
     modifier: Modifier = Modifier,
     style: GraphStyle,
     isSelected: Boolean,
-    category: CategoryData,
+    bar: CategoryBarChartData,
     onSelect: () -> Unit
 ) {
 
@@ -84,17 +84,17 @@ private fun GraphBarSelector(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                category.expense.forEachIndexed { index, expenseData ->
-                    val barColor = if (index == 1) style.secondBarColor else style.barColor
-                    GraphBar(percentage = expenseData.percentage, style = style, color = barColor)
-                }
+//                category.expense.forEachIndexed { index, expenseData ->
+//                    val barColor = if (index == 1) style.secondBarColor else style.barColor
+                GraphBar(percentage = bar.budgetPercentageByCategory, style = style, color = style.barColor)
+//                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))
 
             Text(
                 modifier = Modifier.width(80.dp),
-                text = category.categoryName,
+                text = bar.category.name,
                 style = style.textStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -133,7 +133,7 @@ fun GraphBar(
 @Composable
 fun PreviewGraph() {
     Graph(
-        items = CategoryData.defaultCategoryGraphs(),
+        items = CategoryBarChartData.defaultCategoryGraphs(),
         state = rememberGraphState(),
         onSelect = {}
     )
@@ -145,7 +145,7 @@ fun PreviewGraphBarContainer() {
     GraphBarSelector(
         isSelected = true,
         style = GraphStyle.defaultGraphStyle(),
-        category = CategoryData.dummyCategory()
+        bar = CategoryBarChartData.dummyCategory()
     ) {
 
     }

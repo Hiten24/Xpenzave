@@ -21,15 +21,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.compare.result.CompareIndicator
-import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryData
-import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.ExpenseData
+import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryBarChartData
+import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.ExpenseDataForGraph
 import com.hcapps.xpenzave.presentation.compare.result.component.graph.Graph
 import com.hcapps.xpenzave.presentation.compare.result.component.graph.rememberGraphState
 import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
 
 @Composable
 fun CompareCategoryExpensesGraph(
-    categories: List<CategoryData> = emptyList(),
+    categories: List<CategoryBarChartData> = emptyList(),
     elevation: Dp = DefaultCardElevation,
     cardColor: Color = MaterialTheme.colorScheme.surface
 ) {
@@ -62,10 +62,10 @@ fun CompareCategoryExpensesGraph(
 
             Divider()
 
-            CompareGraphIndicator(
+            /*CompareGraphIndicator(
                 modifier = Modifier.fillMaxWidth(),
-                expenseData = categories[graphState.selectedGraphBar].expense
-            )
+                expenseDatumForGraphs = categories[graphState.selectedGraphBar].expense
+            )*/
         }
     }
 }
@@ -73,17 +73,17 @@ fun CompareCategoryExpensesGraph(
 @Composable
 private fun CompareGraphIndicator(
     modifier: Modifier = Modifier,
-    expenseData: List<ExpenseData>
+    expenseDatumForGraphs: List<ExpenseDataForGraph>
 ) {
     Row(modifier = modifier) {
         CompareValue(
             modifier = Modifier.weight(1f),
             indicatorColor = MaterialTheme.colorScheme.inversePrimary,
-            value = expenseData.getOrNull(0)?.totalSpendingOfMonth.toString() + "$"
+            value = expenseDatumForGraphs.getOrNull(0)?.totalSpendingOfMonth.toString() + "$"
         )
         CompareValue(
             modifier = Modifier.weight(1f),
-            value = expenseData.getOrNull(0)?.totalSpendingOfMonth.toString() + "$"
+            value = expenseDatumForGraphs.getOrNull(0)?.totalSpendingOfMonth.toString() + "$"
         )
     }
 }
@@ -111,11 +111,11 @@ private fun CompareValue(
 @Preview
 @Composable
 fun PreviewCompareGraphIndicator() {
-    CompareGraphIndicator(expenseData = emptyList())
+    CompareGraphIndicator(expenseDatumForGraphs = emptyList())
 }
 
 @Preview
 @Composable
 fun PreviewCategoryExpensesGraph() {
-    CompareCategoryExpensesGraph(categories = CategoryData.defaultCategoryGraphs())
+    CompareCategoryExpensesGraph(categories = CategoryBarChartData.defaultCategoryGraphs())
 }
