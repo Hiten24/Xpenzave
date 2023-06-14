@@ -11,10 +11,10 @@ class GetExpensesUseCase @Inject constructor(
 //    private val databaseRepository: DatabaseRepository
     private val databaseRepository: FakeDatabaseRepository
 ) {
-    suspend fun execute(date: LocalDate): Map<LocalDate, List<ExpenseDomainData>> {
+    suspend fun execute(date: LocalDate): /*Map<LocalDate, */List<ExpenseDomainData>/*>*/ {
         return when (val response = databaseRepository.getExpensesByMonth(date)) {
             is RequestState.Success -> {
-                val expenses = response.data.groupBy { it.date }
+                val expenses = response.data/*.groupBy { it.date }*/
                 Timber.i("expenses: $expenses")
                 expenses
             }
@@ -23,7 +23,8 @@ class GetExpensesUseCase @Inject constructor(
                 throw(response.error)
             }
             else -> {
-                emptyMap()
+//                emptyMap()
+                emptyList()
             }
         }
     }

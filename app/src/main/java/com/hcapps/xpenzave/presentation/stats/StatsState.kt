@@ -8,5 +8,5 @@ data class StatsState(
     val loading: Boolean = true,
     val emptyScreen: Boolean = false,
     var tabScreen: Int = TAB_EXPENSE_LOG,
-    val expenses: Map<LocalDate, List<ExpenseDomainData>>? = null
+//    val expenses: Map<LocalDate, List<ExpenseDomainData>>? = null
 )

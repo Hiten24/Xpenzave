@@ -88,7 +88,7 @@ fun StatsScreen(
                         .height(2.dp)
                 )
             }
-            state.expenses.isNullOrEmpty() -> {
+            viewModel.expenses.isEmpty() -> {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -123,12 +123,11 @@ fun StatsScreen(
                                 navigateToFiler = navigateToFilter,
                                 navigateToDetails = { navigateToDetails(it.toExpenseDetailsArgs()) },
                                 date = state.date,
-                                expenses = state.expenses ?: emptyMap(),
+                                expenses = viewModel.expenses.groupBy { it.date },
                                 expenseLogLazyState = lazyState
                             )
                         }
                     }
-
 
                 }
             }

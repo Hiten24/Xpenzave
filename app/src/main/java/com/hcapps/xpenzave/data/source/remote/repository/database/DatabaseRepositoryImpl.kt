@@ -152,7 +152,7 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun removeExpense(id: String): RequestState<Boolean> {
         return try {
-            val response = database.deleteDocument(
+            database.deleteDocument(
                 databaseId = databaseId,
                 collectionId = expenseCollectionId,
                 documentId = id

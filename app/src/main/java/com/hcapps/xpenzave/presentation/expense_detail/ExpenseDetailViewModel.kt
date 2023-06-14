@@ -11,6 +11,7 @@ import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.presentation.edit_budget.BudgetScreenFlow
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
+import com.hcapps.xpenzave.util.UiConstants.EXPENSE_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.appwrite.extensions.fromJson
 import kotlinx.coroutines.delay
@@ -48,6 +49,7 @@ class ExpenseDetailViewModel @Inject constructor(
             more = details?.moreDetails,
             date = LocalDate.parse(details?.date)
         )
+        savedStateHandle.clearSavedStateProvider(EXPENSE_DETAIL_ARGUMENT_KEY)
         loading(false)
         details?.photoId?.let { getInvoiceImage(it) }
     }
@@ -62,6 +64,7 @@ class ExpenseDetailViewModel @Inject constructor(
         when (val response = databaseRepository.removeExpense(id)) {
             is RequestState.Success -> {
                 _uiFlow.emit(BudgetScreenFlow.SnackBar("Expense deleted successfully!"))
+                savedStateHandle[EXPENSE_ID] = id
                 delay(1000L) // to show SnackBar
                 _uiFlow.emit(BudgetScreenFlow.NavigateUp)
                 loading(false)

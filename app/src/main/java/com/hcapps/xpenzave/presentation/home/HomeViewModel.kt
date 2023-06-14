@@ -51,9 +51,9 @@ class HomeViewModel @Inject constructor(
         try {
             val expenses = getExpensesUseCase.execute(state.value.date)
             // calculating total expenses by adding all expenses amount
-            val totalExpense = expenses.map { it.value.sumOf { it.amount } }.sumOf { it }
+            val totalExpense = expenses.sumOf { it.amount }
             // taking last day log of expenses for recent expenses
-            val lastExpense = expenses.entries.lastOrNull()
+            val lastExpense = expenses.groupBy { it.date }.entries.lastOrNull()
             _state.value = state.value.copy(
                 totalSpending = totalExpense,
                 recentExpenses = lastExpense?.let { mapOf(it.toPair()) } ?: emptyMap(),
