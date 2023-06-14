@@ -11,6 +11,9 @@ import com.hcapps.xpenzave.domain.model.budget.BudgetData
 import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
@@ -25,8 +28,15 @@ class EditBudgetViewModel @Inject constructor(
     private val _state = mutableStateOf(BudgetState())
     val state: State<BudgetState> = _state
 
+    private val _uiFlow = MutableSharedFlow<BudgetScreenFlow>()
+    val uiFlow = _uiFlow.asSharedFlow()
+
     init {
         getMonthYearArgument()
+    }
+
+    private fun clearState() {
+        _state.value = BudgetState()
     }
 
     private fun getMonthYearArgument() {
@@ -35,7 +45,7 @@ class EditBudgetViewModel @Inject constructor(
     }
 
     fun onAmountChange(amount: String) {
-        _state.value = state.value.copy(amount = amount)
+        _state.value = state.value.copy(amount = amount, amountError = null)
     }
 
     private fun validate(): Boolean {
@@ -53,7 +63,11 @@ class EditBudgetViewModel @Inject constructor(
         val budget = BudgetData(date.monthValue, date.year, state.value.amount.toDouble())
         when (val response = databaseRepository.createBudget(budget)) {
             is RequestState.Success -> {
+                clearState()
                 loading(false)
+                _uiFlow.emit(BudgetScreenFlow.SnackBar("Budget updated successfully."))
+                delay(1000L) // to show SnackBar
+                _uiFlow.emit(BudgetScreenFlow.NavigateUp)
             }
             is RequestState.Error -> {
                 Timber.e(response.error)
@@ -61,6 +75,20 @@ class EditBudgetViewModel @Inject constructor(
             }
             else -> {}
         }
+    }
+
+    fun dummyUpdateBudget() = viewModelScope.launch {
+        loading(true)
+        if (!validate()) {
+            loading(false)
+            return@launch
+        }
+        delay(3000L)
+        _uiFlow.emit(BudgetScreenFlow.SnackBar("Budget Updated Successfully"))
+        loading(false)
+        clearState()
+        delay(1000L)
+        _uiFlow.emit(BudgetScreenFlow.NavigateUp)
     }
 
     private fun loading(loading: Boolean) {

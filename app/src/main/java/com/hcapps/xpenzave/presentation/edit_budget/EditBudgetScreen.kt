@@ -8,17 +8,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +43,8 @@ import com.hcapps.xpenzave.presentation.core.component.MonthHeader
 import com.hcapps.xpenzave.presentation.core.component.MonthHeaderStyle
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
 import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
@@ -45,47 +54,72 @@ fun EditBudgetScreen(
 ) {
 
     val state by viewModel.state
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp),
-        verticalArrangement = Arrangement.SpaceEvenly
-    ) {
-        Card(
+    LaunchedEffect(key1 = viewModel.uiFlow) {
+        viewModel.uiFlow.collectLatest {
+            when (it) {
+                is BudgetScreenFlow.SnackBar -> {
+                    scope.launch {
+                        snackBarHostState.showSnackbar(it.message)
+                    }
+                }
+                is BudgetScreenFlow.NavigateUp -> { navigateUp() }
+            }
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.8f),
-            elevation = CardDefaults.cardElevation(defaultElevation = DefaultCardElevation),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(12.dp),
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            MonthHeader(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                date = LocalDate.now(),
-                icon = Icons.Outlined.Close,
-                style = MonthHeaderStyle.defaultMonthHeaderStyle(iconColor = MaterialTheme.colorScheme.onSurface),
-                onClickOfIcon = navigateUp
-            )
+                    .fillMaxHeight(0.8f),
+                elevation = CardDefaults.cardElevation(defaultElevation = DefaultCardElevation),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            ) {
+                MonthHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    date = LocalDate.now(),
+                    icon = Icons.Outlined.Close,
+                    style = MonthHeaderStyle.defaultMonthHeaderStyle(iconColor = MaterialTheme.colorScheme.onSurface),
+                    onClickOfIcon = navigateUp
+                )
 
-            BudgetTextField(
-                modifier = Modifier.fillMaxSize(),
-                budgetValue = state.amount,
-                onBudgetChange = {
-                    viewModel.onAmountChange(it)
-                }
-            )
+                BudgetTextField(
+                    modifier = Modifier.fillMaxSize(),
+                    budgetValue = state.amount,
+                    error = state.amountError,
+                    onBudgetChange = {
+                        viewModel.onAmountChange(it)
+                    },
+                    onKeyboardAction = {
+                        viewModel.dummyUpdateBudget()
+                    }
+                )
+            }
+
+            XpenzaveButton(
+                modifier = Modifier.padding(horizontal = 28.dp),
+                title = "Save",
+                state = state.buttonState
+            ) {
+                viewModel.updateBudget()
+//                viewModel.dummyUpdateBudget()
+            }
+
         }
-
-        XpenzaveButton(
-            modifier = Modifier.padding(horizontal = 28.dp),
-            title = "Save",
-            state = state.buttonState
-        ) {
-            viewModel.updateBudget()
-        }
-
     }
 }
 
@@ -93,10 +127,12 @@ fun EditBudgetScreen(
 fun BudgetTextField(
     modifier: Modifier = Modifier,
     budgetValue: String,
+    error: String? = null,
     onBudgetChange: (String) -> Unit,
     inputTextAlign: TextAlign = TextAlign.Center,
     inputTextColor: Color = MaterialTheme.colorScheme.primary,
-    inputTextStyle: TextStyle = MaterialTheme.typography.headlineSmall
+    inputTextStyle: TextStyle = MaterialTheme.typography.headlineSmall,
+    onKeyboardAction: () -> Unit
 ) {
     val textFieldModifier = Modifier
         .fillMaxWidth()
@@ -119,7 +155,8 @@ fun BudgetTextField(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
                 focusedTextColor = inputTextColor,
-                unfocusedTextColor = inputTextColor
+                unfocusedTextColor = inputTextColor,
+                errorContainerColor = Color.Transparent
             ),
             textStyle = inputTextStyle.copy(textAlign = inputTextAlign, fontWeight = FontWeight.Medium),
             placeholder = {
@@ -133,9 +170,24 @@ fun BudgetTextField(
                     )
                 )
             },
+            isError = error.isNullOrEmpty().not(),
+            supportingText = {
+                error?.let { Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = it,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Medium
+                ) }
+            },
             maxLines = 1,
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                onKeyboardAction()
+                this.defaultKeyboardAction(imeAction = ImeAction.Done)
+            })
         )
     }
 }
@@ -149,7 +201,7 @@ fun PreviewBudgetTextField() {
             .padding(16.dp),
         onBudgetChange = {},
         budgetValue = "2000"
-    )
+    ) {}
 }
 
 @Preview
