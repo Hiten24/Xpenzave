@@ -4,12 +4,13 @@ import com.hcapps.xpenzave.domain.model.category.Category
 import java.time.LocalDate
 
 data class ExpenseDetailState(
+    val expenseId: String? = null,
     val amount: String? = null,
     val category: Category? = null,
     val photo: ByteArray? = null,
     val photoId: String? = null,
     val more: String? = null,
-    val loading: Boolean = true,
+    val loading: Boolean = false,
     val date: LocalDate? = null
 ) {
 

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -22,24 +23,34 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import coil.compose.AsyncImage
 import com.hcapps.xpenzave.presentation.core.component.ZoomableImagePreview
+import com.hcapps.xpenzave.presentation.edit_budget.BudgetScreenFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -52,18 +63,47 @@ fun ExpenseDetailScreen(
 ) {
 
     val state by viewModel.state
-    var imagePreviewOpened by remember {
-        mutableStateOf(false)
+    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    var imagePreviewOpened by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = viewModel.uiFlow) {
+        viewModel.uiFlow.collectLatest {
+            when (it) {
+                is BudgetScreenFlow.SnackBar -> {
+                    scope.launch {
+                        snackBarHostState.showSnackbar(it.message)
+                    }
+                }
+                is BudgetScreenFlow.NavigateUp -> { navigateUp() }
+            }
+        }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = {
             TopBar(
                 date = state.date ?: LocalDate.now(),
-                onClickOfNavigationIcon = navigateUp
+                onClickOfNavigationIcon = navigateUp,
+                deleteExpense = {
+                    state.expenseId?.let { viewModel.deleteExpense(it) }
+                }
             )
         }
     ) { paddingValues ->
+
+
+        if (state.loading) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues)
+                    .height(2.dp),
+                strokeCap = StrokeCap.Round
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -73,15 +113,10 @@ fun ExpenseDetailScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (state.loading) {
-                Spacer(modifier = Modifier.height(62.dp))
-                CircularProgressIndicator()
-            } else {
-                ExpenseDetailContent(
-                    state = state,
-                    previewImage = { imagePreviewOpened = true }
-                )
-            }
+            ExpenseDetailContent(
+                state = state,
+                previewImage = { imagePreviewOpened = true }
+            )
         }
 
     }
@@ -177,6 +212,7 @@ fun ExpenseDetailContent(
 private fun TopBar(
     date: LocalDate = LocalDate.now(),
     onClickOfNavigationIcon: () -> Unit,
+    deleteExpense: () -> Unit
 ) {
     Timber.i("date: $date")
     LargeTopAppBar(
@@ -201,6 +237,11 @@ private fun TopBar(
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "Arrow Back"
                 )
+            }
+        },
+        actions = {
+            IconButton(onClick = deleteExpense) {
+                Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Remove")
             }
         }
     )

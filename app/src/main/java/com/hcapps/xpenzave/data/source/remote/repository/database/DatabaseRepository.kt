@@ -29,4 +29,6 @@ interface DatabaseRepository {
 
     suspend fun getBudgetByDate(date: LocalDate): RequestState<Response<BudgetData>?>
 
+    suspend fun removeExpense(id: String): RequestState<Boolean>
+
 }

@@ -150,6 +150,21 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun removeExpense(id: String): RequestState<Boolean> {
+        return try {
+            val response = database.deleteDocument(
+                databaseId = databaseId,
+                collectionId = expenseCollectionId,
+                documentId = id
+            )
+            RequestState.Success(true)
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
+    }
+
+
+
     private fun generateUniqueId() = ID.unique()
 
 }

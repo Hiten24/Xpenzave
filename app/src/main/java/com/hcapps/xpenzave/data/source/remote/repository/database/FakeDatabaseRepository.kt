@@ -65,4 +65,13 @@ class FakeDatabaseRepository @Inject constructor() : DatabaseRepository {
             RequestState.Error(e)
         }
     }
+
+    override suspend fun removeExpense(id: String): RequestState<Boolean> {
+        return try {
+            delay(1000L)
+            RequestState.Success(true)
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
+    }
 }

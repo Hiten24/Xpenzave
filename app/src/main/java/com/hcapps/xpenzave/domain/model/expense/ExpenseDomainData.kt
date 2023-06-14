@@ -23,7 +23,8 @@ data class ExpenseDomainData(
         categoryId = category,
         photoId = photoId,
         moreDetails = moreDetail,
-        date = date.toString()
+        date = date.toString(),
+        id = id
     )
 
     companion object {
