@@ -15,7 +15,7 @@ sealed class Screen(val route: String) {
 
     object EditBudget: Screen(route = "edit_budget?$EDIT_BUDGET_ARGUMENT_KEY={$EDIT_BUDGET_ARGUMENT_KEY}&" +
             "$EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY={$EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY}") {
-        fun passArgs(monthYear: String, budgetId: String?) =
+        fun passArgs(monthYear: String, budgetId: String) =
             "edit_budget?$EDIT_BUDGET_ARGUMENT_KEY=$monthYear" +
                 "&$EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY=$budgetId"
     }

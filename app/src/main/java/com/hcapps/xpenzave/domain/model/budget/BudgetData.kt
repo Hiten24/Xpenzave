@@ -1,6 +1,7 @@
 package com.hcapps.xpenzave.domain.model.budget
 
 import com.hcapps.xpenzave.domain.model.Response
+import java.time.LocalDate
 import kotlin.random.Random
 
 data class BudgetData(
@@ -11,8 +12,7 @@ data class BudgetData(
 
 fun Response<BudgetData>.toBudgetDomainData() = BudgetDomainData(
     id = id,
-    month = data.month,
-    year = data.year,
+    date = LocalDate.of(data.year, data.month, 1),
     amount = data.amount
 )
 

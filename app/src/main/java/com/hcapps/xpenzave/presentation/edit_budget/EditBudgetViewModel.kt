@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.source.remote.repository.database.FakeDatabaseRepository
+import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.budget.BudgetData
 import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditBudgetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val databaseRepository: FakeDatabaseRepository
+    private val databaseRepository: DatabaseRepository
 ): ViewModel() {
 
     private val _state = mutableStateOf(BudgetState())
@@ -43,7 +43,7 @@ class EditBudgetViewModel @Inject constructor(
     private fun getMonthYearArgument() {
         val date = savedStateHandle.get<String>(key = EDIT_BUDGET_ARGUMENT_KEY)
         val budgetId = savedStateHandle.get<String>(key = EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY)
-        _state.value = state.value.copy(budgetId = budgetId)
+        _state.value = state.value.copy(budgetId = if (budgetId.isNullOrEmpty()) null else budgetId)
         _state.value = state.value.copy(date = LocalDate.parse(date))
     }
 
@@ -59,12 +59,17 @@ class EditBudgetViewModel @Inject constructor(
         } else true
     }
 
-    fun updateBudget() = viewModelScope.launch {
+    fun upsertBudget() = viewModelScope.launch {
         loading(true)
         if (!validate()) return@launch
         val date = state.value.date ?: LocalDate.now()
         val budget = BudgetData(date.monthValue, date.year, state.value.amount.toDouble())
-        when (val response = databaseRepository.createBudget(state.value.budgetId, budget)) {
+        val response = if (state.value.budgetId == null)
+            databaseRepository.createBudget(budget)
+        else
+            databaseRepository.updateBudget(state.value.budgetId!!, budget)
+
+        when (response) {
             is RequestState.Success -> {
                 clearState()
                 loading(false)

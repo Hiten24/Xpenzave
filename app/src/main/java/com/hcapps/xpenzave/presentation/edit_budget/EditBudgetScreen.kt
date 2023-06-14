@@ -105,7 +105,7 @@ fun EditBudgetScreen(
                         viewModel.onAmountChange(it)
                     },
                     onKeyboardAction = {
-                        viewModel.updateBudget()
+                        viewModel.upsertBudget()
                     }
                 )
             }
@@ -115,8 +115,7 @@ fun EditBudgetScreen(
                 title = "Save",
                 state = state.buttonState
             ) {
-//                viewModel.updateBudget()
-                viewModel.updateBudget()
+                viewModel.upsertBudget()
             }
 
         }

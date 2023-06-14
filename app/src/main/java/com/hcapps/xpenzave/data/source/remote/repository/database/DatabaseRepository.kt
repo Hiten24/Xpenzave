@@ -23,8 +23,10 @@ interface DatabaseRepository {
 
     suspend fun getExpense(id: String): RequestState<Response<ExpenseData>>
 
-    suspend fun createBudget(id: String?, budget: BudgetData): CreateBudgetResponse
+    suspend fun createBudget(budget: BudgetData): CreateBudgetResponse
 
-    suspend fun getBudgetByDate(date: LocalDate): RequestState<Response<BudgetData>>
+    suspend fun updateBudget(id: String, budget: BudgetData): CreateBudgetResponse
+
+    suspend fun getBudgetByDate(date: LocalDate): RequestState<Response<BudgetData>?>
 
 }

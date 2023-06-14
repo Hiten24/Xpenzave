@@ -94,7 +94,7 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
 
 fun NavGraphBuilder.homeRoute(
     paddingValues: PaddingValues,
-    navigateToEditBudget: (date: String, budgetId: String?) -> Unit,
+    navigateToEditBudget: (date: String, budgetId: String) -> Unit,
     navigateToExpenseLog: () -> Unit
 ) {
     composable(route = Screen.Home.route) {
@@ -143,7 +143,7 @@ fun NavGraphBuilder.editBudget(
             navArgument(name = EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY) {
                 type = NavType.StringType
                 nullable = true
-                defaultValue = ""
+                defaultValue = null
             }
         )
     ) {

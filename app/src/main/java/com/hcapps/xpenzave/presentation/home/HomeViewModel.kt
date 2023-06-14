@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcapps.xpenzave.domain.model.budget.BudgetDomainData
 import com.hcapps.xpenzave.domain.usecase.GetBudgetByDateUseCase
 import com.hcapps.xpenzave.domain.usecase.GetCategoriesUseCase
 import com.hcapps.xpenzave.presentation.home.state.HomeScreenState
@@ -36,7 +37,7 @@ class HomeViewModel @Inject constructor(
     private fun getBudgetOfTheMonth() = viewModelScope.launch {
         budgetLoading(true)
         try {
-            val budget = getBudgetByDateUseCase.execute(state.value.date) ?: return@launch Timber.e("Something went wrong")
+            val budget = getBudgetByDateUseCase.execute(state.value.date) ?: BudgetDomainData(date = state.value.date, amount = 0.0)
             _state.value = state.value.copy(budgetAmount = budget.amount, budgetId = budget.id)
             budgetLoading(false)
         } catch (e: Exception) {

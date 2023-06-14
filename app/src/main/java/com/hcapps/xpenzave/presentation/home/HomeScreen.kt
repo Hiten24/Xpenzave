@@ -27,7 +27,7 @@ import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
-    editBudget: (date: String, budgetId: String?) -> Unit,
+    editBudget: (date: String, budgetId: String) -> Unit,
     expenseLog: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -48,7 +48,7 @@ fun HomeScreen(
             date = state.date,
             onClickOfCalendar = { monthSelectorState.show() },
             onClickOfEditBudget = {
-                editBudget(state.date.toString(), state.budgetId)
+                editBudget(state.date.toString(), state.budgetId ?: "")
             },
             progress = state.budgetPercentage,
             budgetAmount = state.budgetAmount,

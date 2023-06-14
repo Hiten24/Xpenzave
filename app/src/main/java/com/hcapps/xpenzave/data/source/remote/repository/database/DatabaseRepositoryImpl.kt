@@ -100,12 +100,12 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createBudget(id: String?, budget: BudgetData): CreateBudgetResponse {
+    override suspend fun createBudget(budget: BudgetData): CreateBudgetResponse {
         return try {
             val response = database.createDocument(
                 databaseId = databaseId,
                 collectionId = budgetCollectionId,
-                documentId = id ?: generateUniqueId(),
+                documentId = generateUniqueId(),
                 data = budget,
                 nestedType = BudgetData::class.java,
                 permissions = permissions(user.first())
@@ -116,7 +116,23 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getBudgetByDate(date: LocalDate): RequestState<Response<BudgetData>> {
+    override suspend fun updateBudget(id: String, budget: BudgetData): CreateBudgetResponse {
+        return try {
+            val response = database.updateDocument(
+                databaseId = databaseId,
+                collectionId = budgetCollectionId,
+                documentId = id,
+                data = budget,
+                nestedType = BudgetData::class.java,
+                permissions = permissions(user.first())
+            )
+            RequestState.Success(response.toModel(response.data))
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
+    }
+
+    override suspend fun getBudgetByDate(date: LocalDate): RequestState<Response<BudgetData>?> {
         return try {
             val response = database.listDocuments(
                 databaseId = databaseId,
@@ -126,8 +142,8 @@ class DatabaseRepositoryImpl @Inject constructor(
                     Query.equal("year", date.year)
                 ),
                 nestedType = BudgetData::class.java
-            ).documents.first()
-            val toModel = response.toModel(response.data)
+            ).documents.firstOrNull()
+            val toModel = response?.toModel(response.data)
             RequestState.Success(toModel)
         } catch (e: Exception) {
             RequestState.Error(e)
