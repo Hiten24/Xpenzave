@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.source.remote.repository.database.FakeDatabaseRepository
+import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.budget.BudgetData
 import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
@@ -23,8 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class EditBudgetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-//    private val databaseRepository: DatabaseRepository
-    private val databaseRepository: FakeDatabaseRepository
+    private val databaseRepository: DatabaseRepository
+//    private val databaseRepository: FakeDatabaseRepository
 ): ViewModel() {
 
     private val _state = mutableStateOf(BudgetState())

@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.source.remote.repository.database.FakeDatabaseRepository
+import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
 import com.hcapps.xpenzave.data.source.remote.repository.storage.StorageRepository
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.category.Category
@@ -25,7 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ExpenseDetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val databaseRepository: FakeDatabaseRepository,
+//    private val databaseRepository: FakeDatabaseRepository,
+    private val databaseRepository: DatabaseRepository,
     private val storageRepository: StorageRepository,
 ): ViewModel() {
 
