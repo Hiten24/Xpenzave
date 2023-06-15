@@ -239,13 +239,13 @@ fun RegisterBottomComponent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
+        /*Text(
             text = stringResource(R.string.or_continue_with),
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.labelLarge
-        )
+        )*/
 
-        Spacer(modifier = Modifier.height(16.dp))
+//        Spacer(modifier = Modifier.height(16.dp))
 
         /*Row(modifier = Modifier.fillMaxWidth()) {
 

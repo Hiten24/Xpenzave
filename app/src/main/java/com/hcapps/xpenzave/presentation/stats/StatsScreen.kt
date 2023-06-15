@@ -48,12 +48,15 @@ const val TAB_GENERAL = 1
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatsScreen(
+    deletedExpenseId: String? = null,
     paddingValues: PaddingValues,
     navigateToCompare: () -> Unit,
     navigateToFilter: (appliedFilters: Array<String>) -> Unit,
     navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit,
     viewModel: StatsViewModel = hiltViewModel()
 ) {
+
+    deletedExpenseId?.let { viewModel.deleteExpense(it) }
 
     val state by viewModel.state
     val generalState by viewModel.generalState

@@ -16,7 +16,7 @@ class GetBudgetByDateUseCase @Inject constructor(
     suspend fun execute(date: LocalDate): BudgetDomainData? {
         return when (val response = databaseRepository.getBudgetByDate(date)) {
             is RequestState.Success -> {
-                response.data?.toBudgetDomainData()
+                response.data.toBudgetDomainData()
             }
             is RequestState.Error -> {
                 throw response.error

@@ -17,7 +17,6 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,7 +44,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
 import coil.compose.AsyncImage
 import com.hcapps.xpenzave.presentation.core.component.ZoomableImagePreview
 import com.hcapps.xpenzave.presentation.edit_budget.BudgetScreenFlow
@@ -59,6 +57,7 @@ import java.util.Locale
 @Composable
 fun ExpenseDetailScreen(
     navigateUp: () -> Unit,
+    onDeleteExpense: (id: String) -> Unit,
     viewModel: ExpenseDetailViewModel = hiltViewModel()
 ) {
 
@@ -88,7 +87,9 @@ fun ExpenseDetailScreen(
                 date = state.date ?: LocalDate.now(),
                 onClickOfNavigationIcon = navigateUp,
                 deleteExpense = {
-                    state.expenseId?.let { viewModel.deleteExpense(it) }
+                    state.expenseId?.let { viewModel.deleteExpense(it) { id ->
+                        onDeleteExpense(id)
+                    } }
                 }
             )
         }
@@ -268,5 +269,5 @@ fun DetailsItem(
 @Preview(showBackground = true)
 @Composable
 fun PreviewExpenseDetailScreen() {
-    ExpenseDetailScreen({})
+    ExpenseDetailScreen({}, {})
 }

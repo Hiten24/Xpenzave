@@ -1,12 +1,11 @@
 package com.hcapps.xpenzave.presentation.edit_budget
 
-import android.os.Parcelable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
+import com.hcapps.xpenzave.data.source.remote.repository.database.FakeDatabaseRepository
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.budget.BudgetData
 import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
@@ -24,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class EditBudgetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val databaseRepository: DatabaseRepository
+//    private val databaseRepository: DatabaseRepository
+    private val databaseRepository: FakeDatabaseRepository
 ): ViewModel() {
 
     private val _state = mutableStateOf(BudgetState())
@@ -60,7 +60,7 @@ class EditBudgetViewModel @Inject constructor(
         } else true
     }
 
-    fun upsertBudget() = viewModelScope.launch {
+    fun upsertBudget(onSuccess: (Double) -> Unit) = viewModelScope.launch {
         loading(true)
         if (!validate()) return@launch
         val date = state.value.date ?: LocalDate.now()
@@ -76,6 +76,7 @@ class EditBudgetViewModel @Inject constructor(
                 loading(false)
                 _uiFlow.emit(BudgetScreenFlow.SnackBar("Budget updated successfully."))
                 delay(1000L) // to show SnackBar
+                onSuccess(budget.amount)
                 _uiFlow.emit(BudgetScreenFlow.NavigateUp)
             }
             is RequestState.Error -> {

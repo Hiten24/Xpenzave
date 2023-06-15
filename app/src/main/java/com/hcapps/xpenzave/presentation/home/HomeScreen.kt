@@ -20,17 +20,24 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.presentation.core.component.calendar.MonthDialog
 import com.hcapps.xpenzave.presentation.core.component.calendar.rememberMonthState
+import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
 import com.hcapps.xpenzave.presentation.home.component.BudgetProgressCard
 import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    deletedExpenseId: String? = null,
+    budget: Double? = null,
     paddingValues: PaddingValues,
     editBudget: (date: String, budgetId: String) -> Unit,
+    expenseDetail: (details: ExpenseDetailNavArgs) -> Unit,
+    addExpense: () -> Unit,
     expenseLog: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+
+    deletedExpenseId?.let { viewModel.deleteExpense(it) }
 
     val state by viewModel.state
     val lazyListState = rememberLazyListState()
@@ -63,8 +70,8 @@ fun HomeScreen(
                 .padding(horizontal = 16.dp)
                 .padding(bottom = paddingValues.calculateBottomPadding()),
             onClickOfSeeAll = expenseLog,
-            onClickOfExpenseItem = {},
-            onClickOfAddExpense = {},
+            onClickOfExpenseItem = { expenseDetail(it.toExpenseDetailsArgs()) },
+            onClickOfAddExpense = addExpense,
             expenseLazyState = lazyListState,
             listOfExpense = state.recentExpenses
         )

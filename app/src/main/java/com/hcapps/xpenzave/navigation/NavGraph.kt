@@ -2,6 +2,8 @@ package com.hcapps.xpenzave.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -22,10 +24,13 @@ import com.hcapps.xpenzave.presentation.settings.SettingsScreen
 import com.hcapps.xpenzave.presentation.stats.StatsScreen
 import com.hcapps.xpenzave.util.Screen
 import com.hcapps.xpenzave.util.UiConstants
+import com.hcapps.xpenzave.util.UiConstants.BACK_EXPENSE_ID_ARGUMENT_KEY
+import com.hcapps.xpenzave.util.UiConstants.BUDGET_VALUE_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
 import io.appwrite.extensions.toJson
+import timber.log.Timber
 
 @Composable
 fun XpenzaveNavGraph(
@@ -47,7 +52,9 @@ fun XpenzaveNavGraph(
             },
             navigateToExpenseLog = {
                 navController.navigate(Screen.Stats.withArgs(""))
-            }
+            },
+            navigateToDetails = { navController.navigate(Screen.ExpenseDetail.passArgs(it.toJson())) },
+            navigateToAddExpense = { navController.navigate(Screen.AddExpense.route) }
         )
 
         settingsRoute(navigateToAuth = {
@@ -65,7 +72,10 @@ fun XpenzaveNavGraph(
         )
 
         editBudget(
-            navigateUp = { navController.navigateUp() }
+            navigateUp = { navController.navigateUp() },
+            passDataBackToHome = { key, data ->
+                navController.previousBackStackEntry?.savedStateHandle?.set(key, data)
+            }
         )
 
         addExpense(
@@ -83,7 +93,12 @@ fun XpenzaveNavGraph(
 
         calendar(onNavigateUp = { navController.navigateUp() })
 
-        expenseDetail(onNavigateUp = { navController.navigateUp() })
+        expenseDetail(
+            onNavigateUp = { navController.navigateUp() },
+            onDeleteExpense = { expenseId: String ->
+                navController.previousBackStackEntry?.savedStateHandle?.set(BACK_EXPENSE_ID_ARGUMENT_KEY, expenseId)
+            }
+        )
 
         filter(
             onNavigateUp = { navController.navigateUp() },
@@ -105,13 +120,28 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
 fun NavGraphBuilder.homeRoute(
     paddingValues: PaddingValues,
     navigateToEditBudget: (date: String, budgetId: String) -> Unit,
-    navigateToExpenseLog: () -> Unit
+    navigateToExpenseLog: () -> Unit,
+    navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit,
+    navigateToAddExpense: () -> Unit
 ) {
-    composable(route = Screen.Home.route) {
+    composable(route = Screen.Home.route) { backStackEntry ->
+
+        val budget: Double? by backStackEntry.savedStateHandle.getStateFlow<Double?>(BUDGET_VALUE_ARGUMENT_KEY, null).collectAsState()
+        Timber.i("budget: $budget")
+
+        val deletedExpense by backStackEntry.savedStateHandle.getStateFlow<String?>(BACK_EXPENSE_ID_ARGUMENT_KEY, null).collectAsState()
+
         HomeScreen(
+            deletedExpenseId = deletedExpense,
+            budget = budget,
             paddingValues = paddingValues,
-            editBudget = navigateToEditBudget,
-            expenseLog = navigateToExpenseLog
+            editBudget = { date, budgetId ->
+                backStackEntry.savedStateHandle.remove<Double>(BUDGET_VALUE_ARGUMENT_KEY)
+                navigateToEditBudget(date, budgetId)
+            },
+            expenseLog = navigateToExpenseLog,
+            expenseDetail = navigateToDetails,
+            addExpense = navigateToAddExpense
         )
     }
 }
@@ -136,8 +166,10 @@ fun NavGraphBuilder.statsRoute(
                 nullable = false
             }
         )
-    ) {
+    ) { backStackEntry ->
+        val deletedExpense by backStackEntry.savedStateHandle.getStateFlow<String?>(BACK_EXPENSE_ID_ARGUMENT_KEY, null).collectAsState()
         StatsScreen(
+            deletedExpenseId = deletedExpense,
             paddingValues = paddingValues,
             navigateToCompare = navigateToCompare,
             navigateToFilter = navigateToFilter,
@@ -148,7 +180,8 @@ fun NavGraphBuilder.statsRoute(
 
 
 fun NavGraphBuilder.editBudget(
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    passDataBackToHome: (key: String, Data: Double) -> Unit
 ) {
     composable(
         route = Screen.EditBudget.route,
@@ -165,7 +198,13 @@ fun NavGraphBuilder.editBudget(
             }
         )
     ) {
-        EditBudgetScreen(navigateUp = navigateUp)
+        EditBudgetScreen(
+            navigateUp = navigateUp,
+            passBudgetToHome = { data ->
+                // pass data back to home
+                passDataBackToHome(BUDGET_VALUE_ARGUMENT_KEY, data)
+            }
+        )
     }
 }
 
@@ -202,7 +241,8 @@ fun NavGraphBuilder.calendar(onNavigateUp: () -> Unit) {
 }
 
 fun NavGraphBuilder.expenseDetail(
-    onNavigateUp: () -> Unit
+    onNavigateUp: () -> Unit,
+    onDeleteExpense: (String) -> Unit
 ) {
     composable(
         route = Screen.ExpenseDetail.route,
@@ -213,7 +253,7 @@ fun NavGraphBuilder.expenseDetail(
             }
         )
     ) {
-        ExpenseDetailScreen(navigateUp = onNavigateUp)
+        ExpenseDetailScreen(navigateUp = onNavigateUp, onDeleteExpense)
     }
 }
 

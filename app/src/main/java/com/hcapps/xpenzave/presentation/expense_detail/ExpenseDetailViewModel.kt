@@ -59,13 +59,14 @@ class ExpenseDetailViewModel @Inject constructor(
         _state.value = state.value.copy(photo = response)
     }
 
-    fun deleteExpense(id: String) = viewModelScope.launch {
+    fun deleteExpense(id: String, onSuccess: (id: String) -> Unit) = viewModelScope.launch {
         loading(true)
         when (val response = databaseRepository.removeExpense(id)) {
             is RequestState.Success -> {
                 _uiFlow.emit(BudgetScreenFlow.SnackBar("Expense deleted successfully!"))
                 savedStateHandle[EXPENSE_ID] = id
                 delay(1000L) // to show SnackBar
+                onSuccess(id)
                 _uiFlow.emit(BudgetScreenFlow.NavigateUp)
                 loading(false)
             }

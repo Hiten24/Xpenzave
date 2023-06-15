@@ -49,6 +49,7 @@ import java.time.LocalDate
 
 @Composable
 fun EditBudgetScreen(
+    passBudgetToHome: (Double) -> Unit,
     navigateUp: () -> Unit,
     viewModel: EditBudgetViewModel = hiltViewModel()
 ) {
@@ -105,7 +106,9 @@ fun EditBudgetScreen(
                         viewModel.onAmountChange(it)
                     },
                     onKeyboardAction = {
-                        viewModel.upsertBudget()
+                        viewModel.upsertBudget {
+                            passBudgetToHome(it)
+                        }
                     }
                 )
             }
@@ -115,7 +118,9 @@ fun EditBudgetScreen(
                 title = "Save",
                 state = state.buttonState
             ) {
-                viewModel.upsertBudget()
+                viewModel.upsertBudget {
+                    passBudgetToHome(it)
+                }
             }
 
         }
@@ -206,5 +211,5 @@ fun PreviewBudgetTextField() {
 @Preview
 @Composable
 fun PreviewEditBudgetScreen() {
-    EditBudgetScreen({})
+    EditBudgetScreen({}, {})
 }
