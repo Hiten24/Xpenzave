@@ -36,7 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent
-import com.hcapps.xpenzave.presentation.core.UIEvent
+import com.hcapps.xpenzave.presentation.auth.event.AuthUiEventFlow.Message
+import com.hcapps.xpenzave.presentation.auth.event.AuthUiEventFlow.OAuth2Success
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.util.Constant.AUTH_LOGIN_SCREEN
 import com.hcapps.xpenzave.util.Constant.AUTH_REGISTER_SCREEN
@@ -54,9 +55,8 @@ fun AuthenticationScreen(
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEventFlow.collectLatest { event ->
             when (event) {
-                is UIEvent.Error -> Toast.makeText(context, event.error.message, Toast.LENGTH_SHORT).show()
-                is UIEvent.ShowMessage -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                is UIEvent.Loading -> {}
+                is Message -> Toast.makeText(context, event.msg, Toast.LENGTH_SHORT).show()
+                is OAuth2Success -> navigateToHome()
             }
         }
     }
@@ -89,13 +89,9 @@ fun AuthenticationScreen(
         RegisterBottomComponent(
             onClickOfRegisterButton = {
                 if (state.authState == AUTH_LOGIN_SCREEN) {
-                    viewModel.login(
-                        onSuccess = { navigateToHome() }
-                    )
+                    viewModel.login(onSuccess = { navigateToHome() })
                 } else {
-                    viewModel.registerUser(
-                        onSuccess = { navigateToHome() }
-                    )
+                    viewModel.registerUser(onSuccess = { navigateToHome() })
                 }
             },
             onClickOfFaceBook = {
@@ -243,11 +239,11 @@ fun RegisterBottomComponent(
             text = stringResource(R.string.or_continue_with),
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.labelLarge
-        )*/
+        )
 
-//        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        /*Row(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth()) {
 
             FilledTonalButton(
                 onClick = { onClickOfFaceBook() },

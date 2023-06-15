@@ -18,4 +18,10 @@ object Constant {
 
     const val APP_WRITE_DATE_FORMAT = "dd-MM-yyyy HH:mm:ss.SSS"
 
+    // OAuth2
+    const val OAUTH2_REDIRECT_LINK = "appwrite-callback-${APP_WRITE_PROJECT_ID}://localhost/authentication/"
+    const val OAUTH2_SUCCESS_SUFFIX = "verify"
+    const val OAUTH2_FAILED_SUFFIX = "failed"
+
+
 }

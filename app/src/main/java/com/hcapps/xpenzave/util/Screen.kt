@@ -4,10 +4,17 @@ import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_FILTER_ARGUMENT_KEY
+import com.hcapps.xpenzave.util.UiConstants.OAUTH2_SEGMENT_ARG_KEY
+import timber.log.Timber
 
 sealed class Screen(val route: String) {
 
-    object Authentication: Screen(route = "authentication_screen")
+    object Authentication: Screen(route = "authentication_screen?$OAUTH2_SEGMENT_ARG_KEY={$OAUTH2_SEGMENT_ARG_KEY}") {
+        fun withArgs(segment: String): String {
+            Timber.i("screen segment: $segment")
+            return "authentication_screen?$OAUTH2_SEGMENT_ARG_KEY=$segment"
+        }
+    }
 
     object Home: Screen(route = "home_screen")
 

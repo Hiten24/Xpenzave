@@ -23,7 +23,7 @@ object AppWriteModule {
         return Client(context)
             .setEndpoint(Constant.APP_WRITE_ENDPOINT)
             .setProject(Constant.APP_WRITE_PROJECT_ID)
-            .setSelfSigned(true)
+//            .setSelfSigned(true)
     }
 
     @Provides
