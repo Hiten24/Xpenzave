@@ -9,7 +9,7 @@ interface AuthRepository {
     suspend fun createAccountWithCredentials(
         email: String,
         password: String
-    ): ResponseState<io.appwrite.models.Account<Any>>
+    ): ResponseState<AppUser>
 
     suspend fun loginWithCredentials(
         email: String,

@@ -93,7 +93,7 @@ dependencies {
     implementation ("com.jakewharton.timber:timber:5.0.1")
 
     // navigation
-    implementation ("androidx.navigation:navigation-compose:2.5.3")
+    implementation ("androidx.navigation:navigation-compose:2.6.0")
 
     // Dagger hilt
     implementation ("com.google.dagger:hilt-android:2.44.2")
@@ -104,10 +104,10 @@ dependencies {
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
     // appwrite
-    implementation("io.appwrite:sdk-for-android:1.2.1")
+    implementation("io.appwrite:sdk-for-android:2.0.0")
 
     // gson
-    implementation ("com.google.code.gson:gson:2.9.1")
+    implementation ("com.google.code.gson:gson:2.10.1")
 
     // coil
     implementation("io.coil-kt:coil-compose:2.4.0")

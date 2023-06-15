@@ -4,11 +4,12 @@ import androidx.activity.ComponentActivity
 import com.hcapps.xpenzave.util.ResponseState
 import io.appwrite.ID
 import io.appwrite.models.Session
+import io.appwrite.models.User
 import io.appwrite.services.Account
 import timber.log.Timber
 import javax.inject.Inject
 
-typealias AppUser = io.appwrite.models.Account<Any>
+typealias AppUser = User<Map<String, Any>>
 
 class AuthRepositoryImpl @Inject constructor(
     private val account: Account
