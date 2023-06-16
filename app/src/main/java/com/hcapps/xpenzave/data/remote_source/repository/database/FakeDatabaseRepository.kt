@@ -1,4 +1,4 @@
-package com.hcapps.xpenzave.data.source.remote.repository.database
+package com.hcapps.xpenzave.data.remote_source.repository.database
 
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.Response

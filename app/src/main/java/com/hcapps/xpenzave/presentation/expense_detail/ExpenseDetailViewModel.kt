@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
-import com.hcapps.xpenzave.data.source.remote.repository.storage.StorageRepository
+import com.hcapps.xpenzave.data.remote_source.repository.database.DatabaseRepository
+import com.hcapps.xpenzave.data.remote_source.repository.storage.StorageRepository
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.presentation.edit_budget.BudgetScreenFlow

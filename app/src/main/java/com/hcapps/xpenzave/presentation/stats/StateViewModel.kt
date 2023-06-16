@@ -91,7 +91,14 @@ class StatsViewModel @Inject constructor(
         try {
             val totalSpending = expenses.sumOf { it.amount }
             val budget = generalState.value.budget
-            val totalPercentage = ((totalSpending / budget) * 100).roundToInt()
+            val totalPercentage = try {
+                if (budget != 0.0) {
+                    ((totalSpending / budget) * 100).roundToInt()
+                } else 0
+            } catch (e: Exception) { 0 }
+            Timber.d("totalSpending: $totalSpending")
+            Timber.d("budget: $budget")
+            Timber.d("percentage: $totalPercentage")
             _generalState.value = generalState.value.copy(
                 totalSpend = totalSpending,
                 budgetPercentage = totalPercentage,
@@ -120,7 +127,11 @@ class StatsViewModel @Inject constructor(
                         category = category,
                         budget = budget,
                         totalSpendByCategory = categorySpend,
-                        budgetPercentageByCategory = ((categorySpend / budget) * 100).roundToInt()
+                        budgetPercentageByCategory = try {
+                            if (budget != 0.0) {
+                                ((categorySpend / budget) * 100).roundToInt()
+                            } else 0
+                        } catch (e: Exception) {0}
                     )
                 )
             }

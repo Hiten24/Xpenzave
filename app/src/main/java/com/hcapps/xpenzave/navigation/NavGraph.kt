@@ -29,7 +29,6 @@ import com.hcapps.xpenzave.util.UiConstants.BUDGET_VALUE_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
-import com.hcapps.xpenzave.util.UiConstants.OAUTH2_SEGMENT_ARG_KEY
 import io.appwrite.extensions.toJson
 import timber.log.Timber
 
@@ -114,13 +113,7 @@ fun XpenzaveNavGraph(
 
 fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     composable(
-        route = Screen.Authentication.route,
-        arguments = listOf(
-            navArgument(OAUTH2_SEGMENT_ARG_KEY) {
-                type = NavType.StringType
-                nullable = true
-            }
-        )
+        route = Screen.Authentication.route
     ) {
         AuthenticationScreen(navigateToHome)
     }

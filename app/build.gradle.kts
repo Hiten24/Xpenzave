@@ -29,8 +29,8 @@ android {
     buildTypes {
         getByName("debug") {
             applicationIdSuffix = ".debug"
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
 //            buildConfigField("Boolean", "DEBUG", "true")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -38,8 +38,8 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
-//            buildConfigField("Boolean", "DEBUG", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+//            signingConfig = signingConfigs.getByName("release")
         }
     }
 
@@ -122,6 +122,10 @@ dependencies {
 
     // flow layout
     implementation ("com.google.accompanist:accompanist-flowlayout:0.30.1")
+
+    // room db
+//    implementation ("androidx.room:room-runtime:2.5.1")
+//    annotationProcessor ("androidx.room:room-compiler:2.5.1")
 
     testImplementation ("junit:junit:4.13.2")
 

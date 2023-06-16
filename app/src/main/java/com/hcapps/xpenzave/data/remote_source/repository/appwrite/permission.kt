@@ -1,9 +1,11 @@
-package com.hcapps.xpenzave.data.source.remote.repository.appwrite
+package com.hcapps.xpenzave.data.remote_source.repository.appwrite
 
+import androidx.annotation.Keep
 import com.hcapps.xpenzave.domain.model.User
 import io.appwrite.Permission
 import io.appwrite.Role
 
+@Keep
 object AppWriteUtil {
     fun permissions(user: User): List<String> {
         return listOf(

@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.datastore.DataStoreService
-import com.hcapps.xpenzave.data.source.remote.repository.auth.AuthRepository
+import com.hcapps.xpenzave.data.remote_source.repository.auth.AuthRepository
 import com.hcapps.xpenzave.domain.model.User
 import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.util.ResponseState

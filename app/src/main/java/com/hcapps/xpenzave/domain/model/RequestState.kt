@@ -1,5 +1,8 @@
 package com.hcapps.xpenzave.domain.model
 
+import androidx.annotation.Keep
+
+@Keep
 sealed class RequestState<out T> {
     object Idle: RequestState<Nothing>()
     object Loading: RequestState<Nothing>()

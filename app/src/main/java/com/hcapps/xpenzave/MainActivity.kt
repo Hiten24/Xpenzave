@@ -15,7 +15,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -24,22 +23,15 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var dataStore: DataStoreService
 
-    // receives verify or failed redirected from oauth2
-    private lateinit var intentDataSegment: String
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        intentDataSegment = intent.data?.lastPathSegment ?: ""
-        Timber.i("intent: ${intent.data}")
-        Timber.i("intent: ${intent.data?.lastPathSegment}")
         setContent {
             XpenzaveTheme {
                 val navController = rememberNavController()
                 LaunchedEffect(key1 = Unit) {
-                    val destination = getStartDestination(dataStore, intentDataSegment)
-//                    navController.popBackStack()
-//                    navController.navigate(destination)
+                    val destination = getStartDestination(dataStore)
+                    navController.popBackStack()
+                    navController.navigate(destination)
                 }
                 val backStackEntry = navController.currentBackStackEntryAsState()
                 XpenzaveScaffold(
@@ -47,7 +39,7 @@ class MainActivity : ComponentActivity() {
                     backStackEntry = backStackEntry
                 ) { padding ->
                     XpenzaveNavGraph(
-                        startDestination = Screen.Authentication.withArgs(intentDataSegment),
+                        startDestination = Screen.Authentication.route,
                         navController = navController,
                         paddingValues = padding
                     )
@@ -59,10 +51,10 @@ class MainActivity : ComponentActivity() {
 
 }
 
-suspend fun getStartDestination(dataStore: DataStoreService, segment: String): String {
+suspend fun getStartDestination(dataStore: DataStoreService): String {
     return withContext(Dispatchers.IO) {
         val user = dataStore.getUserFlow().first()
-        return@withContext if (user.userId.isEmpty()) Screen.Authentication.withArgs(segment)
+        return@withContext if (user.userId.isEmpty()) Screen.Authentication.route
         else Screen.Home.route
     }
 }

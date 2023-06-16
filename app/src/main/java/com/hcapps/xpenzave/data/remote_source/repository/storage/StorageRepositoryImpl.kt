@@ -1,7 +1,7 @@
-package com.hcapps.xpenzave.data.source.remote.repository.storage
+package com.hcapps.xpenzave.data.remote_source.repository.storage
 
 import com.hcapps.xpenzave.data.datastore.DataStoreService
-import com.hcapps.xpenzave.data.source.remote.repository.appwrite.AppWriteUtil.permissions
+import com.hcapps.xpenzave.data.remote_source.repository.appwrite.AppWriteUtil.permissions
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.storage.UploadedPhoto
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_EXPENSE_PHOTO_BUCKET_IT

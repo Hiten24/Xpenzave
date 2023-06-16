@@ -3,9 +3,9 @@ package com.hcapps.xpenzave.presentation.add_expense
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.source.remote.APP_WRITE_DATE_TIME_FORMAT
-import com.hcapps.xpenzave.data.source.remote.repository.database.DatabaseRepository
-import com.hcapps.xpenzave.data.source.remote.repository.storage.StorageRepository
+import com.hcapps.xpenzave.data.remote_source.APP_WRITE_DATE_TIME_FORMAT
+import com.hcapps.xpenzave.data.remote_source.repository.database.DatabaseRepository
+import com.hcapps.xpenzave.data.remote_source.repository.storage.StorageRepository
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.expense.ExpenseData
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent
@@ -67,6 +67,7 @@ class AddExpenseViewModel @Inject constructor(
             is AddExpenseEvent.AddButtonClicked -> {
                 viewModelScope.launch {
                     loading(true)
+                    Timber.i("add expense button clicked")
                     state.value.photoPath?.let { uploadPhoto(it) }
                     addExpense()
                     loading(false)
@@ -90,7 +91,7 @@ class AddExpenseViewModel @Inject constructor(
         return (amount != null && amount != 0.0)
     }
 
-    private fun uploadPhoto(path: String) = viewModelScope.launch {
+    private suspend fun uploadPhoto(path: String) /*= viewModelScope.launch*/ {
         state.value = state.value.copy(uploadPhotoProgress = true)
         when (val response = storageRepository.createFile(path)) {
             is RequestState.Success -> {
@@ -106,10 +107,10 @@ class AddExpenseViewModel @Inject constructor(
         }
     }
 
-    private fun addExpense() = viewModelScope.launch {
+    private suspend fun addExpense() /*= viewModelScope.launch */{
         if (validate().not()) {
             state.value = state.value.copy(amountError = "Amount can't be empty.")
-            return@launch
+            return
         }
         val expense = ExpenseData(
             amount = state.value.amount.toDoubleOrNull() ?: 0.0,

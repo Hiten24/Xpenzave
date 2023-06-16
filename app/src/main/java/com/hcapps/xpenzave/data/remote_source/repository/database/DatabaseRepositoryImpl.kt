@@ -1,7 +1,7 @@
-package com.hcapps.xpenzave.data.source.remote.repository.database
+package com.hcapps.xpenzave.data.remote_source.repository.database
 
 import com.hcapps.xpenzave.data.datastore.DataStoreService
-import com.hcapps.xpenzave.data.source.remote.repository.appwrite.AppWriteUtil.permissions
+import com.hcapps.xpenzave.data.remote_source.repository.appwrite.AppWriteUtil.permissions
 import com.hcapps.xpenzave.domain.model.CategoryDataResponse
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.Response
@@ -80,6 +80,9 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun addExpense(expense: ExpenseData): ExpenseResponse {
         return try {
+            Timber.i("user: ${user.first()}")
+            Timber.i("permission: ${permissions(user.first())}")
+            Timber.i("data: $expense")
             val response = database.createDocument(
                 databaseId = databaseId,
                 collectionId = expenseCollectionId,
@@ -131,7 +134,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 databaseId = databaseId,
                 collectionId = budgetCollectionId,
                 documentId = id,
-                data = budget,
+                data = listOf("month" to 1, "year" to 2023, "amount" to 100.0),
                 nestedType = BudgetData::class.java,
                 permissions = permissions(user.first())
             )

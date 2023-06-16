@@ -1,4 +1,4 @@
-package com.hcapps.xpenzave.data.source.remote.repository.storage
+package com.hcapps.xpenzave.data.remote_source.repository.storage
 
 import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.storage.UploadedPhoto

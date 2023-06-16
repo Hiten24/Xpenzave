@@ -9,12 +9,7 @@ import timber.log.Timber
 
 sealed class Screen(val route: String) {
 
-    object Authentication: Screen(route = "authentication_screen?$OAUTH2_SEGMENT_ARG_KEY={$OAUTH2_SEGMENT_ARG_KEY}") {
-        fun withArgs(segment: String): String {
-            Timber.i("screen segment: $segment")
-            return "authentication_screen?$OAUTH2_SEGMENT_ARG_KEY=$segment"
-        }
-    }
+    object Authentication: Screen(route = "authentication_screen")
 
     object Home: Screen(route = "home_screen")
 

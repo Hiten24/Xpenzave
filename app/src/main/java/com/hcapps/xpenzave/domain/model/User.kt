@@ -1,6 +1,6 @@
 package com.hcapps.xpenzave.domain.model
 
-import com.hcapps.xpenzave.data.source.remote.repository.auth.AppUser
+import com.hcapps.xpenzave.data.remote_source.repository.auth.AppUser
 
 data class User(
     val userId: String = "",
