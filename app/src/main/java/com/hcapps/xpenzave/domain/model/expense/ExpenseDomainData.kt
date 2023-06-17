@@ -1,6 +1,7 @@
 package com.hcapps.xpenzave.domain.model.expense
 
 import android.os.Parcelable
+import com.hcapps.xpenzave.data.local_source.entities.ExpenseEntity
 import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
 import kotlinx.parcelize.Parcelize
@@ -25,6 +26,19 @@ data class ExpenseDomainData(
         moreDetails = moreDetail,
         date = date.toString(),
         id = id
+    )
+
+    fun toExpenseEntity() = ExpenseEntity(
+        id = id,
+        amount = amount,
+        details = moreDetail,
+        category = category,
+        addThisExpenseToEachMonth = false,
+        photo = photoId,
+        day = date.dayOfMonth,
+        month = date.monthValue,
+        year = date.year
+
     )
 
     companion object {

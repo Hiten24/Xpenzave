@@ -48,15 +48,12 @@ const val TAB_GENERAL = 1
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatsScreen(
-    deletedExpenseId: String? = null,
     paddingValues: PaddingValues,
     navigateToCompare: () -> Unit,
     navigateToFilter: (appliedFilters: Array<String>) -> Unit,
     navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit,
     viewModel: StatsViewModel = hiltViewModel()
 ) {
-
-    deletedExpenseId?.let { viewModel.deleteExpense(it) }
 
     val state by viewModel.state
     val generalState by viewModel.generalState
@@ -91,7 +88,7 @@ fun StatsScreen(
                         .height(2.dp)
                 )
             }
-            viewModel.expenses.isEmpty() && viewModel.appliedFilter.isEmpty() -> {
+            state.expenses.isEmpty() && viewModel.appliedFilter.isEmpty() -> {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -134,7 +131,7 @@ fun StatsScreen(
                                 navigateToFiler = { navigateToFilter(viewModel.appliedFilter.toTypedArray()) },
                                 navigateToDetails = { navigateToDetails(it.toExpenseDetailsArgs()) },
                                 date = state.date,
-                                expenses = viewModel.expenses.groupBy { it.date },
+                                expenses = state.expenses.groupBy { it.date },
                                 expenseLogLazyState = lazyState,
                                 filterBadge = viewModel.appliedFilter.isNotEmpty()
                             )

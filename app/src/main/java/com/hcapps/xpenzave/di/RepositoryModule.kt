@@ -2,6 +2,8 @@ package com.hcapps.xpenzave.di
 
 import com.hcapps.xpenzave.data.datastore.DataStoreService
 import com.hcapps.xpenzave.data.datastore.DataStoreServiceImpl
+import com.hcapps.xpenzave.data.local_source.repository.LocalDatabaseRepository
+import com.hcapps.xpenzave.data.local_source.repository.LocalDatabaseRepositoryImpl
 import com.hcapps.xpenzave.data.remote_source.repository.auth.AuthRepository
 import com.hcapps.xpenzave.data.remote_source.repository.auth.AuthRepositoryImpl
 import com.hcapps.xpenzave.data.remote_source.repository.database.DatabaseRepository
@@ -36,5 +38,10 @@ abstract class RepositoryModule {
     abstract fun provideDataStore(
         dataStoreImpl: DataStoreServiceImpl
     ): DataStoreService
+
+    @Binds
+    abstract fun provideLocalDatabaseRepository(
+        localDatabaseRepositoryImpl: LocalDatabaseRepositoryImpl
+    ): LocalDatabaseRepository
 
 }

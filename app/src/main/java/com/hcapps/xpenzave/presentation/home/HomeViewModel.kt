@@ -78,7 +78,7 @@ class HomeViewModel @Inject constructor(
         expensesLoading(true)
         try {
             expenses.clear()
-            expenses.addAll(getExpensesUseCase.execute(state.value.date, emptyList()))
+//            expenses.addAll(getExpensesUseCase.execute(state.value.date, emptyList()))
             // calculating total expenses by adding all expenses amount
             val totalExpense = expenses.sumOf { it.amount }
             // taking last day log of expenses for recent expenses

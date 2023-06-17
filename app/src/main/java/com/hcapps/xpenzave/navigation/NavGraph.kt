@@ -23,7 +23,6 @@ import com.hcapps.xpenzave.presentation.home.HomeScreen
 import com.hcapps.xpenzave.presentation.settings.SettingsScreen
 import com.hcapps.xpenzave.presentation.stats.StatsScreen
 import com.hcapps.xpenzave.util.Screen
-import com.hcapps.xpenzave.util.UiConstants
 import com.hcapps.xpenzave.util.UiConstants.BACK_EXPENSE_ID_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.BUDGET_VALUE_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
@@ -51,7 +50,7 @@ fun XpenzaveNavGraph(
                 navController.navigate(Screen.EditBudget.passArgs(monthYear, budgetId))
             },
             navigateToExpenseLog = {
-                navController.navigate(Screen.Stats.withArgs(""))
+                navController.navigate(Screen.Stats.route)
             },
             navigateToDetails = { navController.navigate(Screen.ExpenseDetail.passArgs(it.toJson())) },
             navigateToAddExpense = { navController.navigate(Screen.AddExpense.route) }
@@ -65,8 +64,8 @@ fun XpenzaveNavGraph(
         statsRoute(
             paddingValues,
             navigateToCompare = { navController.navigate(Screen.CompareSelector.route) },
-            navigateToFilter = { appliedFilters ->
-                navController.navigate(Screen.Filter.withArgs(appliedFilters.toJson()))
+            navigateToFilter = {
+                navController.navigate(Screen.Filter.route)
             },
             navigateToDetails = { navController.navigate(Screen.ExpenseDetail.passArgs(it.toJson())) }
         )
@@ -104,7 +103,7 @@ fun XpenzaveNavGraph(
             onNavigateUp = { navController.navigateUp() },
             navigateToStateScreen = { filters ->
                 navController.popBackStack()
-                navController.navigate(Screen.Stats.withArgs(filters.toJson()))
+                navController.navigate(Screen.Stats.route)
             }
         )
 
@@ -161,17 +160,9 @@ fun NavGraphBuilder.statsRoute(
     navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit
 ) {
     composable(
-        route = Screen.Stats.route,
-        arguments = listOf(
-            navArgument(UiConstants.EXPENSE_FILTER_ARGUMENT_KEY) {
-                type = NavType.StringType
-                nullable = false
-            }
-        )
-    ) { backStackEntry ->
-        val deletedExpense by backStackEntry.savedStateHandle.getStateFlow<String?>(BACK_EXPENSE_ID_ARGUMENT_KEY, null).collectAsState()
+        route = Screen.Stats.route
+    ) {
         StatsScreen(
-            deletedExpenseId = deletedExpense,
             paddingValues = paddingValues,
             navigateToCompare = navigateToCompare,
             navigateToFilter = navigateToFilter,
@@ -264,13 +255,7 @@ fun NavGraphBuilder.filter(
     navigateToStateScreen: (filters: Array<String>) -> Unit
 ) {
     composable(
-        route = Screen.Filter.route,
-        arguments = listOf(
-            navArgument(UiConstants.EXPENSE_FILTER_ARGUMENT_KEY) {
-                type = NavType.StringType
-                nullable = false
-            }
-        )
+        route = Screen.Filter.route
     ) {
         FilterScreen(
             navigateUp = onNavigateUp,
