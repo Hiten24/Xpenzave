@@ -3,7 +3,6 @@ package com.hcapps.xpenzave.presentation.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,7 +36,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
 
-    deletedExpenseId?.let { viewModel.deleteExpense(it) }
+//    deletedExpenseId?.let { viewModel.deleteExpense(it) }
 
     val state by viewModel.state
     val lazyListState = rememberLazyListState()

@@ -14,7 +14,7 @@ data class HomeScreenState(
     val budgetPercentage: Int = 0,
     val recentExpenses: ExpenseLogType? = null,
     val budgetLoading: Boolean = false,
-    val recentExpenseLoading: Boolean = false
+    val recentExpenseLoading: Boolean = false,
 ) {
     fun calculateBudgetPercentage() = try {
         if (budgetAmount != 0.0) { ((totalSpending / budgetAmount) * 100).toInt() } else 0
