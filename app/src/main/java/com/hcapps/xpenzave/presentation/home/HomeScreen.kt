@@ -47,7 +47,6 @@ fun HomeScreen(
         BudgetProgressCard(
             modifier = Modifier
                 .fillMaxWidth()
-//                .fillMaxHeight(0.45f)
                 .padding(16.dp)
                 .height(350.dp)
                 .nestedScroll(scrollBehavior.nestedScrollConnection),

@@ -9,5 +9,5 @@ data class BudgetEntity(
     val id: String,
     val month: Int,
     val year: Int,
-    val amount: Int
+    val amount: Double
 )

@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.hcapps.xpenzave.data.local_source.entities.BudgetEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BudgetDao {
@@ -14,5 +15,8 @@ interface BudgetDao {
 
     @Query("SELECT * FROM budget WHERE id = :id")
     suspend fun getBudget(id: String): BudgetEntity
+
+    @Query("SELECT * FROM budget WHERE month = :month AND year = :year")
+    fun getBudgetByDate(month: Int, year: Int): Flow<BudgetEntity?>
 
 }
