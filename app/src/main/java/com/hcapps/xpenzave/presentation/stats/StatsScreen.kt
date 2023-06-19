@@ -30,18 +30,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.hcapps.xpenzave.presentation.core.component.XpenzaveTabRow
 import com.hcapps.xpenzave.presentation.core.component.calendar.MonthDialog
 import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
 import com.hcapps.xpenzave.presentation.expense_log.ExpenseLogSection
-import com.hcapps.xpenzave.presentation.general_stats.GeneralSection
 
-private val statsSection = listOf("Expense Log", "General")
+//private val statsSection = listOf("Expense Log", "General")
 const val TAB_EXPENSE_LOG = 0
 const val TAB_GENERAL = 1
 
@@ -56,7 +53,7 @@ fun StatsScreen(
 ) {
 
     val state by viewModel.state
-    val generalState by viewModel.generalState
+//    val generalState by viewModel.generalState
     var dateDialogOpened by remember { mutableStateOf(false) }
 
     val lazyState = rememberLazyListState()
@@ -108,15 +105,24 @@ fun StatsScreen(
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    XpenzaveTabRow(
+                    /*XpenzaveTabRow(
                         modifier = Modifier
                             .shadow(elevation = 2.dp, shape = MaterialTheme.shapes.small),
                         items = statsSection,
                         selectedIndex = state.tabScreen,
                         onSelectionChange = { viewModel.changeScreen(it) }
+                    )*/
+
+                    ExpenseLogSection(
+                        navigateToFiler = { navigateToFilter(viewModel.appliedFilter.toTypedArray()) },
+                        navigateToDetails = { navigateToDetails(it.toExpenseDetailsArgs()) },
+                        date = state.date,
+                        expenses = state.expenses.groupBy { it.date },
+                        expenseLogLazyState = lazyState,
+                        filterBadge = viewModel.appliedFilter.isNotEmpty()
                     )
 
-                    when (state.tabScreen) {
+                    /*when (state.tabScreen) {
                         TAB_GENERAL -> {
                             GeneralSection(
                                 budget = generalState.budget,
@@ -136,7 +142,7 @@ fun StatsScreen(
                                 filterBadge = viewModel.appliedFilter.isNotEmpty()
                             )
                         }
-                    }
+                    }*/
 
                 }
             }

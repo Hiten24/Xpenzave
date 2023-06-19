@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.domain.model.expense.ExpenseDomainData
-import com.hcapps.xpenzave.presentation.compare.result.component.expense_category_graph.CategoryBarChartData
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLog
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLogs
 import com.hcapps.xpenzave.presentation.core.component.MonthHeader
@@ -33,7 +32,7 @@ fun ExpenseLogSection(
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(22.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
         MonthHeader(

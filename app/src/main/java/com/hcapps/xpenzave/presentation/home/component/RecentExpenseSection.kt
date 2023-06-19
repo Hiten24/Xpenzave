@@ -43,8 +43,6 @@ fun RecentExpenseSection(
             RecentExpenseHeader(modifier = Modifier.fillMaxWidth(), onClickOfSeeAll)
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
         if (listOfExpense.isNullOrEmpty().not()) {
             ExpenseLog(
                 modifier = Modifier.fillMaxSize(),
