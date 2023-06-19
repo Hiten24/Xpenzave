@@ -44,7 +44,7 @@ fun MonthHeader(
             Text(
                 text = date.month.defaultDisplayName(),
                 style = style.monthTextStyle.copy(fontWeight = style.fontWeight),
-                color = style.monthTextColor
+                color = style.monthTextColor,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -94,7 +94,7 @@ data class MonthHeaderStyle(
             monthTextStyle: TextStyle = MaterialTheme.typography.headlineSmall,
             yearTextStyle: TextStyle = MaterialTheme.typography.bodySmall,
             iconColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-            fontWeight: FontWeight = FontWeight.Medium
+            fontWeight: FontWeight = FontWeight.Bold
         ) = MonthHeaderStyle(monthTextColor, yearTextColor, monthTextStyle, yearTextStyle, iconColor, fontWeight)
     }
 }
