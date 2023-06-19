@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.local_source.repository.LocalDatabaseRepository
 import com.hcapps.xpenzave.domain.local_usecase.LocalExpenseUseCase
+import com.hcapps.xpenzave.domain.model.expense.ExpenseData
 import com.hcapps.xpenzave.domain.usecase.GetBudgetByDateUseCase
 import com.hcapps.xpenzave.domain.usecase.GetExpensesUseCase
 import com.hcapps.xpenzave.presentation.home.state.HomeScreenState
@@ -26,12 +27,14 @@ class HomeViewModel @Inject constructor(
     private val localDatabaseRepository: LocalDatabaseRepository
 ): ViewModel() {
 
+    private var getBudgetJob: Job? = null
+
     private val _state = mutableStateOf(HomeScreenState())
     val state: State<HomeScreenState> = _state
 
     init {
-        getLocalExpenses(state.value.date)
         getLocalBudget(state.value.date)
+        getLocalExpenses(state.value.date)
         viewModelScope.launch {
             getBudgetByDateUseCase.execute(state.value.date)
             getExpensesUseCase.execute(state.value.date, emptyList())
@@ -42,7 +45,6 @@ class HomeViewModel @Inject constructor(
         _state.value = state.value.copy(date = date)
         getLocalExpenses(date)
         getLocalBudget(date)
-//        getBudgetByDateUseCase.execute(date)
     }
 
     private var getExpenseJob: Job? = null
@@ -50,22 +52,24 @@ class HomeViewModel @Inject constructor(
         getExpenseJob?.cancel()
         getExpenseJob = localExpenseUseCase.invoke(date)
             .onEach { iteration ->
-                val lastExpense =  iteration.groupBy { it.date }.entries.lastOrNull()
+                val lastExpense = iteration.groupBy { it.date }.entries.lastOrNull()
+                val totalSpend = iteration.sumOf { it.amount }
                 _state.value = state.value.copy(
-                    recentExpenses = lastExpense?.let { mapOf(it.toPair()) } ?: emptyMap()
+                    recentExpenses = lastExpense?.let { mapOf(it.toPair()) } ?: emptyMap(),
+                    totalSpending = totalSpend,
+                    budgetPercentage = state.value.calculateBudgetPercentage()
                 )
             }
             .launchIn(viewModelScope)
     }
 
-    private var getBudgetJob: Job? = null
     private fun getLocalBudget(date: LocalDate) {
         Timber.i("budget date: ${date.month.name} ${date.year}")
         getBudgetJob?.cancel()
         getBudgetJob = localDatabaseRepository.getBudget(date)
             .onEach { iterate ->
                 _state.value = iterate?.let {
-                    state.value.copy(budgetId = it.id, budgetAmount = it.amount)   
+                    state.value.copy(budgetId = it.id, budgetAmount = it.amount)
                 } ?: state.value.copy(budgetId = null, budgetAmount = null)
                 Timber.i("budget data: $iterate")
             }

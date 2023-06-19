@@ -17,7 +17,10 @@ data class HomeScreenState(
     val recentExpenseLoading: Boolean = false,
 ) {
     fun calculateBudgetPercentage() = try {
-        if (budgetAmount != null && budgetAmount != 0.0) { ((totalSpending / budgetAmount) * 100).toInt() } else 0
+        if (budgetAmount != null && budgetAmount != 0.0) {
+            val percentage = ((totalSpending / budgetAmount) * 100).toInt()
+            if (percentage > 100) 100 else percentage
+        } else 0
     } catch (e: Exception) { 0 }
 }
 
