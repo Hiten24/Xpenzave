@@ -26,8 +26,6 @@ import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    deletedExpenseId: String? = null,
-    budget: Double? = null,
     paddingValues: PaddingValues,
     editBudget: (date: String, budgetId: String) -> Unit,
     expenseDetail: (details: ExpenseDetailNavArgs) -> Unit,
@@ -35,8 +33,6 @@ fun HomeScreen(
     expenseLog: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-
-//    deletedExpenseId?.let { viewModel.deleteExpense(it) }
 
     val state by viewModel.state
     val lazyListState = rememberLazyListState()

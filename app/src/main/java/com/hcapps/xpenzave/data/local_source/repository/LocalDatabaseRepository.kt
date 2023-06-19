@@ -15,4 +15,6 @@ interface LocalDatabaseRepository {
 
     suspend fun addBudget(budgetEntity: BudgetEntity)
 
+    suspend fun addExpense(expense: ExpenseEntity)
+
 }

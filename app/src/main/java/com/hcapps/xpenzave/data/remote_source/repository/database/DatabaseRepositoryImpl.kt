@@ -130,11 +130,12 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun updateBudget(id: String, budget: BudgetData): CreateBudgetResponse {
         return try {
+            Timber.i("budget id: $id")
             val response = database.updateDocument(
                 databaseId = databaseId,
                 collectionId = budgetCollectionId,
                 documentId = id,
-                data = listOf("month" to 1, "year" to 2023, "amount" to 100.0),
+                data = budget,
                 nestedType = BudgetData::class.java,
                 permissions = permissions(user.first())
             )

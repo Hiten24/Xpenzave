@@ -30,4 +30,8 @@ class LocalDatabaseRepositoryImpl @Inject constructor(
     override suspend fun addBudget(budgetEntity: BudgetEntity) {
         budgetDao.upsertBudget(budgetEntity)
     }
+
+    override suspend fun addExpense(expense: ExpenseEntity) {
+        expenseDao.insertExpenses(listOf(expense))
+    }
 }

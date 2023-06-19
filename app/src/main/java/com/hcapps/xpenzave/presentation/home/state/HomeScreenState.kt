@@ -9,7 +9,7 @@ import java.time.LocalDate
 data class HomeScreenState(
     val budgetId: String? = null,
     val date: LocalDate = LocalDate.now(),
-    val budgetAmount: Double = 0.0,
+    val budgetAmount: Double? = null,
     val totalSpending: Double = 0.0,
     val budgetPercentage: Int = 0,
     val recentExpenses: ExpenseLogType? = null,
@@ -17,7 +17,7 @@ data class HomeScreenState(
     val recentExpenseLoading: Boolean = false,
 ) {
     fun calculateBudgetPercentage() = try {
-        if (budgetAmount != 0.0) { ((totalSpending / budgetAmount) * 100).toInt() } else 0
+        if (budgetAmount != null && budgetAmount != 0.0) { ((totalSpending / budgetAmount) * 100).toInt() } else 0
     } catch (e: Exception) { 0 }
 }
 

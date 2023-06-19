@@ -64,11 +64,9 @@ class HomeViewModel @Inject constructor(
         getBudgetJob?.cancel()
         getBudgetJob = localDatabaseRepository.getBudget(date)
             .onEach { iterate ->
-                iterate?.let {
-                    _state.value = state.value.copy(
-                        budgetId = it.id, budgetAmount = it.amount
-                    )
-                }
+                _state.value = iterate?.let {
+                    state.value.copy(budgetId = it.id, budgetAmount = it.amount)   
+                } ?: state.value.copy(budgetId = null, budgetAmount = null)
                 Timber.i("budget data: $iterate")
             }
             .launchIn(viewModelScope)

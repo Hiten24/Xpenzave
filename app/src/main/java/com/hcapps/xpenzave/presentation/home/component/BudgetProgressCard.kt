@@ -36,7 +36,7 @@ fun BudgetProgressCard(
     modifier: Modifier = Modifier,
     date: LocalDate = LocalDate.now(),
     progress: Int = 0,
-    budgetAmount: Double = 0.0,
+    budgetAmount: Double? = 0.0,
     totalSpending: Double = 0.0,
     loading: Boolean = false,
     cardBackgroundColor: Color = MaterialTheme.colorScheme.surface,
@@ -86,7 +86,8 @@ fun BudgetProgressCard(
                         append("$totalSpending $symbol")
                     }
                     withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f))) {
-                        append(" / $budgetAmount $")
+                        append(" / ${budgetAmount ?: "-"}")
+                        budgetAmount?.let { append(" $") }
                     }
                 }
 

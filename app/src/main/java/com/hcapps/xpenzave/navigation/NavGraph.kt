@@ -2,8 +2,6 @@ package com.hcapps.xpenzave.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -29,7 +27,6 @@ import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
 import io.appwrite.extensions.toJson
-import timber.log.Timber
 
 @Composable
 fun XpenzaveNavGraph(
@@ -71,10 +68,7 @@ fun XpenzaveNavGraph(
         )
 
         editBudget(
-            navigateUp = { navController.navigateUp() },
-            passDataBackToHome = { key, data ->
-                navController.previousBackStackEntry?.savedStateHandle?.set(key, data)
-            }
+            navigateUp = { navController.navigateUp() }
         )
 
         addExpense(
@@ -126,15 +120,7 @@ fun NavGraphBuilder.homeRoute(
     navigateToAddExpense: () -> Unit
 ) {
     composable(route = Screen.Home.route) { backStackEntry ->
-
-        val budget: Double? by backStackEntry.savedStateHandle.getStateFlow<Double?>(BUDGET_VALUE_ARGUMENT_KEY, null).collectAsState()
-        Timber.i("budget: $budget")
-
-        val deletedExpense by backStackEntry.savedStateHandle.getStateFlow<String?>(BACK_EXPENSE_ID_ARGUMENT_KEY, null).collectAsState()
-
         HomeScreen(
-            deletedExpenseId = deletedExpense,
-            budget = budget,
             paddingValues = paddingValues,
             editBudget = { date, budgetId ->
                 backStackEntry.savedStateHandle.remove<Double>(BUDGET_VALUE_ARGUMENT_KEY)
@@ -173,8 +159,7 @@ fun NavGraphBuilder.statsRoute(
 
 
 fun NavGraphBuilder.editBudget(
-    navigateUp: () -> Unit,
-    passDataBackToHome: (key: String, Data: Double) -> Unit
+    navigateUp: () -> Unit
 ) {
     composable(
         route = Screen.EditBudget.route,
@@ -192,11 +177,7 @@ fun NavGraphBuilder.editBudget(
         )
     ) {
         EditBudgetScreen(
-            navigateUp = navigateUp,
-            passBudgetToHome = { data ->
-                // pass data back to home
-                passDataBackToHome(BUDGET_VALUE_ARGUMENT_KEY, data)
-            }
+            navigateUp = navigateUp
         )
     }
 }

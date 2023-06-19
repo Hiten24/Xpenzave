@@ -5,9 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcapps.xpenzave.data.remote_source.repository.database.DatabaseRepository
-import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.budget.BudgetData
+import com.hcapps.xpenzave.domain.usecase.EditBudgetUseCase
 import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
@@ -16,15 +15,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class EditBudgetViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val databaseRepository: DatabaseRepository
-//    private val databaseRepository: FakeDatabaseRepository
+    private val editBudgetUseCase: EditBudgetUseCase
 ): ViewModel() {
 
     private val _state = mutableStateOf(BudgetState())
@@ -60,30 +57,21 @@ class EditBudgetViewModel @Inject constructor(
         } else true
     }
 
-    fun upsertBudget(onSuccess: (Double) -> Unit) = viewModelScope.launch {
+    fun upsertBudget() = viewModelScope.launch {
         loading(true)
         if (!validate()) return@launch
         val date = state.value.date ?: LocalDate.now()
         val budget = BudgetData(date.monthValue, date.year, state.value.amount.toDouble())
-        val response = if (state.value.budgetId == null)
-            databaseRepository.createBudget(budget)
-        else
-            databaseRepository.updateBudget(state.value.budgetId!!, budget)
-
-        when (response) {
-            is RequestState.Success -> {
-                clearState()
-                loading(false)
-                _uiFlow.emit(BudgetScreenFlow.SnackBar("Budget updated successfully."))
-                delay(1000L) // to show SnackBar
-                onSuccess(budget.amount)
-                _uiFlow.emit(BudgetScreenFlow.NavigateUp)
-            }
-            is RequestState.Error -> {
-                Timber.e(response.error)
-                loading(false)
-            }
-            else -> {}
+        try {
+            editBudgetUseCase(state.value.budgetId, budget)
+            loading(false)
+            clearState()
+            _uiFlow.emit(BudgetScreenFlow.SnackBar("Budget updated successfully."))
+            delay(1000L)
+            _uiFlow.emit(BudgetScreenFlow.NavigateUp)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            loading(false)
         }
     }
 

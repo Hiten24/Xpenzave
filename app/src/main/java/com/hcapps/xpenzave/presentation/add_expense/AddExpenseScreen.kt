@@ -1,7 +1,6 @@
 package com.hcapps.xpenzave.presentation.add_expense
 
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +38,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Shapes
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -51,6 +52,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -88,6 +90,7 @@ import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 import com.hcapps.xpenzave.util.getActualPathOfImage
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -103,12 +106,15 @@ fun AddExpense(
     val dateState = rememberSheetState()
     var imagePreviewOpened by remember { mutableStateOf(false) }
 
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEventFlow.collectLatest { event ->
             when (event) {
                 is UIEvent.Loading -> {  }
                 is UIEvent.ShowMessage -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    scope.launch { snackBarHostState.showSnackbar(event.message) }
                 }
                 is UIEvent.Error -> {}
             }
@@ -116,6 +122,7 @@ fun AddExpense(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = {
             AddExpenseTopBar(onClickOfNavigationIcon = navigateUp)
         }
@@ -142,8 +149,11 @@ fun AddExpense(
             )
 
             XpenzaveButton(
-                modifier = Modifier.padding(start = 32.dp, bottom = 16.dp, end = 32.dp).align(
-                    Alignment.BottomCenter),
+                modifier = Modifier
+                    .padding(start = 32.dp, bottom = 16.dp, end = 32.dp)
+                    .align(
+                        Alignment.BottomCenter
+                    ),
                 title = stringResource(R.string.add),
                 state = state.addButtonState
             ) {
@@ -220,7 +230,7 @@ fun AddExpenseContent(
             ) {
                 SelectCategoryComponent(
                     categoryStyle = defaultCategoryStyle(backgroundColor = MaterialTheme.colorScheme.surface),
-                    selected = state.category,
+                    selected = state.category ?: "",
                     onSelect = onSelectCategory
                 )
                 /*AddBillEachMonth(
@@ -384,7 +394,7 @@ fun SelectCategoryComponent(
                     CategoryComponent(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(6.dp),
+                            .padding(2.dp),
                         category = category,
                         style = categoryStyle,
                         isSelected = category.id == selected,
@@ -490,7 +500,9 @@ fun AddPhotoSection(
                 )
             } else {
                 Card(
-                    modifier = Modifier.size(100.dp).clickable(onClick = previewPhoto),
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clickable(onClick = previewPhoto),
                     elevation = CardDefaults.elevatedCardElevation(2.dp)
                 ) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

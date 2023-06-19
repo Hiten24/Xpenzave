@@ -11,7 +11,7 @@ data class AddExpenseState(
     val details: String = "",
     val date: LocalDateTime = LocalDateTime.now(),
     val eachMonth: Boolean = false,
-    val category: String = "",
+    val category: String? = null,
     val photo: Uri? = null,
     val photoPath: String? = null,
     val uploadedPhoto: UploadedPhoto? = null,

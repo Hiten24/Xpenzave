@@ -4,10 +4,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.remote_source.APP_WRITE_DATE_TIME_FORMAT
-import com.hcapps.xpenzave.data.remote_source.repository.database.DatabaseRepository
-import com.hcapps.xpenzave.data.remote_source.repository.storage.StorageRepository
-import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.domain.model.expense.ExpenseData
+import com.hcapps.xpenzave.domain.usecase.AddExpenseUseCase
+import com.hcapps.xpenzave.domain.usecase.UploadPhotoUseCase
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.AddBillEachMonthChange
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.AmountChange
@@ -21,14 +20,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class AddExpenseViewModel @Inject constructor(
-    private val databaseRepository: DatabaseRepository,
-    private val storageRepository: StorageRepository
+    private val uploadPhotoUseCase: UploadPhotoUseCase,
+    private val addExpenseUseCase: AddExpenseUseCase
 ): ViewModel() {
 
     val state = mutableStateOf(AddExpenseState())
@@ -65,13 +63,7 @@ class AddExpenseViewModel @Inject constructor(
                 state.value = state.value.copy(date = event.dateTime)
             }
             is AddExpenseEvent.AddButtonClicked -> {
-                viewModelScope.launch {
-                    loading(true)
-                    Timber.i("add expense button clicked")
-                    state.value.photoPath?.let { uploadPhoto(it) }
-                    addExpense()
-                    loading(false)
-                }
+                uploadPhotoAndAddExpense(state.value.photoPath)
             }
         }
     }
@@ -88,34 +80,42 @@ class AddExpenseViewModel @Inject constructor(
 
     private fun validate(): Boolean {
         val amount = state.value.amount.toDoubleOrNull()
-        return (amount != null && amount != 0.0)
-    }
-
-    private suspend fun uploadPhoto(path: String) /*= viewModelScope.launch*/ {
-        state.value = state.value.copy(uploadPhotoProgress = true)
-        when (val response = storageRepository.createFile(path)) {
-            is RequestState.Success -> {
-                Timber.i("name: ${response.data.name}, id: ${response.data.fileId}")
-                state.value = state.value.copy(uploadedPhoto = response.data)
-                state.value = state.value.copy(uploadPhotoProgress = false)
+        val category = state.value.category
+        when {
+            amount == null || amount == 0.0 -> {
+                state.value = state.value.copy(amountError = "Amount can't be empty.")
             }
-            is RequestState.Error -> {
-                Timber.e(response.error)
-                state.value = state.value.copy(uploadPhotoProgress = false)
+            category.isNullOrEmpty() -> {
+                viewModelScope.launch {
+                    _uiEventFlow.emit(UIEvent.ShowMessage("Select category to add expense."))
+                }
             }
-            else -> {}
         }
+        return (amount != null && amount != 0.0 && category.isNullOrEmpty().not())
     }
 
-    private suspend fun addExpense() /*= viewModelScope.launch */{
+    private fun uploadPhotoAndAddExpense(path: String?) = viewModelScope.launch {
+        loading(true)
         if (validate().not()) {
-            state.value = state.value.copy(amountError = "Amount can't be empty.")
-            return
+            loading(false)
+            return@launch
         }
-        val expense = ExpenseData(
+        try {
+            path?.let { uploadPhotoUseCase(it) }
+            addExpenseUseCase(getTypedExpense())
+            loading(false)
+            clearState()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            loading(false)
+        }
+    }
+
+    private fun getTypedExpense(): ExpenseData {
+        return ExpenseData(
             amount = state.value.amount.toDoubleOrNull() ?: 0.0,
             details = state.value.details,
-            categoryId = state.value.category,
+            categoryId = state.value.category ?: "",
             date = state.value.date.format(DateTimeFormatter.ofPattern(APP_WRITE_DATE_TIME_FORMAT)),
             day = state.value.date.dayOfMonth,
             month = state.value.date.monthValue,
@@ -123,16 +123,6 @@ class AddExpenseViewModel @Inject constructor(
             addThisExpenseToEachMonth = state.value.eachMonth,
             photo = state.value.uploadedPhoto?.fileId
         )
-        when (val response = databaseRepository.addExpense(expense)) {
-            is RequestState.Success -> {
-                clearState()
-            }
-            is RequestState.Error -> {
-                Timber.e(response.error)
-            }
-            else -> Unit
-        }
-
     }
 
 }
