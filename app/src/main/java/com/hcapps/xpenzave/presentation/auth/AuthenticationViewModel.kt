@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.presentation.auth
 
+import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -15,6 +16,8 @@ import com.hcapps.xpenzave.presentation.auth.event.AuthScreenState
 import com.hcapps.xpenzave.presentation.auth.event.AuthUiEventFlow
 import com.hcapps.xpenzave.presentation.auth.event.AuthUiEventFlow.Message
 import com.hcapps.xpenzave.util.Constant
+import com.hcapps.xpenzave.util.Constant.AUTH_LOGIN_SCREEN
+import com.hcapps.xpenzave.util.Constant.AUTH_REGISTER_SCREEN
 import com.hcapps.xpenzave.util.UiConstants.OAUTH2_SEGMENT_ARG_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,11 +43,6 @@ class AuthenticationViewModel @Inject constructor(
         authenticationNavArgs()
     }
 
-    private fun clearFields() {
-        authScreenState.value = authScreenState.value.copy(email = "")
-        authScreenState.value = authScreenState.value.copy(password = "")
-    }
-
     private fun authenticationNavArgs() = viewModelScope.launch {
         val oAuth2Segment = savedStateHandle.get<String>(OAUTH2_SEGMENT_ARG_KEY)
         Timber.i("segment: $oAuth2Segment")
@@ -54,14 +52,13 @@ class AuthenticationViewModel @Inject constructor(
     fun onEvent(event: AuthEvent) {
         when (event) {
             is AuthEvent.EmailChanged -> {
-                authScreenState.value = authScreenState.value.copy(email = event.email)
+                authScreenState.value = authScreenState.value.copy(email = event.email, emailError = null)
             }
             is AuthEvent.PasswordChanged -> {
-                authScreenState.value = authScreenState.value.copy(password = event.password)
+                authScreenState.value = authScreenState.value.copy(password = event.password, passwordError = null)
             }
             is AuthEvent.SwitchAuthScreen -> {
-                clearFields()
-                authScreenState.value = authScreenState.value.copy(authState = event.screen)
+                authScreenState.value = AuthScreenState(authState = event.screen)
             }
         }
     }
@@ -69,8 +66,7 @@ class AuthenticationViewModel @Inject constructor(
     fun registerUser(
         onSuccess: () -> Unit
     ) = viewModelScope.launch {
-        if (!validateFields()) {
-            onError(Exception("Enter all require details to register."))
+        if (!validate()) {
             return@launch
         }
         showLoading(true)
@@ -91,13 +87,9 @@ class AuthenticationViewModel @Inject constructor(
         }
     }
 
-    fun login(
-        onSuccess: () -> Unit
-    ) = viewModelScope.launch {
-        if (!validateFields()) {
-            onError(Exception("Enter all require details to login."))
-            return@launch
-        }
+    fun login(onSuccess: () -> Unit) = viewModelScope.launch {
+        if (!validate()) { return@launch }
+
         showLoading(true)
         val email = authScreenState.value.email
         val password = authScreenState.value.password
@@ -109,6 +101,9 @@ class AuthenticationViewModel @Inject constructor(
                 onSuccess()
             }
             is RequestState.Error -> {
+                if (response.error.message == "Invalid credentials. Please check the email and password.") {
+                    authScreenState.value = authScreenState.value.copy(passwordError = "Invalid credentials.")
+                }
                 showLoading(false)
                 onError(response.error)
             }
@@ -165,8 +160,24 @@ class AuthenticationViewModel @Inject constructor(
         }
     }
 
-    private fun validateFields(): Boolean {
-        return (authScreenState.value.email.isEmpty() || authScreenState.value.password.isEmpty()).not()
+    private fun validate(): Boolean {
+        val emailValid = Patterns.EMAIL_ADDRESS.matcher(authScreenState.value.email).matches()
+        when {
+            emailValid.not() -> {
+                authScreenState.value = authScreenState.value.copy(emailError = "Enter valid email address.")
+            }
+            authScreenState.value.password.length < 8 && authScreenState.value.authState == AUTH_LOGIN_SCREEN -> {
+                authScreenState.value = authScreenState.value.copy(passwordError = "Invalid password.")
+            }
+            authScreenState.value.password.length < 8 && authScreenState.value.authState == AUTH_REGISTER_SCREEN -> {
+                authScreenState.value = authScreenState.value.copy(passwordError = "Password Must be at least 8 chars long.")
+            }
+            else -> {}
+        }
+        return authScreenState.value.email.isNotEmpty()
+                && authScreenState.value.password.isNotEmpty()
+                && emailValid
+                && authScreenState.value.password.length >= 8
     }
 
     private fun showLoading(loading: Boolean) {

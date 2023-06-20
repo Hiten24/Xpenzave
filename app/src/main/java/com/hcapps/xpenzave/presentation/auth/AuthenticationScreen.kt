@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -66,8 +65,7 @@ fun AuthenticationScreen(
             .fillMaxSize()
             .padding(horizontal = 24.dp)
             .padding(vertical = 32.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         RegisterHeader(
             onClickOfLogin = {
@@ -79,12 +77,18 @@ fun AuthenticationScreen(
             screenState = state.authState
         )
 
+        Spacer(modifier = Modifier.height(80.dp))
+
         RegisterMiddleComponent(
             email = state.email,
             onEmailChanged = { viewModel.onEvent(AuthEvent.EmailChanged(it)) },
             password = state.password,
-            onPasswordChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) }
+            onPasswordChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) },
+            emailError = state.emailError,
+            passwordError = state.passwordError
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         RegisterBottomComponent(
             onClickOfRegisterButton = {
@@ -109,7 +113,8 @@ fun AuthenticationScreen(
                 )
             },
             buttonTitle = if (state.authState == AUTH_LOGIN_SCREEN) stringResource(R.string.login) else stringResource(R.string.register),
-            loadingState = state.loading
+            loadingState = state.loading,
+            buttonEnabled = state.email.isNotEmpty() && state.password.isNotEmpty()
         )
     }
 }
@@ -156,7 +161,9 @@ fun RegisterMiddleComponent(
      email: String,
      onEmailChanged: (String) -> Unit,
      password: String,
-     onPasswordChanged: (String) -> Unit
+     onPasswordChanged: (String) -> Unit,
+     emailError: String? = null,
+     passwordError: String? = null
 ) {
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -164,17 +171,17 @@ fun RegisterMiddleComponent(
         OutlinedTextField(
             value = email,
             onValueChange = onEmailChanged,
-            label = {
-                Text(text = stringResource(R.string.e_mail))
-            },
+            label = { Text(text = stringResource(R.string.e_mail)) },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
-            )
+            ),
+            isError = emailError.isNullOrEmpty().not(),
+            supportingText = { emailError?.let { Text(text = it) } }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = password,
@@ -187,7 +194,9 @@ fun RegisterMiddleComponent(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            isError = passwordError.isNullOrEmpty().not(),
+            supportingText = { passwordError?.let { Text(text = it) } }
         )
 
     }
@@ -195,7 +204,9 @@ fun RegisterMiddleComponent(
 
 @Composable
 fun RegisterBottomComponent(
+    modifier: Modifier = Modifier,
     onClickOfRegisterButton: () -> Unit,
+    buttonEnabled: Boolean = false,
     onClickOfGoogle: () -> Unit,
     onClickOfFaceBook: () -> Unit,
     buttonTitle: String,
@@ -203,19 +214,18 @@ fun RegisterBottomComponent(
 ) {
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
             onClick = {
-//                loadingState = true
                 onClickOfRegisterButton()
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(ButtonHeight),
             shape = Shapes().small,
-            enabled = !loadingState
+            enabled = !loadingState && buttonEnabled
         ) {
             if (!loadingState) {
                 Text(
