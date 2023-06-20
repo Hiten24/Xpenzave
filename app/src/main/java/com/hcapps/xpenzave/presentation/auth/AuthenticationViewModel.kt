@@ -15,7 +15,6 @@ import com.hcapps.xpenzave.presentation.auth.event.AuthScreenState
 import com.hcapps.xpenzave.presentation.auth.event.AuthUiEventFlow
 import com.hcapps.xpenzave.presentation.auth.event.AuthUiEventFlow.Message
 import com.hcapps.xpenzave.util.Constant
-import com.hcapps.xpenzave.util.ResponseState
 import com.hcapps.xpenzave.util.UiConstants.OAUTH2_SEGMENT_ARG_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -78,13 +77,13 @@ class AuthenticationViewModel @Inject constructor(
         val email = authScreenState.value.email
         val password = authScreenState.value.password
         when (val response = authRepository.createAccountWithCredentials(email, password)) {
-            is ResponseState.Success -> {
+            is RequestState.Success -> {
                 val user = response.data
                 dataStore.saveUser(User(userId = user.id, email = user.email, currencyCode = null))
                 showLoading(false)
                 onSuccess()
             }
-            is ResponseState.Error -> {
+            is RequestState.Error -> {
                 showLoading(false)
                 onError(response.error)
             }
@@ -103,13 +102,13 @@ class AuthenticationViewModel @Inject constructor(
         val email = authScreenState.value.email
         val password = authScreenState.value.password
         when (val response = authRepository.loginWithCredentials(email, password)) {
-            is ResponseState.Success -> {
+            is RequestState.Success -> {
                 val user = response.data
                 dataStore.saveUser(User(userId = user.userId, email = email, currencyCode = null))
                 showLoading(false)
                 onSuccess()
             }
-            is ResponseState.Error -> {
+            is RequestState.Error -> {
                 showLoading(false)
                 onError(response.error)
             }
@@ -123,8 +122,8 @@ class AuthenticationViewModel @Inject constructor(
         provider: String
     ) = viewModelScope.launch {
         when (val response = authRepository.authenticateWithOauth2(activity, provider)) {
-            is ResponseState.Success -> onSuccess()
-            is ResponseState.Error -> onError(response.error)
+            is RequestState.Success -> onSuccess()
+            is RequestState.Error -> onError(response.error)
             else -> Unit
         }
     }

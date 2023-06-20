@@ -21,4 +21,8 @@
     <string name="compare">Compare</string>
     <string name="expenses_category">Expenses / Category</string>
     <string name="clear">Clear</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="cancel">Cancel</string>
+    <string name="change">Change</string>
 </resources>

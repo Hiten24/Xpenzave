@@ -5,7 +5,6 @@ import com.hcapps.xpenzave.domain.model.RequestState
 import com.hcapps.xpenzave.util.Constant.OAUTH2_FAILED_SUFFIX
 import com.hcapps.xpenzave.util.Constant.OAUTH2_REDIRECT_LINK
 import com.hcapps.xpenzave.util.Constant.OAUTH2_SUCCESS_SUFFIX
-import com.hcapps.xpenzave.util.ResponseState
 import io.appwrite.ID
 import io.appwrite.models.Session
 import io.appwrite.models.User
@@ -22,7 +21,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun createAccountWithCredentials(
         email: String,
         password: String
-    ): ResponseState<AppUser> {
+    ): RequestState<AppUser> {
         return try {
             val response = account.create(
                 userId = ID.unique(),
@@ -32,13 +31,13 @@ class AuthRepositoryImpl @Inject constructor(
             Timber.i("response: $response")
             Timber.i("response: ${response.registration}")
             Timber.i("createAccountWithCredentials: user " + response.email + " registered successfully")
-            ResponseState.Success(response)
+            RequestState.Success(response)
         } catch (e: Exception) {
             e.printStackTrace()
             if (e.message == "A user with the same email already exists in your project.") {
-                ResponseState.Error(Exception("A user with the same email already exists."))
+                RequestState.Error(Exception("A user with the same email already exists."))
             } else {
-                ResponseState.Error(e)
+                RequestState.Error(e)
             }
         }
     }
@@ -46,23 +45,23 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun loginWithCredentials(
         email: String,
         password: String
-    ): ResponseState<Session> {
+    ): RequestState<Session> {
         return try {
             val response = account.createEmailSession(
                 email = email,
                 password = password
             )
-            ResponseState.Success(response)
+            RequestState.Success(response)
         } catch (e: Exception) {
             e.printStackTrace()
-            ResponseState.Error(e)
+            RequestState.Error(e)
         }
     }
 
     override suspend fun authenticateWithOauth2(
         activity: ComponentActivity,
         provider: String
-    ): ResponseState<Boolean> {
+    ): RequestState<Boolean> {
         return try {
             account.createOAuth2Session(
                 activity = activity,
@@ -70,27 +69,36 @@ class AuthRepositoryImpl @Inject constructor(
                 success = "${OAUTH2_REDIRECT_LINK}${OAUTH2_SUCCESS_SUFFIX}",
                 failure = "${OAUTH2_REDIRECT_LINK}${OAUTH2_FAILED_SUFFIX}"
             )
-            ResponseState.Success(true)
+            RequestState.Success(true)
         } catch (e: Exception) {
             e.printStackTrace()
-            ResponseState.Error(e)
+            RequestState.Error(e)
         }
     }
 
-    override suspend fun logOut(): ResponseState<Boolean> {
+    override suspend fun logOut(): RequestState<Boolean> {
         return try {
             // logs out from all the devices
             account.deleteSessions()
-            ResponseState.Success(true)
+            RequestState.Success(true)
         } catch (e: Exception) {
             e.printStackTrace()
-            ResponseState.Error(e)
+            RequestState.Error(e)
         }
     }
 
     override suspend fun getAccount(): RequestState<AppUser> {
         return try {
             RequestState.Success(account.get())
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
+    }
+
+    override suspend fun changePassword(oldPassword: String, newPassword: String): RequestState<Boolean> {
+        return try {
+            account.updatePassword(newPassword, oldPassword)
+            RequestState.Success(true)
         } catch (e: Exception) {
             RequestState.Error(e)
         }

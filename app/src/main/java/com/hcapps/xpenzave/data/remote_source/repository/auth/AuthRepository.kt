@@ -2,7 +2,6 @@ package com.hcapps.xpenzave.data.remote_source.repository.auth
 
 import androidx.activity.ComponentActivity
 import com.hcapps.xpenzave.domain.model.RequestState
-import com.hcapps.xpenzave.util.ResponseState
 import io.appwrite.models.Session
 
 interface AuthRepository {
@@ -10,17 +9,19 @@ interface AuthRepository {
     suspend fun createAccountWithCredentials(
         email: String,
         password: String
-    ): ResponseState<AppUser>
+    ): RequestState<AppUser>
 
     suspend fun loginWithCredentials(
         email: String,
         password: String
-    ): ResponseState<Session>
+    ): RequestState<Session>
 
-    suspend fun authenticateWithOauth2(activity: ComponentActivity, provider: String): ResponseState<Boolean>
+    suspend fun authenticateWithOauth2(activity: ComponentActivity, provider: String): RequestState<Boolean>
 
-    suspend fun logOut(): ResponseState<Boolean>
+    suspend fun logOut(): RequestState<Boolean>
 
     suspend fun getAccount(): RequestState<AppUser>
+
+    suspend fun changePassword(oldPassword: String, newPassword: String): RequestState<Boolean>
 
 }

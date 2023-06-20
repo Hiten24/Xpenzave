@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.presentation.core.UIEvent
+import com.hcapps.xpenzave.presentation.core.rememberAlertDialogState
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.ui.theme.primaryGradient
 import kotlinx.coroutines.flow.collectLatest
@@ -54,6 +55,7 @@ fun SettingsScreen(
 
     val context = LocalContext.current
     val state by viewModel.state
+    val changePasswordDialogState = rememberAlertDialogState()
 
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEventFlow.collectLatest { event ->
@@ -84,18 +86,30 @@ fun SettingsScreen(
             .padding(topBarPadding)
             .padding(paddingValues)
         ) {
-            SettingsHeader(
-                state.email
-            )
+            SettingsHeader(state.email)
             Spacer(modifier = Modifier.weight(1f))
             SettingsContent(
-                logOut = {
-                    viewModel.logOut(navigateToAuth)
-                },
+                logOut = { viewModel.onEvent(SettingsEvent.LogOut(navigateToAuth)) },
+                changePassword = { changePasswordDialogState.show() } ,
                 logOutLoading = state.logOutLoading
             )
         }
     }
+
+    ChangePasswordDialog(
+        state = changePasswordDialogState,
+        oldPasswordValue = state.oldPassword,
+        newPasswordValue = state.newPassword,
+        oldPasswordError = state.oldPasswordError,
+        newPasswordError = state.newPasswordError,
+        oldPasswordChange = { password -> viewModel.onEvent(SettingsEvent.OldPasswordChanged(password)) },
+        newPasswordChange = { password -> viewModel.onEvent(SettingsEvent.NewPasswordChanged(password)) },
+        onPasswordChange = { viewModel.onEvent(SettingsEvent.ChangePassword() {
+            changePasswordDialogState.dismiss()
+        }) },
+        onDismissRequest = { changePasswordDialogState.dismiss() }
+    )
+
 }
 
 @Composable
@@ -126,11 +140,16 @@ fun SettingsHeader(
 }
 
 @Composable
-fun SettingsContent(modifier: Modifier = Modifier, logOut: () -> Unit, logOutLoading: Boolean) {
+fun SettingsContent(
+    modifier: Modifier = Modifier,
+    logOut: () -> Unit,
+    changePassword: () -> Unit,
+    logOutLoading: Boolean
+) {
     Column(modifier = modifier
         .fillMaxSize()
         .padding(16.dp)) {
-        SettingItem(title = "Change Password", onClick = {  }) {
+        SettingItem(title = "Change Password", onClick = changePassword) {
             Icon(imageVector = Icons.Outlined.ArrowForward, contentDescription = null)
         }
         Spacer(modifier = Modifier.weight(1f))

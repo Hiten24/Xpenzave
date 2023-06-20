@@ -39,5 +39,9 @@ class DataStoreServiceImpl @Inject constructor(
             }
     }
 
+    override suspend fun clear() {
+        userPreferencesDataStore.edit { clear() }
+    }
+
     override fun getUser(): User = getUserFlow().asLiveData().value ?: User()
 }

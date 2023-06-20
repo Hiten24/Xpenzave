@@ -11,4 +11,6 @@ interface DataStoreService {
 
     fun getUserFlow(): Flow<User>
 
+    suspend fun clear()
+
 }

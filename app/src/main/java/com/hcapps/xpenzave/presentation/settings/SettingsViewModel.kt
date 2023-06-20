@@ -4,21 +4,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.datastore.DataStoreService
-import com.hcapps.xpenzave.data.remote_source.repository.auth.AuthRepository
-import com.hcapps.xpenzave.domain.model.User
+import com.hcapps.xpenzave.domain.usecase.auth.ChangePasswordUseCase
+import com.hcapps.xpenzave.domain.usecase.auth.LogOutUseCase
 import com.hcapps.xpenzave.presentation.core.UIEvent
-import com.hcapps.xpenzave.util.ResponseState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val dataStore: DataStoreService
+    dataStore: DataStoreService,
+    private val logOutUseCase: LogOutUseCase,
+    private val changePasswordUseCase: ChangePasswordUseCase
 ): ViewModel() {
 
     private val _state = mutableStateOf(SettingsState())
@@ -38,28 +39,66 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun logOut(onSuccess: () -> Unit) = viewModelScope.launch {
-        _state.value = state.value.copy(logOutLoading = true)
-        when (val response = authRepository.logOut()) {
-            is ResponseState.Success -> {
-                dataStore.saveUser(User())
-                onSuccess()
-                _state.value = state.value.copy(logOutLoading = false)
+    fun onEvent(event: SettingsEvent) {
+        when (event) {
+            is SettingsEvent.OldPasswordChanged -> {
+                _state.value = state.value.copy(oldPassword = event.password)
             }
-            is ResponseState.Error -> {
-                onError(response.error)
-                _state.value = state.value.copy(logOutLoading = false)
+            is SettingsEvent.NewPasswordChanged -> {
+                _state.value = state.value.copy(newPassword = event.password)
             }
-            else -> Unit
+            is SettingsEvent.ChangePassword -> {
+                changePassword(state.value.oldPassword, state.value.newPassword) {
+                    event.onSuccess()
+                }
+            }
+            is SettingsEvent.LogOut -> {
+                logOut(event.onSuccess)
+            }
         }
     }
 
-    fun setCurrencyPreference(currencyCode: String) = viewModelScope.launch {
-        dataStore.saveUser(user.first().copy(currencyCode = currencyCode))
+    private fun changePassword(old: String, new: String, onSuccess: () -> Unit) = viewModelScope.launch {
+        if (!validate(old, new)) return@launch
+        try {
+            changePasswordUseCase(old, new)
+            onSuccess()
+        } catch (e: Exception) {
+            when (e.message) {
+                "Invalid credentials. Please check the email and password." -> {
+                    _state.value = state.value.copy(oldPasswordError = "Invalid Password")
+                }
+            }
+            Timber.e(e)
+        }
     }
 
-    private fun onError(error: Throwable) = viewModelScope.launch {
-        _uiEventFlow.emit(UIEvent.Error(error))
+    private fun validate(oldPassword: String, newPassword: String): Boolean {
+        when {
+            oldPassword.length < 8 -> {
+                _state.value = state.value.copy(oldPasswordError = "Passwords must be at least 8 char long.")
+            }
+            newPassword.length < 8 -> {
+                _state.value = state.value.copy(newPasswordError = "Passwords must be at least 8 char long.")
+            }
+        }
+        return oldPassword.length >= 8 && newPassword.length >= 8
     }
+
+    private fun logOut(onSuccess: () -> Unit) = viewModelScope.launch {
+        _state.value = state.value.copy(logOutLoading = true)
+        try {
+            logOutUseCase()
+            onSuccess()
+            _state.value = state.value.copy(logOutLoading = false)
+        } catch (e: Exception) {
+            _state.value = state.value.copy(logOutLoading = false)
+            Timber.e(e)
+        }
+    }
+
+    /*fun setCurrencyPreference(currencyCode: String) = viewModelScope.launch {
+        dataStore.saveUser(user.first().copy(currencyCode = currencyCode))
+    }*/
 
 }
