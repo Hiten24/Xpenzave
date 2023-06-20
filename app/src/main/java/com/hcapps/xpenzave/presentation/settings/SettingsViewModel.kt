@@ -21,8 +21,8 @@ class SettingsViewModel @Inject constructor(
     private val dataStore: DataStoreService
 ): ViewModel() {
 
-    var state = mutableStateOf(SettingsState())
-        private set
+    private val _state = mutableStateOf(SettingsState())
+    var state = _state
 
     private val user = dataStore.getUserFlow()
 
@@ -31,7 +31,7 @@ class SettingsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            state.value = state.value.copy(
+            _state.value = state.value.copy(
                 email = user.first().email ?: "",
 //                currencyCode = user.currencyCode ?: ""
             )
@@ -39,12 +39,17 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun logOut(onSuccess: () -> Unit) = viewModelScope.launch {
+        _state.value = state.value.copy(logOutLoading = true)
         when (val response = authRepository.logOut()) {
             is ResponseState.Success -> {
                 dataStore.saveUser(User())
                 onSuccess()
+                _state.value = state.value.copy(logOutLoading = false)
             }
-            is ResponseState.Error -> { onError(response.error) }
+            is ResponseState.Error -> {
+                onError(response.error)
+                _state.value = state.value.copy(logOutLoading = false)
+            }
             else -> Unit
         }
     }

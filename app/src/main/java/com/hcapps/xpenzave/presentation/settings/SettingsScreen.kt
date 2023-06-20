@@ -9,45 +9,42 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
+import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Shapes
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.gson.reflect.TypeToken
 import com.hcapps.xpenzave.presentation.core.UIEvent
-import com.hcapps.xpenzave.presentation.settings.model.Currency
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
-import com.hcapps.xpenzave.util.jsonToValue
+import com.hcapps.xpenzave.ui.theme.primaryGradient
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     paddingValues: PaddingValues,
@@ -56,7 +53,7 @@ fun SettingsScreen(
 ) {
 
     val context = LocalContext.current
-    var state by viewModel.state
+    val state by viewModel.state
 
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEventFlow.collectLatest { event ->
@@ -68,141 +65,106 @@ fun SettingsScreen(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-        SettingsHeader(
-            state.email,
-            onCLickOfLogOut = { viewModel.logOut {
-                Toast.makeText(context, "logging out", Toast.LENGTH_SHORT).show()
-                navigateToAuth()
-            } }
-        )
-        SettingsContent(
-            onSelectOfCurrency = { code ->
-                viewModel.setCurrencyPreference(code)
-                state = state.copy(currencyCode = code)
-            },
-            selectedCurrency = state.currencyCode,
-            onCLickOfLogOut = { viewModel.logOut {
-                Toast.makeText(context, "logging out", Toast.LENGTH_SHORT).show()
-                navigateToAuth()
-            } }
-        )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Settings",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                },
+                modifier = Modifier.background(primaryGradient()),
+                colors = TopAppBarDefaults.topAppBarColors(Color.Transparent)
+            )
+        }
+    ) { topBarPadding ->
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(topBarPadding)
+            .padding(paddingValues)
+        ) {
+            SettingsHeader(
+                state.email
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            SettingsContent(
+                logOut = {
+                    viewModel.logOut(navigateToAuth)
+                },
+                logOutLoading = state.logOutLoading
+            )
+        }
     }
 }
 
 @Composable
 fun SettingsHeader(
-    email: String,
-    onCLickOfLogOut: () -> Unit
+    email: String
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.3f)
-            .background(
-                Brush.horizontalGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.primary
-                    )
-                )
-            )
-            .padding(horizontal = 24.dp)
-            .padding(bottom = 32.dp),
+            .background(primaryGradient())
+            .padding(horizontal = 16.dp, vertical = 22.dp),
         verticalArrangement = Arrangement.SpaceAround
     ) {
-        SettingsTopBar(onCLickOfLogOut)
-        Spacer(modifier = Modifier.height(32.dp))
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "E-mail",
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = email,
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
 }
 
 @Composable
-fun SettingsTopBar(
-    onCLickOfLogOut: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(text = "Settings", style = MaterialTheme.typography.headlineMedium, color = Color.White)
-        /*OutlinedButton(
-            onClick = { onCLickOfLogOut() },
-            shape = Shapes().small
-        ) {
-            Text(text = "Log Out", color = Color.White)
-        }*/
+fun SettingsContent(modifier: Modifier = Modifier, logOut: () -> Unit, logOutLoading: Boolean) {
+    Column(modifier = modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
+        SettingItem(title = "Change Password", onClick = {  }) {
+            Icon(imageVector = Icons.Outlined.ArrowForward, contentDescription = null)
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        LogOutButton(logOut = logOut, loading = logOutLoading)
     }
 }
 
 @Composable
-fun SettingsContent(
-    onSelectOfCurrency: (code: String) -> Unit,
-    selectedCurrency: String,
-    onCLickOfLogOut: () -> Unit
-) {
-
-//    var openedCurrencyDialog by remember { mutableStateOf(false) }
-
-    Column(
+fun LogOutButton(logOut: () -> Unit, loading: Boolean) {
+    Button(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 38.dp, bottom = 22.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+            .fillMaxWidth()
+            .height(ButtonHeight),
+        shape = MaterialTheme.shapes.small,
+        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f)),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.error),
+        onClick = logOut
     ) {
-        SettingItem(title = "Change Password", onClick = {}) {
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "Arrow Forward"
-            )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(ButtonHeight)
-                .padding(horizontal = 24.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
-            onClick = onCLickOfLogOut,
-            shape = Shapes().small
-        ) {
-            Text(text = "Log Out", color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
-        }
-        /*SettingItem(title = "Use Face ID", onClick = {}) {
-
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        SettingItem(title = "Currency", onClick = { openedCurrencyDialog = true }) {
+        if (!loading) {
             Text(
-                text = selectedCurrency,
-                fontWeight = MaterialTheme.typography.labelLarge.fontWeight,
-                color = MaterialTheme.colorScheme.primary
+                text = "Log Out",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.error
             )
-        }*/
-    }
-
-    /*CurrencySelectionDialog(
-        openedDialog = openedCurrencyDialog,
-        onDismissRequest = { openedCurrencyDialog = false },
-        onSelectOfCurrency = { code ->
-            onSelectOfCurrency(code)
-            openedCurrencyDialog = false
+        } else {
+            CircularProgressIndicator(
+                modifier = Modifier.size(22.dp),
+                strokeWidth = 2.dp,
+                strokeCap = StrokeCap.Round,
+                color = MaterialTheme.colorScheme.error
+            )
         }
-    )*/
-
+    }
 }
 
 @Composable
@@ -215,8 +177,7 @@ fun SettingItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(horizontal = 24.dp),
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -225,6 +186,7 @@ fun SettingItem(
     }
 }
 
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrencySelectionDialog(
@@ -267,16 +229,19 @@ fun CurrencySelectionDialog(
         }
     }
 }
+*/
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun PreviewSettingsHeader() {
-    SettingsHeader("test.account@gmail.com") {}
+    SettingsHeader("test.account@gmail.com")
 }
 
-@Preview
-@Composable
-fun PreviewSettingsTopBar() {
-    SettingsTopBar {}
-}
-
+/*CurrencySelectionDialog(
+        openedDialog = openedCurrencyDialog,
+        onDismissRequest = { openedCurrencyDialog = false },
+        onSelectOfCurrency = { code ->
+            onSelectOfCurrency(code)
+            openedCurrencyDialog = false
+        }
+    )*/

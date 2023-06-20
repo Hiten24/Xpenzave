@@ -47,7 +47,7 @@ data class ExpenseDateHeaderStyle(
             dateTextColor = MaterialTheme.colorScheme.primary,
             headerBackgroundColor = MaterialTheme.colorScheme.surface,
             cardShape = Shapes().small,
-            dateFontWeight = MaterialTheme.typography.labelLarge.fontWeight
+            dateFontWeight = FontWeight.Medium
         )
     }
 }

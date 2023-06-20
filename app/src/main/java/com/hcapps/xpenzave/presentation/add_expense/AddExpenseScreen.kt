@@ -272,7 +272,6 @@ fun AddExpenseTopBar(
         modifier = Modifier.background(
             brush = Brush.horizontalGradient(
                 listOf(
-                    MaterialTheme.colorScheme.secondary,
                     MaterialTheme.colorScheme.primary,
                     MaterialTheme.colorScheme.secondary
                 )
@@ -280,14 +279,14 @@ fun AddExpenseTopBar(
         ),
         title = { Text(
             text = "Add Expense",
-            color = MaterialTheme.colorScheme.onPrimary
+            color = MaterialTheme.colorScheme.onSecondary
         ) },
         navigationIcon = {
             IconButton(onClick = onClickOfNavigationIcon) {
                 Icon(
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "Back Arrow",
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
         },
