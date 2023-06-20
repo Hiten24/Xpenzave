@@ -20,19 +20,20 @@ import com.hcapps.xpenzave.ui.theme.ButtonHeight
 fun XpenzaveButton(
     modifier: Modifier = Modifier,
     title: String,
-    state: ButtonState = ButtonState(),
+    enabled: Boolean = true,
+    loading: Boolean = false,
     onClickOfButton: () -> Unit
 ) {
     Button(
         modifier = modifier
             .fillMaxWidth()
             .height(ButtonHeight),
-        enabled = state.enabled && state.loading.not(),
+        enabled = enabled && loading.not(),
         onClick = onClickOfButton,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = Shapes().small
     ) {
-        if (state.loading.not()) {
+        if (loading.not()) {
             Text(text = title)
         } else {
             CircularProgressIndicator(

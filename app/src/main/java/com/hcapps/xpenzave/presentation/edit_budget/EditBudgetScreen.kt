@@ -113,7 +113,7 @@ fun EditBudgetScreen(
             XpenzaveButton(
                 modifier = Modifier.padding(horizontal = 28.dp),
                 title = "Save",
-                state = state.buttonState
+                loading = state.loading
             ) {
                 viewModel.upsertBudget()
             }

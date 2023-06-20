@@ -155,7 +155,7 @@ fun AddExpense(
                         Alignment.BottomCenter
                     ),
                 title = stringResource(R.string.add),
-                state = state.addButtonState
+                loading = state.loading
             ) {
                 viewModel.onEvent(AddButtonClicked)
             }

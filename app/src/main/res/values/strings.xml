@@ -3,7 +3,9 @@
 
     <string name="register">Register</string>
     <string name="login">Log In</string>
-    <string name="set_password">Set Password</string>
+    <string name="set_password">Set password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="password">Password</string>
     <string name="e_mail">E-Mail</string>
     <string name="google">Google</string>
     <string name="facebook">FaceBook</string>
@@ -27,4 +29,17 @@
     <string name="change">Change</string>
 
     <string name="input_empty_error">Please input the require fields.</string>
+    <string name="login_title">Log in to Xpenzave</string>
+    <string name="login_action_text">Join now</string>
+    <string name="register_title">Ready to track your Expenses?</string>
+    <string name="register_action_text">Log in</string>
+
+<!--    password validation-->
+    <string name="password_rule_title">Password should include:</string>
+    <string name="password_rule_1">%s Password should be 8–20 characters.</string>
+    <string name="password_rule_2">%s Password should have a lower case letter.</string>
+    <string name="password_rule_3">%s Password should have a upper case letter.</string>
+    <string name="password_rule_4">%s Password should have a number or acceptable character ( $ ! # &amp; @ ? \u003D \u005F )</string>
+    <string name="check_unicode">\u2705</string>
+    <string name="bullet_point_unicode">\u2022</string>
 </resources>

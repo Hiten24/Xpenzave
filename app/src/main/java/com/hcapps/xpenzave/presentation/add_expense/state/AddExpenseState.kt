@@ -2,7 +2,6 @@ package com.hcapps.xpenzave.presentation.add_expense.state
 
 import android.net.Uri
 import com.hcapps.xpenzave.domain.model.storage.UploadedPhoto
-import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
 import java.time.LocalDateTime
 
 data class AddExpenseState(
@@ -15,6 +14,6 @@ data class AddExpenseState(
     val photo: Uri? = null,
     val photoPath: String? = null,
     val uploadedPhoto: UploadedPhoto? = null,
-    val addButtonState: ButtonState = ButtonState(),
+    val loading: Boolean = false,
     val uploadPhotoProgress: Boolean = false
 )

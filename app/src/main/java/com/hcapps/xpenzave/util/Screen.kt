@@ -35,4 +35,8 @@ sealed class Screen(val route: String) {
 
     object Filter: Screen(route = "filter")
 
+    object Login: Screen(route = "login")
+
+    object Register: Screen(route = "register")
+
 }

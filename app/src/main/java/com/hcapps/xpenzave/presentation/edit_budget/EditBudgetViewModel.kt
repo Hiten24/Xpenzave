@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.domain.model.budget.BudgetData
 import com.hcapps.xpenzave.domain.usecase.EditBudgetUseCase
-import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -76,7 +75,7 @@ class EditBudgetViewModel @Inject constructor(
     }
 
     private fun loading(loading: Boolean) {
-        _state.value = state.value.copy(buttonState = ButtonState(loading = loading))
+        _state.value = state.value.copy(loading = loading)
     }
 
 }

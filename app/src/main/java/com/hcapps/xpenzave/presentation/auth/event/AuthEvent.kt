@@ -3,6 +3,9 @@ package com.hcapps.xpenzave.presentation.auth.event
 sealed class AuthEvent {
     data class EmailChanged(val email: String): AuthEvent()
     data class PasswordChanged(val password: String): AuthEvent()
+    data class ConfirmPasswordChanged(val password: String): AuthEvent()
     // switch between login and register screen
     data class SwitchAuthScreen(val screen: Int): AuthEvent()
+    object Login: AuthEvent()
+    object Register: AuthEvent()
 }

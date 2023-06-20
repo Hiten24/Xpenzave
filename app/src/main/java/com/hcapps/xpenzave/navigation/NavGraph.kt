@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.hcapps.xpenzave.presentation.add_expense.AddExpense
 import com.hcapps.xpenzave.presentation.auth.AuthenticationScreen
+import com.hcapps.xpenzave.presentation.auth.LoginScreen
+import com.hcapps.xpenzave.presentation.auth.RegisterScreen
 import com.hcapps.xpenzave.presentation.calendar.CalendarScreen
 import com.hcapps.xpenzave.presentation.compare.CompareSelector
 import com.hcapps.xpenzave.presentation.compare.result.CompareResult
@@ -101,6 +103,18 @@ fun XpenzaveNavGraph(
             }
         )
 
+        loginRoute(
+            navigateToRegister = {
+                navController.popBackStack(Screen.Login.route, true)
+                navController.navigate(Screen.Register.route)
+            }
+        )
+
+        registerRoute(navigateToLogin = {
+            navController.popBackStack(Screen.Register.route, true)
+            navController.navigate(Screen.Login.route)
+        })
+
     }
 }
 
@@ -109,6 +123,18 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
         route = Screen.Authentication.route
     ) {
         AuthenticationScreen(navigateToHome)
+    }
+}
+
+fun NavGraphBuilder.loginRoute(navigateToRegister: () -> Unit) {
+    composable(route = Screen.Login.route) {
+        LoginScreen(navigateToHome = { /*TODO*/ }, register = navigateToRegister)
+    }
+}
+
+fun NavGraphBuilder.registerRoute(navigateToLogin: () -> Unit) {
+    composable(route = Screen.Register.route) {
+        RegisterScreen(navigateToHome = { /*TODO*/ }, login = navigateToLogin)
     }
 }
 

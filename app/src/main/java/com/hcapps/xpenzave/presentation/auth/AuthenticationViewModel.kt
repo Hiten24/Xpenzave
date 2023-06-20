@@ -57,9 +57,13 @@ class AuthenticationViewModel @Inject constructor(
             is AuthEvent.PasswordChanged -> {
                 authScreenState.value = authScreenState.value.copy(password = event.password, passwordError = null)
             }
+            is AuthEvent.ConfirmPasswordChanged -> {
+                authScreenState.value = authScreenState.value.copy(confirmPassword = event.password)
+            }
             is AuthEvent.SwitchAuthScreen -> {
                 authScreenState.value = AuthScreenState(authState = event.screen)
             }
+            else ->{}
         }
     }
 
@@ -169,7 +173,7 @@ class AuthenticationViewModel @Inject constructor(
             authScreenState.value.password.length < 8 && authScreenState.value.authState == AUTH_LOGIN_SCREEN -> {
                 authScreenState.value = authScreenState.value.copy(passwordError = "Invalid password.")
             }
-            authScreenState.value.password.length < 8 && authScreenState.value.authState == AUTH_REGISTER_SCREEN -> {
+            authScreenState.value.password.length < 8 && authScreenState.value.confirmPassword.length < 8 && authScreenState.value.authState == AUTH_REGISTER_SCREEN -> {
                 authScreenState.value = authScreenState.value.copy(passwordError = "Password Must be at least 8 chars long.")
             }
             else -> {}

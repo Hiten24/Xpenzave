@@ -15,7 +15,6 @@ import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.Detail
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.PhotoChange
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseState
 import com.hcapps.xpenzave.presentation.core.UIEvent
-import com.hcapps.xpenzave.presentation.core.component.button.ButtonState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -69,9 +68,7 @@ class AddExpenseViewModel @Inject constructor(
     }
 
     private fun loading(loading: Boolean) {
-        state.value = state.value.copy(
-            addButtonState = ButtonState(loading = loading)
-        )
+        state.value = state.value.copy(loading = loading)
     }
 
     private fun clearState() {
