@@ -41,8 +41,7 @@ class ForgotPasswordViewModel @Inject constructor(
             return@launch
         }
         try {
-//            delay(3000)
-//            forgotPasswordUseCase(state.value.email)
+            forgotPasswordUseCase(state.value.email)
             onSuccess()
         }
         catch (e: Exception) {

@@ -64,7 +64,9 @@ fun LoginScreen(
                 onPasswordChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) },
                 emailError = state.emailError,
                 passwordError = state.passwordError,
-                login = { viewModel.onEvent(AuthEvent.Login) },
+                login = {
+                    viewModel.onEvent(AuthEvent.Login(navigateToHome))
+                },
                 loading = state.loading,
                 forgotPassword = forgotPassword
             )

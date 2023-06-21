@@ -52,7 +52,7 @@ class RegisterViewModel @Inject constructor(
                     _state.value = state.value.copy(loading = false)
                     return
                 }
-                register()
+                register(event.onSuccess)
             }
             else -> {}
         }
@@ -76,10 +76,11 @@ class RegisterViewModel @Inject constructor(
         return emailValid && passwordMatchValid && passwordRules
     }
 
-    private fun register() = viewModelScope.launch {
+    private fun register(onSuccess: () -> Unit) = viewModelScope.launch {
         _state.value = state.value.copy(loading = true)
         try {
             registerUseCase(state.value.email, state.value.password)
+            onSuccess()
         } catch (e: Exception) {
             Timber.e(e)
         }

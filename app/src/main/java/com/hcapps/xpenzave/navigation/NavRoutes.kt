@@ -200,8 +200,8 @@ fun NavGraphBuilder.onBoard(navigateToLogin: () -> Unit, navigateToRegister: () 
     }
 }
 
-fun NavGraphBuilder.forgotPasswordRoute() {
+fun NavGraphBuilder.forgotPasswordRoute(navigateUp: () -> Unit) {
     composable(route = Screen.ForgotPassword.route) {
-        ForgotPasswordScreen()
+        ForgotPasswordScreen(navigateUp = navigateUp)
     }
 }

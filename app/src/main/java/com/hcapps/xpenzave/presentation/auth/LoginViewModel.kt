@@ -40,7 +40,7 @@ class LoginViewModel @Inject constructor(
                     _state.value = state.value.copy(loading = false)
                     return
                 }
-                login()
+                login(event.onSuccess)
             }
             else -> {}
         }
@@ -57,10 +57,11 @@ class LoginViewModel @Inject constructor(
         return emailValid && passwordValid
     }
 
-    private fun login() = viewModelScope.launch {
+    private fun login(onSuccess: () -> Unit) = viewModelScope.launch {
         _state.value = state.value.copy(loading = true)
         try {
             loginUseCase(state.value.email, state.value.password)
+            onSuccess()
         } catch (e: Exception) {
             if (e.message == "Invalid credentials. Please check the email and password.") {
                 _state.value = state.value.copy(passwordError = "Invalid credentials.")

@@ -70,7 +70,7 @@ fun ResetPasswordContent(
         val secret = it.getQueryParameter("secret")
         val expire = it.getQueryParameter("expire")?.replace(" ", "T")
         val expireDateTime = LocalDateTime.parse(expire)
-        isExpired = LocalDateTime.now().compareTo(expireDateTime) == 1
+//        isExpired = LocalDateTime.now().compareTo(expireDateTime) == 1
         Timber.i("userId: $userId")
         Timber.i("secret: $secret")
         Timber.i("expire: $expire")

@@ -62,7 +62,7 @@ fun RegisterScreen(
                 onPasswordChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) },
                 emailError = state.emailError,
                 passwordError = state.passwordError,
-                register = { viewModel.onEvent(AuthEvent.Register) },
+                register = { viewModel.onEvent(AuthEvent.Register(navigateToHome)) },
                 loading = state.loading,
                 confirmPassword = state.confirmPassword,
                 onConfirmPasswordChanged = { viewModel.onEvent(AuthEvent.ConfirmPasswordChanged(it)) },
@@ -163,7 +163,7 @@ fun RegisterContent(
         )
 
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         XpenzaveButton(
             title = "Register",
             enabled = email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty(),

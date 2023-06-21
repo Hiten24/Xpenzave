@@ -14,7 +14,7 @@ class LoginUseCase @Inject constructor(
         when (val response = authRepository.loginWithCredentials(email, password)) {
             is RequestState.Success -> {
                 val user = response.data
-                dataStoreService.saveUser(User(userId = user.id, email = email))
+                dataStoreService.saveUser(User(userId = user.userId, email = email))
             }
             is RequestState.Error -> throw response.error
             else -> {}

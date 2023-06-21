@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.presentation.core.UIEvent
 import com.hcapps.xpenzave.presentation.core.rememberAlertDialogState
+import com.hcapps.xpenzave.presentation.settings.SettingsEvent.LogOut
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.ui.theme.primaryGradient
 import kotlinx.coroutines.flow.collectLatest
@@ -89,7 +90,7 @@ fun SettingsScreen(
             SettingsHeader(state.email)
             Spacer(modifier = Modifier.weight(1f))
             SettingsContent(
-                logOut = { viewModel.onEvent(SettingsEvent.LogOut(navigateToAuth)) },
+                logOut = { viewModel.onEvent(LogOut(navigateToAuth)) },
                 changePassword = { changePasswordDialogState.show() } ,
                 logOutLoading = state.logOutLoading
             )

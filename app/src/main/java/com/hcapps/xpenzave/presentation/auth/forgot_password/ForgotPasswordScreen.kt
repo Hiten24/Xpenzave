@@ -32,7 +32,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForgotPasswordScreen(
-    viewModel: ForgotPasswordViewModel = hiltViewModel()
+    viewModel: ForgotPasswordViewModel = hiltViewModel(),
+    navigateUp: () -> Unit
 ) {
     val state by viewModel.state
     val scope = rememberCoroutineScope()
@@ -42,7 +43,7 @@ fun ForgotPasswordScreen(
         topBar = {
             AuthTopBar(
                 title = stringResource(id = R.string.forgot_password_title),
-                onNavigation = {  }
+                onNavigation = navigateUp
             )
         },
     ) { paddingValues ->  
@@ -66,7 +67,7 @@ fun ForgotPasswordScreen(
                 error = state.emailError,
                 keyboardType = KeyboardType.Email,
                 action = {
-                    viewModel.onEvent(ForgotPasswordEvent.ContinueButton() {
+                    viewModel.onEvent(ForgotPasswordEvent.ContinueButton {
                         scope.launch { sheetState.show() }
                     })
                 }
@@ -79,7 +80,7 @@ fun ForgotPasswordScreen(
                 enabled = state.email.isNotEmpty(),
                 loading = state.loading
             ) {
-                viewModel.onEvent(ForgotPasswordEvent.ContinueButton() {
+                viewModel.onEvent(ForgotPasswordEvent.ContinueButton {
                     scope.launch {
                         sheetState.show()
                     }
@@ -89,16 +90,25 @@ fun ForgotPasswordScreen(
     }
 
     if (sheetState.isVisible) {
-        ForgotPasswordBottomSheetContent(sheetState) {
-            scope.launch { sheetState.hide() }
-        }
+        ForgotPasswordBottomSheetContent(
+            state = sheetState,
+            onDismiss = {
+                scope.launch { sheetState.hide() }
+                navigateUp()
+            },
+            done = navigateUp
+        )
     }
     
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ForgotPasswordBottomSheetContent(state: SheetState, onDismiss: () -> Unit) {
+fun ForgotPasswordBottomSheetContent(
+    state: SheetState,
+    onDismiss: () -> Unit,
+    done: () -> Unit
+) {
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = state) {
         Column(
             Modifier
@@ -115,7 +125,7 @@ fun ForgotPasswordBottomSheetContent(state: SheetState, onDismiss: () -> Unit) {
                 style = MaterialTheme.typography.labelLarge
             )
             Spacer(modifier = Modifier.height(4.dp))
-            XpenzaveButton(title = "Done", onClickOfButton = onDismiss)
+            XpenzaveButton(title = "Done", onClickOfButton = done)
         }
     }
 }

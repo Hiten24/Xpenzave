@@ -34,8 +34,8 @@ fun XpenzaveNavGraph(
         )
 
         settingsRoute(navigateToAuth = {
-            navController.popBackStack()
-            navController.navigate(Screen.Authentication.route)
+//            navController.popBackStack(Screen.Settings.route, true)
+            navController.navigate(Screen.Login.route)
         },paddingValues)
 
         statsRoute(
@@ -99,7 +99,7 @@ fun XpenzaveNavGraph(
             navigateToRegister = { navController.navigate(Screen.Register.route) }
         )
 
-        forgotPasswordRoute()
+        forgotPasswordRoute(navigateUp = { navController.navigateUp() })
 
     }
 }

@@ -6,6 +6,6 @@ sealed class AuthEvent {
     data class ConfirmPasswordChanged(val password: String): AuthEvent()
     // switch between login and register screen
     data class SwitchAuthScreen(val screen: Int): AuthEvent()
-    object Login: AuthEvent()
-    object Register: AuthEvent()
+    data class Login(val onSuccess: () -> Unit): AuthEvent()
+    data class Register(val onSuccess: () -> Unit): AuthEvent()
 }
