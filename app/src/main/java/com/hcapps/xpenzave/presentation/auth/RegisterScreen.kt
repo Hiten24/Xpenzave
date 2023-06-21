@@ -28,6 +28,7 @@ import com.hcapps.xpenzave.presentation.core.component.input.XpenzaveTextField
 @Composable
 fun RegisterScreen(
     navigateToHome: () -> Unit,
+    navigateUp: () -> Unit,
     login: () -> Unit,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
@@ -38,8 +39,9 @@ fun RegisterScreen(
         topBar = {
             AuthTopBar(
                 title = stringResource(id = R.string.register_title),
+                subtitle = stringResource(id = R.string.register_subtitle),
                 actionText = stringResource(id = R.string.register_action_text),
-                onNavigation = { /*TODO*/ },
+                onNavigation = navigateUp,
                 onAction = login
             )
         }

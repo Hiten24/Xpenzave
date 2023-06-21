@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -26,6 +30,7 @@ import com.hcapps.xpenzave.presentation.core.component.input.XpenzaveTextField
 fun LoginScreen(
     navigateToHome: () -> Unit,
     register: () -> Unit,
+    navigateUp: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
@@ -35,8 +40,9 @@ fun LoginScreen(
         topBar = {
             AuthTopBar(
                 title = stringResource(id = R.string.login_title),
+                subtitle = stringResource(id = R.string.login_subtitle),
                 actionText = stringResource(id = R.string.login_action_text),
-                onNavigation = { /*TODO*/ },
+                onNavigation = navigateUp,
                 onAction = register
             )
         }
@@ -78,7 +84,10 @@ fun LoginContent(
     login: () -> Unit
 ) {
 
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
 
         XpenzaveTextField(
             value = email,
@@ -98,6 +107,14 @@ fun LoginContent(
             error = passwordError,
             action = login
         )
+
+        TextButton(modifier = Modifier.align(Alignment.End), onClick = { /*TODO*/ }) {
+            Text(
+                text = "Forgot Password",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold
+            )
+        }
         
         Spacer(modifier = Modifier.height(12.dp))
 

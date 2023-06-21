@@ -20,6 +20,7 @@ import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
 import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailScreen
 import com.hcapps.xpenzave.presentation.filter.FilterScreen
 import com.hcapps.xpenzave.presentation.home.HomeScreen
+import com.hcapps.xpenzave.presentation.on_board.OnBoardScreen
 import com.hcapps.xpenzave.presentation.settings.SettingsScreen
 import com.hcapps.xpenzave.presentation.stats.StatsScreen
 import com.hcapps.xpenzave.util.Screen
@@ -104,16 +105,21 @@ fun XpenzaveNavGraph(
         )
 
         loginRoute(
-            navigateToRegister = {
-                navController.popBackStack(Screen.Login.route, true)
-                navController.navigate(Screen.Register.route)
-            }
+            navigateToRegister = { navController.navigate(Screen.Register.route) },
+            navigateToHome = { navController.navigate(Screen.Home.route) },
+            navigateUp = { navController.navigateUp() }
         )
 
-        registerRoute(navigateToLogin = {
-            navController.popBackStack(Screen.Register.route, true)
-            navController.navigate(Screen.Login.route)
-        })
+        registerRoute(
+            navigateToLogin = { navController.navigate(Screen.Login.route) },
+            navigateToHome = { navController.navigate(Screen.Home.route) },
+            navigateUp = { navController.navigateUp() }
+        )
+
+        onBoard(
+            navigateToLogin = { navController.navigate(Screen.Login.route) },
+            navigateToRegister = { navController.navigate(Screen.Register.route) }
+        )
 
     }
 }
@@ -126,15 +132,23 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.loginRoute(navigateToRegister: () -> Unit) {
+fun NavGraphBuilder.loginRoute(navigateToRegister: () -> Unit, navigateUp: () -> Unit, navigateToHome: () -> Unit) {
     composable(route = Screen.Login.route) {
-        LoginScreen(navigateToHome = { /*TODO*/ }, register = navigateToRegister)
+        LoginScreen(
+            navigateToHome = navigateToHome,
+            register = navigateToRegister,
+            navigateUp = navigateUp
+        )
     }
 }
 
-fun NavGraphBuilder.registerRoute(navigateToLogin: () -> Unit) {
+fun NavGraphBuilder.registerRoute(navigateToLogin: () -> Unit, navigateToHome: () -> Unit, navigateUp: () -> Unit) {
     composable(route = Screen.Register.route) {
-        RegisterScreen(navigateToHome = { /*TODO*/ }, login = navigateToLogin)
+        RegisterScreen(
+            navigateToHome = navigateToHome,
+            login = navigateToLogin,
+            navigateUp = navigateUp
+        )
     }
 }
 
@@ -267,6 +281,15 @@ fun NavGraphBuilder.filter(
         FilterScreen(
             navigateUp = onNavigateUp,
             applyFilter = navigateToStateScreen
+        )
+    }
+}
+
+fun NavGraphBuilder.onBoard(navigateToLogin: () -> Unit, navigateToRegister: () -> Unit) {
+    composable(route = Screen.OnBoard.route) {
+        OnBoardScreen(
+            logIn =  navigateToLogin,
+            createAccount =  navigateToRegister
         )
     }
 }

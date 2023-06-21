@@ -39,4 +39,6 @@ sealed class Screen(val route: String) {
 
     object Register: Screen(route = "register")
 
+    object OnBoard: Screen(route = "on_board")
+
 }
