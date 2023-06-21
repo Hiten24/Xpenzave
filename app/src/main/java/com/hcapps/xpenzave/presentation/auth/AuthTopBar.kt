@@ -19,13 +19,13 @@ import androidx.compose.ui.text.style.TextOverflow
 fun AuthTopBar(
     title: String,
     subtitle: String? = null,
-    actionText: String,
     onNavigation: () -> Unit,
-    onAction: () -> Unit
+    actionText: String? = null,
+    onAction: () -> Unit = {}
 ) {
     LargeTopAppBar(
         title = {
-            Column() {
+            Column {
                 Text(
                     text = title,
                     color = MaterialTheme.colorScheme.primary,
@@ -43,12 +43,14 @@ fun AuthTopBar(
             }
         },
         actions = {
-            TextButton(onClick = onAction) {
-                Text(
-                    text = actionText,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold
-                )
+            actionText?.let {
+                TextButton(onClick = onAction) {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     )

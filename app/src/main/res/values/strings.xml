@@ -28,14 +28,19 @@
     <string name="cancel">Cancel</string>
     <string name="change">Change</string>
 
+<!--    Authentication-->
     <string name="input_empty_error">Please input the require fields.</string>
     <string name="login_title">Welcome Back &#128075;</string>
     <string name="login_subtitle">You can continue to login for manage finances</string>
     <string name="login_action_text">Join now</string>
-<!--    <string name="register_title">Ready to track your Expenses?</string>-->
     <string name="register_title">Create a New Account</string>
     <string name="register_subtitle">so you can manage your personal finances</string>
     <string name="register_action_text">Log in</string>
+    <string name="forgot_password_title">Forgot Password</string>
+    <string name="forgot_password_subtitle">Enter the email associated with your account and we\'ll send an email with instruction to reset your password.</string>
+    <string name="reset_password_title">Reset Password</string>
+    <string name="reset_password_expired">Request Expired</string>
+    <string name="reset_password_expired_subtitle">your password reset request has expired. Please start a new request to reset your password.</string>
 
 <!--    password validation-->
     <string name="password_rule_title">Password should include:</string>

@@ -31,6 +31,7 @@ fun LoginScreen(
     navigateToHome: () -> Unit,
     register: () -> Unit,
     navigateUp: () -> Unit,
+    forgotPassword: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
@@ -64,7 +65,8 @@ fun LoginScreen(
                 emailError = state.emailError,
                 passwordError = state.passwordError,
                 login = { viewModel.onEvent(AuthEvent.Login) },
-                loading = state.loading
+                loading = state.loading,
+                forgotPassword = forgotPassword
             )
 
         }
@@ -81,6 +83,7 @@ fun LoginContent(
     onPasswordChanged: (String) -> Unit,
     passwordError: String? = null,
     loading: Boolean = false,
+    forgotPassword: () -> Unit,
     login: () -> Unit
 ) {
 
@@ -108,7 +111,7 @@ fun LoginContent(
             action = login
         )
 
-        TextButton(modifier = Modifier.align(Alignment.End), onClick = { /*TODO*/ }) {
+        TextButton(modifier = Modifier.align(Alignment.End), onClick = forgotPassword) {
             Text(
                 text = "Forgot Password",
                 style = MaterialTheme.typography.labelLarge,

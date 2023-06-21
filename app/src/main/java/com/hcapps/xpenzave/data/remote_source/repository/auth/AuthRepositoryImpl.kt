@@ -103,4 +103,35 @@ class AuthRepositoryImpl @Inject constructor(
             RequestState.Error(e)
         }
     }
+
+    override suspend fun passwordRecovery(email: String): RequestState<Boolean> {
+        return try {
+            val response = account.createRecovery(
+                email = email,
+                url = "https://localhost/reset-password"
+            )
+            RequestState.Success(true)
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
+    }
+
+    override suspend fun resetPassword(
+        userId: String,
+        secret: String,
+        password: String,
+        passwordAgain: String
+    ): RequestState<Boolean> {
+        return try {
+            account.updateRecovery(
+                userId = userId,
+                secret = secret,
+                password = password,
+                passwordAgain = passwordAgain
+            )
+            RequestState.Success(true)
+        } catch (e: Exception) {
+            RequestState.Error(e)
+        }
+    }
 }

@@ -26,11 +26,25 @@
             </intent-filter>
 
 <!--            handle App write OAuth2 redirection-->
-            <intent-filter android:label="android_web_auth">
+            <!--<intent-filter android:label="android_web_auth">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="appwrite-callback-6487f4285941b21bf271" />
+            </intent-filter>-->
+
+        </activity>
+
+        <activity
+            android:name=".presentation.auth.forgot_password_activity.ResetPasswordActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Xpenzave">
+            <intent-filter android:label="Xpenzave link">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                    android:host="localhost"/>
             </intent-filter>
         </activity>
 

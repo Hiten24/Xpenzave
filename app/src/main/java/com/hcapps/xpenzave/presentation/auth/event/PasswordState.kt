@@ -5,10 +5,12 @@ data class PasswordState(
     val shouldHaveALowerCase: Boolean = false,
     val shouldHaveAUpperCase: Boolean = false,
     val shouldHaveANumberOrAcceptableCharacter: Boolean = false
-)
+) {
+    fun validate() = shouldBeMin8Max20Char && shouldHaveALowerCase && shouldHaveAUpperCase && shouldHaveANumberOrAcceptableCharacter
 
-val passwordRules = "Password should include:" +
-        "\n Password should be 8-20 characters." +
-        "\nPassword should have a lower case letter. " +
-        "\nPassword should have a upper case letter. " +
-        "\nPassword should have a number or acceptable character $ ! # & @ ? % = _"
+    fun shouldBeMin8Max20Char(pass: String) = pass.length in 8..20
+    fun shouldHaveALowerCase(pass: String) = Regex("[a-z]").containsMatchIn(pass)
+    fun shouldHaveAUpperCase(pass: String) = Regex("[A-Z]").containsMatchIn(pass)
+    fun shouldHaveANumberOrAcceptableCharacter(pass: String) = Regex("[1-9$!#&@?=_]").containsMatchIn(pass)
+
+}

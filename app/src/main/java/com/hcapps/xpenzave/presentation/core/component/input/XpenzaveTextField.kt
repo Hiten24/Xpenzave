@@ -64,8 +64,8 @@ fun XpenzaveTextField(
         isError = error.isNullOrEmpty().not(),
         supportingText = { error?.let { Text(text = it) } },
         keyboardActions = KeyboardActions(onDone = {
-            action()
             KeyboardActions.Default
+            action()
         })
     )
 }

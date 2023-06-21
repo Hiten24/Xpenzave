@@ -41,4 +41,6 @@ sealed class Screen(val route: String) {
 
     object OnBoard: Screen(route = "on_board")
 
+    object ForgotPassword: Screen(route = "forgot_password")
+
 }

@@ -1,0 +1,80 @@
+package com.hcapps.xpenzave.presentation.auth.forgot_password_activity
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.hcapps.xpenzave.data.remote_source.repository.auth.AuthRepository
+import com.hcapps.xpenzave.presentation.auth.event.PasswordState
+import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.ConfirmPasswordChanged
+import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.IntentData
+import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.OnPasswordChanged
+import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.PasswordChanged
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
+
+@HiltViewModel
+class RestPasswordViewModel @Inject constructor(
+    private val authRepository: AuthRepository
+): ViewModel() {
+
+    private val _state = mutableStateOf(ResetPasswordState())
+    val state = _state
+
+    fun onEvent(event: ResetPasswordEvent) {
+        when (event) {
+            is IntentData -> {
+                _state.value = state.value.copy(userId = event.userId, secret = event.secret, expire = event.expire)
+            }
+            is PasswordChanged -> {
+                _state.value = state.value.copy(password = event.password, passwordError = null)
+                val pass = state.value.password
+                    _state.value = state.value.copy(passwordState = PasswordState(
+                    shouldBeMin8Max20Char = state.value.passwordState?.shouldBeMin8Max20Char(pass) ?: false,
+                    shouldHaveALowerCase = state.value.passwordState?.shouldHaveALowerCase(pass) ?: false,
+                    shouldHaveAUpperCase = state.value.passwordState?.shouldHaveAUpperCase(pass) ?: false,
+                    shouldHaveANumberOrAcceptableCharacter = state.value.passwordState?.shouldHaveANumberOrAcceptableCharacter(pass) ?: false))
+                _state.value = state.value.copy(password = event.password, passwordError = null)
+            }
+            is ConfirmPasswordChanged -> {
+                _state.value = state.value.copy(confirmPassword = event.password, confirmPasswordError = null)
+            }
+            is OnPasswordChanged -> { resetPassword(event.onSuccess, event.onError) }
+        }
+    }
+
+    private fun validate(): Boolean {
+        val passwordMatchValid = state.value.password == state.value.confirmPassword
+        val passwordRuleValid = state.value.passwordState?.validate() ?: false
+        if (!passwordMatchValid) {
+            _state.value = state.value.copy(confirmPasswordError = "Password must be same.")
+        } else if (!passwordRuleValid) {
+            _state.value = state.value.copy(passwordError = "Password should follow below instruction.")
+        }
+        return passwordMatchValid && passwordRuleValid
+    }
+
+    private fun resetPassword(onSuccess: () -> Unit, onError: (String) -> Unit) = viewModelScope.launch {
+        if (!validate()) {
+            return@launch
+        }
+        _state.value = state.value.copy(loading = true)
+        try {
+            if (state.value.userId != null && state.value.secret != null) {
+                authRepository.resetPassword(
+                    state.value.userId!!,
+                    state.value.secret!!,
+                    state.value.password,
+                    state.value.confirmPassword
+                )
+                onSuccess()
+            } else { onError("Invalid link!") }
+        } catch (e: Exception) {
+            e.message?.let { onError(it) }
+            Timber.e(e)
+        }
+        _state.value = state.value.copy(loading = false)
+    }
+
+}

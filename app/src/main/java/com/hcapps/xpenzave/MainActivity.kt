@@ -30,8 +30,8 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 LaunchedEffect(key1 = Unit) {
                     val destination = getStartDestination(dataStore)
-//                    navController.popBackStack()
-//                    navController.navigate(destination)
+                    navController.popBackStack()
+                    navController.navigate(destination)
                 }
                 val backStackEntry = navController.currentBackStackEntryAsState()
                 XpenzaveScaffold(
@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
 suspend fun getStartDestination(dataStore: DataStoreService): String {
     return withContext(Dispatchers.IO) {
         val user = dataStore.getUserFlow().first()
-        return@withContext if (user.userId.isEmpty()) Screen.Authentication.route
+        return@withContext if (user.userId.isEmpty()) Screen.OnBoard.route
         else Screen.Home.route
     }
 }

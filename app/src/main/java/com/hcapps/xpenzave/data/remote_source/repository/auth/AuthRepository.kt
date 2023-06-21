@@ -24,4 +24,8 @@ interface AuthRepository {
 
     suspend fun changePassword(oldPassword: String, newPassword: String): RequestState<Boolean>
 
+    suspend fun passwordRecovery(email: String): RequestState<Boolean>
+
+    suspend fun resetPassword(userId: String, secret: String, password: String, passwordAgain: String): RequestState<Boolean>
+
 }
