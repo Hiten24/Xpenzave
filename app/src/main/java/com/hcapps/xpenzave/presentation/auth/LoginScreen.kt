@@ -109,8 +109,7 @@ fun LoginContent(
             label = stringResource(id = R.string.set_password),
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done,
-            error = passwordError,
-            action = login
+            error = passwordError
         )
 
         TextButton(modifier = Modifier.align(Alignment.End), onClick = forgotPassword) {

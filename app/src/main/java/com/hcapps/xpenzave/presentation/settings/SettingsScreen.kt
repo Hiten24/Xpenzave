@@ -34,13 +34,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.core.UIEvent
-import com.hcapps.xpenzave.presentation.core.rememberAlertDialogState
 import com.hcapps.xpenzave.presentation.settings.SettingsEvent.LogOut
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.ui.theme.primaryGradient
@@ -51,12 +52,12 @@ import kotlinx.coroutines.flow.collectLatest
 fun SettingsScreen(
     paddingValues: PaddingValues,
     viewModel: SettingsViewModel = hiltViewModel(),
-    navigateToAuth: () -> Unit
+    navigateToAuth: () -> Unit,
+    changePassword: () -> Unit
 ) {
 
     val context = LocalContext.current
     val state by viewModel.state
-    val changePasswordDialogState = rememberAlertDialogState()
 
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEventFlow.collectLatest { event ->
@@ -91,25 +92,11 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.weight(1f))
             SettingsContent(
                 logOut = { viewModel.onEvent(LogOut(navigateToAuth)) },
-                changePassword = { changePasswordDialogState.show() } ,
+                changePassword = changePassword,
                 logOutLoading = state.logOutLoading
             )
         }
     }
-
-    ChangePasswordDialog(
-        state = changePasswordDialogState,
-        oldPasswordValue = state.oldPassword,
-        newPasswordValue = state.newPassword,
-        oldPasswordError = state.oldPasswordError,
-        newPasswordError = state.newPasswordError,
-        oldPasswordChange = { password -> viewModel.onEvent(SettingsEvent.OldPasswordChanged(password)) },
-        newPasswordChange = { password -> viewModel.onEvent(SettingsEvent.NewPasswordChanged(password)) },
-        onPasswordChange = { viewModel.onEvent(SettingsEvent.ChangePassword() {
-            changePasswordDialogState.dismiss()
-        }) },
-        onDismissRequest = { changePasswordDialogState.dismiss() }
-    )
 
 }
 
@@ -126,7 +113,7 @@ fun SettingsHeader(
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "E-mail",
+                text = stringResource(id = R.string.e_mail),
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold
@@ -150,7 +137,7 @@ fun SettingsContent(
     Column(modifier = modifier
         .fillMaxSize()
         .padding(16.dp)) {
-        SettingItem(title = "Change Password", onClick = changePassword) {
+        SettingItem(title = stringResource(id = R.string.change_password_title), onClick = changePassword) {
             Icon(imageVector = Icons.Outlined.ArrowForward, contentDescription = null)
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -206,62 +193,8 @@ fun SettingItem(
     }
 }
 
-/*
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CurrencySelectionDialog(
-    openedDialog: Boolean,
-    onDismissRequest: () -> Unit,
-    onSelectOfCurrency: (code: String) -> Unit
-) {
-    val context = LocalContext.current
-    if (openedDialog) {
-        AlertDialog(modifier = Modifier.padding(vertical = 64.dp), onDismissRequest = onDismissRequest) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = MaterialTheme.colorScheme.surface, shape = Shapes().small)
-                    .padding(vertical = 16.dp)
-            ) {
-                Text(text = "Select your currencies", modifier = Modifier.padding(horizontal = 16.dp))
-                Spacer(modifier = Modifier.height(12.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(12.dp))
-                val currenciesJson = context.assets.open("Currencies.json").bufferedReader().use { it.readText() }
-                val type = object : TypeToken<Map<String, Currency>>() {}.type
-                val currencies = jsonToValue<Map<String, Currency>>(currenciesJson, type).values.toList()
-                LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                    items(currencies) { currency ->
-                        Text(
-                            text = "${currency.code}  -  ${currency.name}",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onSelectOfCurrency(currency.code)
-                                }
-                                .padding(vertical = 8.dp, horizontal = 16.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-*/
-
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun PreviewSettingsHeader() {
     SettingsHeader("test.account@gmail.com")
 }
-
-/*CurrencySelectionDialog(
-        openedDialog = openedCurrencyDialog,
-        onDismissRequest = { openedCurrencyDialog = false },
-        onSelectOfCurrency = { code ->
-            onSelectOfCurrency(code)
-            openedCurrencyDialog = false
-        }
-    )*/

@@ -65,12 +65,7 @@ fun ForgotPasswordScreen(
                 onValueChange = { viewModel.onEvent(ForgotPasswordEvent.EmailChange(it)) },
                 label = stringResource(id = R.string.e_mail),
                 error = state.emailError,
-                keyboardType = KeyboardType.Email,
-                action = {
-                    viewModel.onEvent(ForgotPasswordEvent.ContinueButton {
-                        scope.launch { sheetState.show() }
-                    })
-                }
+                keyboardType = KeyboardType.Email
             )
 
             Spacer(modifier = Modifier.height(24.dp))

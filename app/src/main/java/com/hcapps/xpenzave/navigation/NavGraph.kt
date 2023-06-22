@@ -33,10 +33,15 @@ fun XpenzaveNavGraph(
             navigateToAddExpense = { navController.navigate(Screen.AddExpense.route) }
         )
 
-        settingsRoute(navigateToAuth = {
-//            navController.popBackStack(Screen.Settings.route, true)
-            navController.navigate(Screen.Login.route)
-        },paddingValues)
+        settingsRoute(
+            navigateToAuth = {
+                navController.navigate(Screen.Login.route)
+            },
+            paddingValues,
+            navigateToChangePassword = {
+                navController.navigate(Screen.ChangePassword.route)
+            }
+        )
 
         statsRoute(
             paddingValues,
@@ -75,7 +80,7 @@ fun XpenzaveNavGraph(
 
         filter(
             onNavigateUp = { navController.navigateUp() },
-            navigateToStateScreen = { filters ->
+            navigateToStateScreen = {
                 navController.popBackStack()
                 navController.navigate(Screen.Stats.route)
             }
@@ -100,6 +105,8 @@ fun XpenzaveNavGraph(
         )
 
         forgotPasswordRoute(navigateUp = { navController.navigateUp() })
+
+        changePasswordRoute(navigateUp = { navController.navigateUp() })
 
     }
 }

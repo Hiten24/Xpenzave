@@ -43,4 +43,6 @@ sealed class Screen(val route: String) {
 
     object ForgotPassword: Screen(route = "forgot_password")
 
+    object ChangePassword: Screen(route = "change_password")
+
 }

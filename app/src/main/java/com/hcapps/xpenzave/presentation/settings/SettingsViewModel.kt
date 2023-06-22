@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.datastore.DataStoreService
-import com.hcapps.xpenzave.domain.usecase.auth.ChangePasswordUseCase
 import com.hcapps.xpenzave.domain.usecase.auth.LogOutUseCase
 import com.hcapps.xpenzave.presentation.core.UIEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     dataStore: DataStoreService,
-    private val logOutUseCase: LogOutUseCase,
-    private val changePasswordUseCase: ChangePasswordUseCase
+    private val logOutUseCase: LogOutUseCase
 ): ViewModel() {
 
     private val _state = mutableStateOf(SettingsState())
@@ -41,48 +39,10 @@ class SettingsViewModel @Inject constructor(
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
-            is SettingsEvent.OldPasswordChanged -> {
-                _state.value = state.value.copy(oldPassword = event.password)
-            }
-            is SettingsEvent.NewPasswordChanged -> {
-                _state.value = state.value.copy(newPassword = event.password)
-            }
-            is SettingsEvent.ChangePassword -> {
-                changePassword(state.value.oldPassword, state.value.newPassword) {
-                    event.onSuccess()
-                }
-            }
             is SettingsEvent.LogOut -> {
                 logOut(event.onSuccess)
             }
         }
-    }
-
-    private fun changePassword(old: String, new: String, onSuccess: () -> Unit) = viewModelScope.launch {
-        if (!validate(old, new)) return@launch
-        try {
-            changePasswordUseCase(old, new)
-            onSuccess()
-        } catch (e: Exception) {
-            when (e.message) {
-                "Invalid credentials. Please check the email and password." -> {
-                    _state.value = state.value.copy(oldPasswordError = "Invalid Password")
-                }
-            }
-            Timber.e(e)
-        }
-    }
-
-    private fun validate(oldPassword: String, newPassword: String): Boolean {
-        when {
-            oldPassword.length < 8 -> {
-                _state.value = state.value.copy(oldPasswordError = "Passwords must be at least 8 char long.")
-            }
-            newPassword.length < 8 -> {
-                _state.value = state.value.copy(newPasswordError = "Passwords must be at least 8 char long.")
-            }
-        }
-        return oldPassword.length >= 8 && newPassword.length >= 8
     }
 
     private fun logOut(onSuccess: () -> Unit) = viewModelScope.launch {

@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.auth.AuthTopBar
-import com.hcapps.xpenzave.presentation.auth.event.PasswordState
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.ConfirmPasswordChanged
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.IntentData
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.PasswordChanged
@@ -122,7 +121,7 @@ fun ResetPasswordContent(
                 )
 
                 AnimatedVisibility(visible = state.passwordState != null) {
-                    PasswordObserver(passwordState = state.passwordState)
+                    PasswordObserver(passwordState = state.passwordState!!)
                 }
 
                 XpenzaveTextField(
@@ -131,10 +130,7 @@ fun ResetPasswordContent(
                     label = stringResource(id = R.string.confirm_password),
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next,
-                    error = state.confirmPasswordError,
-                    action = {
-
-                    }
+                    error = state.confirmPasswordError
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -151,49 +147,6 @@ fun ResetPasswordContent(
                     }
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun PasswordObserver(passwordState: PasswordState?) {
-    passwordState?.let {
-        val checkIcon = stringResource(id = R.string.check_unicode)
-        val bulletIcon = stringResource(id = R.string.bullet_point_unicode)
-        Column {
-            Text(
-                text = stringResource(id = R.string.password_rule_title),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = stringResource(
-                    id = R.string.password_rule_1,
-                    if (it.shouldBeMin8Max20Char) checkIcon else bulletIcon
-                ),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = stringResource(
-                    id = R.string.password_rule_2,
-                    if (it.shouldHaveALowerCase) checkIcon else bulletIcon
-                ),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = stringResource(
-                    id = R.string.password_rule_3,
-                    if (it.shouldHaveAUpperCase) checkIcon else bulletIcon
-                ),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = stringResource(
-                    id = R.string.password_rule_4,
-                    if (it.shouldHaveANumberOrAcceptableCharacter) checkIcon else bulletIcon
-                ),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }

@@ -41,6 +41,7 @@
     <string name="reset_password_title">Reset Password</string>
     <string name="reset_password_expired">Request Expired</string>
     <string name="reset_password_expired_subtitle">your password reset request has expired. Please start a new request to reset your password.</string>
+    <string name="change_password_title">Change Password</string>
 
 <!--    password validation-->
     <string name="password_rule_title">Password should include:</string>

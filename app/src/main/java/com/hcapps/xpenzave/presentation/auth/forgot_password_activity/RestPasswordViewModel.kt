@@ -5,6 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.remote_source.repository.auth.AuthRepository
 import com.hcapps.xpenzave.presentation.auth.event.PasswordState
+import com.hcapps.xpenzave.presentation.auth.event.PasswordState.Companion.shouldBeMin8Max20Char
+import com.hcapps.xpenzave.presentation.auth.event.PasswordState.Companion.shouldHaveALowerCase
+import com.hcapps.xpenzave.presentation.auth.event.PasswordState.Companion.shouldHaveANumberOrAcceptableCharacter
+import com.hcapps.xpenzave.presentation.auth.event.PasswordState.Companion.shouldHaveAUpperCase
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.ConfirmPasswordChanged
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.IntentData
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.OnPasswordChanged
@@ -16,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RestPasswordViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ): ViewModel() {
 
     private val _state = mutableStateOf(ResetPasswordState())
@@ -31,10 +35,11 @@ class RestPasswordViewModel @Inject constructor(
                 _state.value = state.value.copy(password = event.password, passwordError = null)
                 val pass = state.value.password
                     _state.value = state.value.copy(passwordState = PasswordState(
-                    shouldBeMin8Max20Char = state.value.passwordState?.shouldBeMin8Max20Char(pass) ?: false,
-                    shouldHaveALowerCase = state.value.passwordState?.shouldHaveALowerCase(pass) ?: false,
-                    shouldHaveAUpperCase = state.value.passwordState?.shouldHaveAUpperCase(pass) ?: false,
-                    shouldHaveANumberOrAcceptableCharacter = state.value.passwordState?.shouldHaveANumberOrAcceptableCharacter(pass) ?: false))
+                    shouldBeMin8Max20Char = shouldBeMin8Max20Char(pass),
+                    shouldHaveALowerCase = shouldHaveALowerCase(pass),
+                    shouldHaveAUpperCase = shouldHaveAUpperCase(pass),
+                    shouldHaveANumberOrAcceptableCharacter = shouldHaveANumberOrAcceptableCharacter(pass)
+                    ))
                 _state.value = state.value.copy(password = event.password, passwordError = null)
             }
             is ConfirmPasswordChanged -> {

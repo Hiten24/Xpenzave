@@ -1,7 +1,6 @@
 package com.hcapps.xpenzave.presentation.core.component.input
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -25,8 +24,7 @@ fun XpenzaveTextField(
     label: String,
     error: String? = null,
     imeAction: ImeAction = ImeAction.Done,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    action: () -> Unit = {}
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
 
     var visualTransformation: MutableState<Boolean>? = null
@@ -62,10 +60,6 @@ fun XpenzaveTextField(
         },
         visualTransformation = if (visualTransformation?.value == true) PasswordVisualTransformation() else VisualTransformation.None,
         isError = error.isNullOrEmpty().not(),
-        supportingText = { error?.let { Text(text = it) } },
-        keyboardActions = KeyboardActions(onDone = {
-            KeyboardActions.Default
-//            action()
-        })
+        supportingText = { error?.let { Text(text = it) } }
     )
 }

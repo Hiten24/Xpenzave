@@ -158,8 +158,7 @@ fun RegisterContent(
             label = stringResource(id = R.string.confirm_password),
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Next,
-            error = confirmPasswordError,
-            action = register
+            error = confirmPasswordError
         )
 
         Spacer(modifier = Modifier.height(12.dp))

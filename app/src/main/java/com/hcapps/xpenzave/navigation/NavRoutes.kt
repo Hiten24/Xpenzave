@@ -11,6 +11,7 @@ import com.hcapps.xpenzave.presentation.auth.LoginScreen
 import com.hcapps.xpenzave.presentation.auth.RegisterScreen
 import com.hcapps.xpenzave.presentation.auth.forgot_password.ForgotPasswordScreen
 import com.hcapps.xpenzave.presentation.calendar.CalendarScreen
+import com.hcapps.xpenzave.presentation.change_password.ChangePasswordScreen
 import com.hcapps.xpenzave.presentation.compare.CompareSelector
 import com.hcapps.xpenzave.presentation.compare.result.CompareResult
 import com.hcapps.xpenzave.presentation.edit_budget.EditBudgetScreen
@@ -79,9 +80,13 @@ fun NavGraphBuilder.homeRoute(
     }
 }
 
-fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit, paddingValues: PaddingValues) {
+fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit, paddingValues: PaddingValues, navigateToChangePassword: () -> Unit) {
     composable(route = Screen.Settings.route) {
-        SettingsScreen(navigateToAuth = navigateToAuth, paddingValues = paddingValues)
+        SettingsScreen(
+            navigateToAuth = navigateToAuth,
+            paddingValues = paddingValues,
+            changePassword = navigateToChangePassword
+        )
     }
 }
 
@@ -203,5 +208,11 @@ fun NavGraphBuilder.onBoard(navigateToLogin: () -> Unit, navigateToRegister: () 
 fun NavGraphBuilder.forgotPasswordRoute(navigateUp: () -> Unit) {
     composable(route = Screen.ForgotPassword.route) {
         ForgotPasswordScreen(navigateUp = navigateUp)
+    }
+}
+
+fun NavGraphBuilder.changePasswordRoute(navigateUp: () -> Unit) {
+    composable(route = Screen.ChangePassword.route) {
+        ChangePasswordScreen(navigateUp)
     }
 }
