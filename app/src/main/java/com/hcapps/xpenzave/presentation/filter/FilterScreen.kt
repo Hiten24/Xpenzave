@@ -22,10 +22,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
@@ -33,25 +35,22 @@ import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreen(
-    navigateUp: () -> Unit,
-    applyFilter: (filters: Array<String>) -> Unit,
+    navigateUp: (Array<String>) -> Unit,
     viewModel: FilterViewModel = hiltViewModel()
 ) {
-
-//    var amount by viewModel.amount
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Filter by",
+                        text = stringResource(R.string.filter_by),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Medium
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = navigateUp) {
+                    IconButton(onClick = { navigateUp(viewModel.selectedCategory.toTypedArray()) }) {
                         Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = "Arrow Back")
                     }
                 }
@@ -71,22 +70,17 @@ fun FilterScreen(
                 onSelectCategory = { viewModel.onSelectChange(it) }
             )
 
-            // beta release
-            /*AmountSlider(
-                amount.toFloat(),
-                onValueChange = { amount = it.toInt() },
-                100f..2000f
-            )*/
             Spacer(modifier = Modifier.weight(1f))
 
             BottomButton(
                 reset = { viewModel.onRest() },
                 apply = {
-                    if (viewModel.isFilterChanged()) {
+                    navigateUp(viewModel.selectedCategory.toTypedArray())
+                    /*if (viewModel.isFilterChanged()) {
                         applyFilter(viewModel.getSelectedCategoriesId())
                     } else {
                         navigateUp()
-                    }
+                    }*/
                 }
             )
 
@@ -152,41 +146,8 @@ private fun BottomButton(
     }
 }
 
-/*@Composable
-private fun AmountSlider(
-    value: Float,
-    onValueChange: (Float) -> Unit,
-    range: ClosedFloatingPointRange<Float>
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            text = stringResource(id = R.string.amount),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold
-        )
-        Slider(
-            value = value,
-            onValueChange = onValueChange,
-            valueRange = range,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Text(
-            text = "$value $",
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
-}*/
-
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewFilterScreen() {
-    FilterScreen(navigateUp = {}, {})
+    FilterScreen(navigateUp = {})
 }

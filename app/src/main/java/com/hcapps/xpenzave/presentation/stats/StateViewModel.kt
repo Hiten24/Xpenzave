@@ -26,19 +26,23 @@ class StatsViewModel @Inject constructor(
 
     var appliedFilter: List<String> = emptyList()
 
-    private val _generalState = mutableStateOf(StatisticsState())
-    val generalState: State<StatisticsState> = _generalState
+//    private val _generalState = mutableStateOf(StatisticsState())
+//    val generalState: State<StatisticsState> = _generalState
 
     private var getExpenseJob: Job? = null
 
     init {
-        getLocalExpenses(state.value.date)
         getExpenses(emptyList())
     }
 
-    fun changeScreen(screen: Int) {
-        _state.value = state.value.copy(tabScreen = screen)
+    fun applyFilters(selectedCategories: List<String>) {
+        appliedFilter = selectedCategories
+        getLocalExpenses(state.value.date, selectedCategories)
     }
+
+    /*fun changeScreen(screen: Int) {
+        _state.value = state.value.copy(tabScreen = screen)
+    }*/
 
     fun dateChange(date: LocalDate) {
         _state.value = state.value.copy(date = date)
@@ -62,9 +66,9 @@ class StatsViewModel @Inject constructor(
         _state.value = state.value.copy(loading = loading)
     }
 
-    private fun getLocalExpenses(date: LocalDate) {
+    private fun getLocalExpenses(date: LocalDate, filter: List<String> = emptyList()) {
         getExpenseJob?.cancel()
-        getExpenseJob = localExpenseUseCase.invoke(date)
+        getExpenseJob = localExpenseUseCase.invoke(date, filter)
             .onEach {
                 _state.value = state.value.copy(
                     expenses = it

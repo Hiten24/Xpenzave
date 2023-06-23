@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.hcapps.xpenzave.util.Screen
 import com.hcapps.xpenzave.util.UiConstants.BACK_EXPENSE_ID_ARGUMENT_KEY
+import com.hcapps.xpenzave.util.UiConstants.EXPENSE_FILTER_ARGUMENT_KEY
 import io.appwrite.extensions.toJson
 
 @Composable
@@ -24,12 +25,12 @@ fun XpenzaveNavGraph(
         homeRoute(
             paddingValues,
             navigateToEditBudget = { monthYear, budgetId ->
-                navController.navigate(Screen.EditBudget.passArgs(monthYear, budgetId))
+                navController.navigate(Screen.EditBudget.withArgs(monthYear, budgetId))
             },
             navigateToExpenseLog = {
                 navController.navigate(Screen.Stats.route)
             },
-            navigateToDetails = { navController.navigate(Screen.ExpenseDetail.passArgs(it.toJson())) },
+            navigateToDetails = { navController.navigate(Screen.ExpenseDetail.withArgs(it.toJson())) },
             navigateToAddExpense = { navController.navigate(Screen.AddExpense.route) }
         )
 
@@ -47,9 +48,9 @@ fun XpenzaveNavGraph(
             paddingValues,
             navigateToCompare = { navController.navigate(Screen.CompareSelector.route) },
             navigateToFilter = {
-                navController.navigate(Screen.Filter.route)
+                navController.navigate(Screen.Filter.withArgs(it))
             },
-            navigateToDetails = { navController.navigate(Screen.ExpenseDetail.passArgs(it.toJson())) }
+            navigateToDetails = { navController.navigate(Screen.ExpenseDetail.withArgs(it.toJson())) }
         )
 
         editBudget(
@@ -79,10 +80,9 @@ fun XpenzaveNavGraph(
         )
 
         filter(
-            onNavigateUp = { navController.navigateUp() },
-            navigateToStateScreen = {
-                navController.popBackStack()
-                navController.navigate(Screen.Stats.route)
+            onNavigateUp = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(EXPENSE_FILTER_ARGUMENT_KEY, it.toJson())
+                navController.navigateUp()
             }
         )
 

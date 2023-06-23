@@ -19,7 +19,7 @@ interface ExpenseDao {
     @Query("SELECT * FROM expense WHERE id = :id")
     suspend fun getExpense(id: String): ExpenseEntity
 
-    @Query("SELECT * FROM expense where month = :month AND year = :year")
-    fun getExpenses(month: Int, year: Int): Flow<List<ExpenseEntity>>
+    @Query("SELECT * FROM expense where month = :month AND year = :year AND :filterSize = 0 OR category IN (:filters)")
+    fun getExpenses(month: Int, year: Int, filters: List<String>, filterSize: Int): Flow<List<ExpenseEntity>>
 
 }

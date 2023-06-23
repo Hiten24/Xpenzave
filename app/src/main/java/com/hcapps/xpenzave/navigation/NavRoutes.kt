@@ -1,6 +1,7 @@
 package com.hcapps.xpenzave.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -22,8 +23,11 @@ import com.hcapps.xpenzave.presentation.home.HomeScreen
 import com.hcapps.xpenzave.presentation.on_board.OnBoardScreen
 import com.hcapps.xpenzave.presentation.settings.SettingsScreen
 import com.hcapps.xpenzave.presentation.stats.StatsScreen
+import com.hcapps.xpenzave.presentation.stats.StatsViewModel
 import com.hcapps.xpenzave.util.Screen
 import com.hcapps.xpenzave.util.UiConstants
+import com.hcapps.xpenzave.util.UiConstants.EXPENSE_FILTER_ARGUMENT_KEY
+import io.appwrite.extensions.fromJson
 
 fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     composable(
@@ -97,13 +101,26 @@ fun NavGraphBuilder.statsRoute(
     navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit
 ) {
     composable(
-        route = Screen.Stats.route
-    ) {
+        route = Screen.Stats.route,
+        arguments = listOf(
+            navArgument(name = EXPENSE_FILTER_ARGUMENT_KEY) {
+                type = NavType.StringType
+                nullable = false
+                defaultValue = ""
+            })
+    ) { backStackEntry ->
+        val filters = backStackEntry.savedStateHandle.get<String>(EXPENSE_FILTER_ARGUMENT_KEY)?.fromJson<List<String>>()
+        val filterViewModel: StatsViewModel = hiltViewModel()
+        filterViewModel.applyFilters(filters ?: emptyList())
         StatsScreen(
             paddingValues = paddingValues,
             navigateToCompare = navigateToCompare,
-            navigateToFilter = navigateToFilter,
-            navigateToDetails = navigateToDetails
+            navigateToFilter = {
+                backStackEntry.savedStateHandle.remove<String>(EXPENSE_FILTER_ARGUMENT_KEY)
+                navigateToFilter(it)
+            },
+            navigateToDetails = navigateToDetails,
+            viewModel = filterViewModel
         )
     }
 }
@@ -183,15 +200,13 @@ fun NavGraphBuilder.expenseDetail(
 }
 
 fun NavGraphBuilder.filter(
-    onNavigateUp: () -> Unit,
-    navigateToStateScreen: (filters: Array<String>) -> Unit
+    onNavigateUp: (Array<String>) -> Unit
 ) {
     composable(
         route = Screen.Filter.route
     ) {
         FilterScreen(
             navigateUp = onNavigateUp,
-            applyFilter = navigateToStateScreen
         )
     }
 }

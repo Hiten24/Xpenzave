@@ -10,4 +10,6 @@ object UiConstants {
     const val BACK_EXPENSE_ID_ARGUMENT_KEY = "back_expense_id"
 
     const val OAUTH2_SEGMENT_ARG_KEY = "oauth2_segment_key"
+
+    const val EXPENSE_FILTER_ARGUMENT_KEY = "expense_filter"
 }

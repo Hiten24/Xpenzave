@@ -18,8 +18,8 @@ class LocalDatabaseRepositoryImpl @Inject constructor(
         return expenseDao.insertExpenses(list)
     }
 
-    override fun getExpenses(date: LocalDate): Flow<List<ExpenseEntity>> {
-        return expenseDao.getExpenses(month = date.monthValue, year = date.year)
+    override fun getExpenses(date: LocalDate, filters: List<String>): Flow<List<ExpenseEntity>> {
+        return expenseDao.getExpenses(month = date.monthValue, year = date.year, filters, filters.size)
     }
 
     override fun getBudget(date: LocalDate): Flow<BudgetEntity?> {

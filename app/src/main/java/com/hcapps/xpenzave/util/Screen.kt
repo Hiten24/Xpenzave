@@ -3,6 +3,8 @@ package com.hcapps.xpenzave.util
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
+import com.hcapps.xpenzave.util.UiConstants.EXPENSE_FILTER_ARGUMENT_KEY
+import io.appwrite.extensions.toJson
 
 sealed class Screen(val route: String) {
 
@@ -16,7 +18,7 @@ sealed class Screen(val route: String) {
 
     object EditBudget: Screen(route = "edit_budget?$EDIT_BUDGET_ARGUMENT_KEY={$EDIT_BUDGET_ARGUMENT_KEY}&" +
             "$EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY={$EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY}") {
-        fun passArgs(monthYear: String, budgetId: String) =
+        fun withArgs(monthYear: String, budgetId: String) =
             "edit_budget?$EDIT_BUDGET_ARGUMENT_KEY=$monthYear" +
                 "&$EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY=$budgetId"
     }
@@ -30,10 +32,12 @@ sealed class Screen(val route: String) {
     object Calendar: Screen(route = "calendar")
 
     object ExpenseDetail: Screen(route = "expense_detail?$EXPENSE_DETAIL_ARGUMENT_KEY={$EXPENSE_DETAIL_ARGUMENT_KEY}") {
-        fun passArgs(detail: String) = "expense_detail?$EXPENSE_DETAIL_ARGUMENT_KEY=$detail"
+        fun withArgs(detail: String) = "expense_detail?$EXPENSE_DETAIL_ARGUMENT_KEY=$detail"
     }
 
-    object Filter: Screen(route = "filter")
+    object Filter: Screen(route = "filter?$EXPENSE_FILTER_ARGUMENT_KEY={$EXPENSE_FILTER_ARGUMENT_KEY}") {
+        fun withArgs(filter: Array<String>) = "filter?$EXPENSE_FILTER_ARGUMENT_KEY=${filter.toJson()}"
+    }
 
     object Login: Screen(route = "login")
 

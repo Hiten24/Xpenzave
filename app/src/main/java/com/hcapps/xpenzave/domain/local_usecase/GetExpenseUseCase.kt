@@ -11,9 +11,10 @@ class LocalExpenseUseCase @Inject constructor(
     private val localDatabaseRepository: LocalDatabaseRepository
 ) {
     operator fun invoke(
-        date: LocalDate
+        date: LocalDate,
+        filters: List<String> = emptyList()
     ): Flow<List<ExpenseDomainData>> {
-        return localDatabaseRepository.getExpenses(date)
+        return localDatabaseRepository.getExpenses(date, filters)
             .map { it.map { expense -> expense.toExpenseDomainData() } }
     }
 

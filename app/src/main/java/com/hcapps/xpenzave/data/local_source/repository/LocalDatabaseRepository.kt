@@ -9,7 +9,7 @@ interface LocalDatabaseRepository {
 
     suspend fun insertExpenses(list: List<ExpenseEntity>)
 
-    fun getExpenses(date: LocalDate): Flow<List<ExpenseEntity>>
+    fun getExpenses(date: LocalDate, filters: List<String>): Flow<List<ExpenseEntity>>
 
     fun getBudget(date: LocalDate): Flow<BudgetEntity?>
 
