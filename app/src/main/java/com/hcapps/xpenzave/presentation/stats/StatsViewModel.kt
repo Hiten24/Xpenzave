@@ -32,7 +32,7 @@ class StatsViewModel @Inject constructor(
     private var getExpenseJob: Job? = null
 
     init {
-        getExpenses(emptyList())
+        getExpenses(state.value.date, emptyList())
     }
 
     fun applyFilters(selectedCategories: List<String>) {
@@ -47,14 +47,14 @@ class StatsViewModel @Inject constructor(
     fun dateChange(date: LocalDate) {
         _state.value = state.value.copy(date = date)
         getLocalExpenses(date)
-        getExpenses(emptyList())
+        getExpenses(date, emptyList())
         appliedFilter = emptyList()
     }
 
-    private fun getExpenses(filter: List<String>) = viewModelScope.launch {
+    private fun getExpenses(date: LocalDate, filter: List<String>) = viewModelScope.launch {
          loading(true)
         try {
-            getExpensesUseCase.execute(state.value.date, filter)
+            getExpensesUseCase.execute(date, filter)
             loading(false)
         } catch (e: Exception) {
             Timber.e(e)

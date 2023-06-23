@@ -16,6 +16,8 @@ class GetExpensesUseCase @Inject constructor(
             is RequestState.Success -> {
                 val expenses = response.data
                 val expenseEntities = expenses.map { it.toExpenseEntity() }
+                Timber.i("date: $date")
+                Timber.i("expenses entity: $expenseEntities")
                 localDatabaseRepository.insertExpenses(expenseEntities)
             }
             is RequestState.Error -> {

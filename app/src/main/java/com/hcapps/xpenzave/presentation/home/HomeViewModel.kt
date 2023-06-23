@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.local_source.repository.LocalDatabaseRepository
 import com.hcapps.xpenzave.domain.local_usecase.LocalExpenseUseCase
-import com.hcapps.xpenzave.domain.model.expense.ExpenseData
 import com.hcapps.xpenzave.domain.usecase.GetBudgetByDateUseCase
 import com.hcapps.xpenzave.domain.usecase.GetExpensesUseCase
 import com.hcapps.xpenzave.presentation.home.state.HomeScreenState
@@ -45,6 +44,10 @@ class HomeViewModel @Inject constructor(
         _state.value = state.value.copy(date = date)
         getLocalExpenses(date)
         getLocalBudget(date)
+        viewModelScope.launch {
+            getBudgetByDateUseCase.execute(state.value.date)
+            getExpensesUseCase.execute(state.value.date, emptyList())
+        }
     }
 
     private var getExpenseJob: Job? = null
@@ -69,7 +72,7 @@ class HomeViewModel @Inject constructor(
         getBudgetJob = localDatabaseRepository.getBudget(date)
             .onEach { iterate ->
                 _state.value = iterate?.let {
-                    state.value.copy(budgetId = it.id, budgetAmount = it.amount)
+                    state.value.copy(budgetId = it.id, budgetAmount = it.amount, budgetPercentage = state.value.calculateBudgetPercentage())
                 } ?: state.value.copy(budgetId = null, budgetAmount = null)
                 Timber.i("budget data: $iterate")
             }
