@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hcapps.xpenzave.data.datastore.DataStoreService
@@ -23,13 +24,20 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var dataStore: DataStoreService
 
+    private var keepSplashOn = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        installSplashScreen().setKeepOnScreenCondition { keepSplashOn }
+
         setContent {
             XpenzaveTheme {
                 val navController = rememberNavController()
-                LaunchedEffect(key1 = Unit) {
-                    val destination = getStartDestination(dataStore)
+                LaunchedEffect(key1 = true) {
+                    val destination = getStartDestination(dataStore) {
+                        keepSplashOn = false
+                    }
                     navController.popBackStack()
                     navController.navigate(destination)
                 }
@@ -51,10 +59,16 @@ class MainActivity : ComponentActivity() {
 
 }
 
-suspend fun getStartDestination(dataStore: DataStoreService): String {
+suspend fun getStartDestination(dataStore: DataStoreService, onResult: () -> Unit): String {
     return withContext(Dispatchers.IO) {
         val user = dataStore.getUserFlow().first()
-        return@withContext if (user.userId.isEmpty()) Screen.OnBoard.route
-        else Screen.Home.route
+        return@withContext if (user.userId.isEmpty()) {
+            onResult()
+            Screen.OnBoard.route
+        }
+        else {
+            onResult()
+            Screen.Home.route
+        }
     }
 }

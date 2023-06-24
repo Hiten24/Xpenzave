@@ -17,4 +17,6 @@ interface LocalDatabaseRepository {
 
     suspend fun addExpense(expense: ExpenseEntity)
 
+    suspend fun deleteExpense(id: String)
+
 }

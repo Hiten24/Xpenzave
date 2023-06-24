@@ -183,8 +183,7 @@ fun NavGraphBuilder.calendar(onNavigateUp: () -> Unit) {
 }
 
 fun NavGraphBuilder.expenseDetail(
-    onNavigateUp: () -> Unit,
-    onDeleteExpense: (String) -> Unit
+    onNavigateUp: () -> Unit
 ) {
     composable(
         route = Screen.ExpenseDetail.route,
@@ -195,7 +194,7 @@ fun NavGraphBuilder.expenseDetail(
             }
         )
     ) {
-        ExpenseDetailScreen(navigateUp = onNavigateUp, onDeleteExpense)
+        ExpenseDetailScreen(navigateUp = onNavigateUp)
     }
 }
 

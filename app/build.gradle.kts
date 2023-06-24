@@ -134,6 +134,9 @@ dependencies {
     implementation ("androidx.room:room-ktx:2.5.1")
     ksp ("androidx.room:room-compiler:2.5.1")
 
+    // splash
+    implementation ("androidx.core:core-splashscreen:1.0.0")
+
     testImplementation ("junit:junit:4.13.2")
 
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")

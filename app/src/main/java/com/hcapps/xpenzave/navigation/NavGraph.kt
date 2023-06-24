@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.hcapps.xpenzave.util.Screen
-import com.hcapps.xpenzave.util.UiConstants.BACK_EXPENSE_ID_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_FILTER_ARGUMENT_KEY
 import io.appwrite.extensions.toJson
 
@@ -73,10 +72,7 @@ fun XpenzaveNavGraph(
         calendar(onNavigateUp = { navController.navigateUp() })
 
         expenseDetail(
-            onNavigateUp = { navController.navigateUp() },
-            onDeleteExpense = { expenseId: String ->
-                navController.previousBackStackEntry?.savedStateHandle?.set(BACK_EXPENSE_ID_ARGUMENT_KEY, expenseId)
-            }
+            onNavigateUp = { navController.navigateUp() }
         )
 
         filter(

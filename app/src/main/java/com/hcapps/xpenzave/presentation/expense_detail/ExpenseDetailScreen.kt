@@ -57,7 +57,6 @@ import java.util.Locale
 @Composable
 fun ExpenseDetailScreen(
     navigateUp: () -> Unit,
-    onDeleteExpense: (id: String) -> Unit,
     viewModel: ExpenseDetailViewModel = hiltViewModel()
 ) {
 
@@ -87,9 +86,7 @@ fun ExpenseDetailScreen(
                 date = state.date ?: LocalDate.now(),
                 onClickOfNavigationIcon = navigateUp,
                 deleteExpense = {
-                    state.expenseId?.let { viewModel.deleteExpense(it) { id ->
-                        onDeleteExpense(id)
-                    } }
+                    state.expenseId?.let { viewModel.deleteExpense(it) }
                 }
             )
         }
@@ -269,5 +266,5 @@ fun DetailsItem(
 @Preview(showBackground = true)
 @Composable
 fun PreviewExpenseDetailScreen() {
-    ExpenseDetailScreen({}, {})
+    ExpenseDetailScreen({})
 }
