@@ -54,30 +54,30 @@ fun XpenzaveNavGraph(
             navigateToDetails = { navController.navigate(Screen.ExpenseDetail.withArgs(it.toJson())) }
         )
 
-        editBudget(
+        editBudgetRoute(
             navigateUp = { navController.navigateUp() }
         )
 
-        addExpense(
+        addExpenseRoute(
             navigateUp = { navController.navigateUp() }
         )
 
-        compareSelector(
+        compareSelectorRoute(
             onNavigateUp = { navController.navigateUp() },
             navigateToResult = { navController.navigate(Screen.CompareResult.route) }
         )
 
-        compareResult(
+        compareResultRoute(
             onNavigateUp = { navController.navigateUp() }
         )
 
-        calendar(onNavigateUp = { navController.navigateUp() })
+        calendarRoute(onNavigateUp = { navController.navigateUp() })
 
-        expenseDetail(
+        expenseDetailRoute(
             onNavigateUp = { navController.navigateUp() }
         )
 
-        filter(
+        filterRoute(
             onNavigateUp = {
                 navController.previousBackStackEntry?.savedStateHandle?.set(EXPENSE_FILTER_ARGUMENT_KEY, it.toJson())
                 navController.navigateUp()
@@ -97,7 +97,7 @@ fun XpenzaveNavGraph(
             navigateUp = { navController.navigateUp() }
         )
 
-        onBoard(
+        onBoardRoute(
             navigateToLogin = { navController.navigate(Screen.Login.route) },
             navigateToRegister = { navController.navigate(Screen.Register.route) },
             onDataLoaded = onDataLoaded

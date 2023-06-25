@@ -54,7 +54,11 @@ fun NavGraphBuilder.loginRoute(
     }
 }
 
-fun NavGraphBuilder.registerRoute(navigateToLogin: () -> Unit, navigateToHome: () -> Unit, navigateUp: () -> Unit) {
+fun NavGraphBuilder.registerRoute(
+    navigateToLogin: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateUp: () -> Unit
+) {
     composable(route = Screen.Register.route) {
         RegisterScreen(
             navigateToHome = navigateToHome,
@@ -91,7 +95,11 @@ fun NavGraphBuilder.homeRoute(
     }
 }
 
-fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit, paddingValues: PaddingValues, navigateToChangePassword: () -> Unit) {
+fun NavGraphBuilder.settingsRoute(
+    navigateToAuth: () -> Unit,
+    paddingValues: PaddingValues,
+    navigateToChangePassword: () -> Unit
+) {
     composable(route = Screen.Settings.route) {
         SettingsScreen(
             navigateToAuth = navigateToAuth,
@@ -133,7 +141,7 @@ fun NavGraphBuilder.statsRoute(
 }
 
 
-fun NavGraphBuilder.editBudget(
+fun NavGraphBuilder.editBudgetRoute(
     navigateUp: () -> Unit
 ) {
     composable(
@@ -157,7 +165,7 @@ fun NavGraphBuilder.editBudget(
     }
 }
 
-fun NavGraphBuilder.addExpense(
+fun NavGraphBuilder.addExpenseRoute(
     navigateUp: () -> Unit
 ) {
     composable(route = Screen.AddExpense.route) {
@@ -165,7 +173,7 @@ fun NavGraphBuilder.addExpense(
     }
 }
 
-fun NavGraphBuilder.compareSelector(
+fun NavGraphBuilder.compareSelectorRoute(
     onNavigateUp: () -> Unit,
     navigateToResult: () -> Unit
 ) {
@@ -177,19 +185,19 @@ fun NavGraphBuilder.compareSelector(
     }
 }
 
-fun NavGraphBuilder.compareResult(onNavigateUp: () -> Unit) {
+fun NavGraphBuilder.compareResultRoute(onNavigateUp: () -> Unit) {
     composable(route = Screen.CompareResult.route) {
         CompareResult(onNavigateUp)
     }
 }
 
-fun NavGraphBuilder.calendar(onNavigateUp: () -> Unit) {
+fun NavGraphBuilder.calendarRoute(onNavigateUp: () -> Unit) {
     composable(route = Screen.Calendar.route) {
         CalendarScreen(onNavigateUp)
     }
 }
 
-fun NavGraphBuilder.expenseDetail(
+fun NavGraphBuilder.expenseDetailRoute(
     onNavigateUp: () -> Unit
 ) {
     composable(
@@ -205,7 +213,7 @@ fun NavGraphBuilder.expenseDetail(
     }
 }
 
-fun NavGraphBuilder.filter(
+fun NavGraphBuilder.filterRoute(
     onNavigateUp: (Array<String>) -> Unit
 ) {
     composable(
@@ -217,7 +225,11 @@ fun NavGraphBuilder.filter(
     }
 }
 
-fun NavGraphBuilder.onBoard(navigateToLogin: () -> Unit, navigateToRegister: () -> Unit, onDataLoaded: () -> Unit) {
+fun NavGraphBuilder.onBoardRoute(
+    navigateToLogin: () -> Unit,
+    navigateToRegister: () -> Unit,
+    onDataLoaded: () -> Unit
+) {
     composable(route = Screen.OnBoard.route) {
 
         LaunchedEffect(key1 = Unit) {
