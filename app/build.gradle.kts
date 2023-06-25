@@ -2,11 +2,11 @@
 
 plugins {
     id("com.android.application")
-    kotlin("android")
-    kotlin("kapt")
     id("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp") version "1.8.21-1.0.11"
+    kotlin("android")
+    kotlin("kapt")
 }
 
 android {
