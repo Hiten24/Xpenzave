@@ -12,7 +12,8 @@ import io.appwrite.extensions.toJson
 fun XpenzaveNavGraph(
     startDestination: String,
     navController: NavHostController,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    onDataLoaded: () -> Unit
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
 
@@ -30,7 +31,8 @@ fun XpenzaveNavGraph(
                 navController.navigate(Screen.Stats.route)
             },
             navigateToDetails = { navController.navigate(Screen.ExpenseDetail.withArgs(it.toJson())) },
-            navigateToAddExpense = { navController.navigate(Screen.AddExpense.route) }
+            navigateToAddExpense = { navController.navigate(Screen.AddExpense.route) },
+            onDataLoaded = onDataLoaded
         )
 
         settingsRoute(
@@ -97,7 +99,8 @@ fun XpenzaveNavGraph(
 
         onBoard(
             navigateToLogin = { navController.navigate(Screen.Login.route) },
-            navigateToRegister = { navController.navigate(Screen.Register.route) }
+            navigateToRegister = { navController.navigate(Screen.Register.route) },
+            onDataLoaded = onDataLoaded
         )
 
         forgotPasswordRoute(navigateUp = { navController.navigateUp() })

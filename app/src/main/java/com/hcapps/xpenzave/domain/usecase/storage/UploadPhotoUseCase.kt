@@ -1,4 +1,4 @@
-package com.hcapps.xpenzave.domain.usecase
+package com.hcapps.xpenzave.domain.usecase.storage
 
 import com.hcapps.xpenzave.data.remote_source.repository.storage.StorageRepository
 import com.hcapps.xpenzave.domain.model.RequestState

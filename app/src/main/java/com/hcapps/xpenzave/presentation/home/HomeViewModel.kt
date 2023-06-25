@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.local_source.repository.LocalDatabaseRepository
 import com.hcapps.xpenzave.domain.local_usecase.LocalExpenseUseCase
-import com.hcapps.xpenzave.domain.usecase.GetBudgetByDateUseCase
-import com.hcapps.xpenzave.domain.usecase.GetExpensesUseCase
+import com.hcapps.xpenzave.domain.usecase.budget.GetBudgetByDateUseCase
+import com.hcapps.xpenzave.domain.usecase.expense.GetExpensesUseCase
 import com.hcapps.xpenzave.presentation.home.state.HomeScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job

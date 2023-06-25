@@ -86,7 +86,7 @@ fun ExpenseDetailScreen(
                 date = state.date ?: LocalDate.now(),
                 onClickOfNavigationIcon = navigateUp,
                 deleteExpense = {
-                    state.expenseId?.let { viewModel.deleteExpense(it) }
+                    state.expenseId?.let { viewModel.deleteExpense(it, state.photoId) }
                 }
             )
         }

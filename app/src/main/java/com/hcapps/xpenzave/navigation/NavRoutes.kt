@@ -1,6 +1,7 @@
 package com.hcapps.xpenzave.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -68,9 +69,15 @@ fun NavGraphBuilder.homeRoute(
     navigateToEditBudget: (date: String, budgetId: String) -> Unit,
     navigateToExpenseLog: () -> Unit,
     navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit,
-    navigateToAddExpense: () -> Unit
+    navigateToAddExpense: () -> Unit,
+    onDataLoaded: () -> Unit
 ) {
     composable(route = Screen.Home.route) { backStackEntry ->
+
+        LaunchedEffect(key1 = Unit) {
+            onDataLoaded()
+        }
+
         HomeScreen(
             paddingValues = paddingValues,
             editBudget = { date, budgetId ->
@@ -210,8 +217,13 @@ fun NavGraphBuilder.filter(
     }
 }
 
-fun NavGraphBuilder.onBoard(navigateToLogin: () -> Unit, navigateToRegister: () -> Unit) {
+fun NavGraphBuilder.onBoard(navigateToLogin: () -> Unit, navigateToRegister: () -> Unit, onDataLoaded: () -> Unit) {
     composable(route = Screen.OnBoard.route) {
+
+        LaunchedEffect(key1 = Unit) {
+            onDataLoaded()
+        }
+
         OnBoardScreen(
             logIn =  navigateToLogin,
             createAccount =  navigateToRegister

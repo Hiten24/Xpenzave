@@ -1,4 +1,4 @@
-package com.hcapps.xpenzave.domain.usecase
+package com.hcapps.xpenzave.domain.usecase.budget
 
 import com.hcapps.xpenzave.data.local_source.entities.BudgetEntity
 import com.hcapps.xpenzave.data.local_source.repository.LocalDatabaseRepository

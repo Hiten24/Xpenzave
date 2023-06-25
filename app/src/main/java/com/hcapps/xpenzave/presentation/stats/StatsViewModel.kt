@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.domain.local_usecase.LocalExpenseUseCase
-import com.hcapps.xpenzave.domain.usecase.GetExpensesUseCase
+import com.hcapps.xpenzave.domain.usecase.expense.GetExpensesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn

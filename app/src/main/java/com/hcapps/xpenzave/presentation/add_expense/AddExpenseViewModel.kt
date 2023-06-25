@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.remote_source.APP_WRITE_DATE_TIME_FORMAT
 import com.hcapps.xpenzave.domain.model.expense.ExpenseData
-import com.hcapps.xpenzave.domain.usecase.AddExpenseUseCase
-import com.hcapps.xpenzave.domain.usecase.UploadPhotoUseCase
+import com.hcapps.xpenzave.domain.usecase.expense.AddExpenseUseCase
+import com.hcapps.xpenzave.domain.usecase.storage.UploadPhotoUseCase
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.AddBillEachMonthChange
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.AmountChange

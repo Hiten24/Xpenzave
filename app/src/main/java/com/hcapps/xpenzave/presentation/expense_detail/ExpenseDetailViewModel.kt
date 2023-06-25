@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.data.remote_source.repository.storage.StorageRepository
 import com.hcapps.xpenzave.domain.model.category.Category
-import com.hcapps.xpenzave.domain.usecase.DeleteExpenseUseCase
+import com.hcapps.xpenzave.domain.usecase.expense.DeleteExpenseUseCase
 import com.hcapps.xpenzave.presentation.edit_budget.BudgetScreenFlow
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,6 +47,7 @@ class ExpenseDetailViewModel @Inject constructor(
             more = details?.moreDetails,
             date = LocalDate.parse(details?.date)
         )
+        Timber.i("photoId: ${details?.photoId}")
         savedStateHandle.clearSavedStateProvider(EXPENSE_DETAIL_ARGUMENT_KEY)
         loading(false)
         details?.photoId?.let { getInvoiceImage(it) }
@@ -57,10 +58,10 @@ class ExpenseDetailViewModel @Inject constructor(
         _state.value = state.value.copy(photo = response)
     }
 
-    fun deleteExpense(id: String) = viewModelScope.launch {
+    fun deleteExpense(id: String, fileId: String?) = viewModelScope.launch {
         loading(true)
         try {
-            deleteExpenseUseCase(id)
+            deleteExpenseUseCase(id, fileId)
             _uiFlow.emit(BudgetScreenFlow.SnackBar("Expense deleted successfully!"))
             delay(1000)
             _uiFlow.emit(BudgetScreenFlow.NavigateUp)

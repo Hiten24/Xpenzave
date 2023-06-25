@@ -6,7 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcapps.xpenzave.domain.model.budget.BudgetData
-import com.hcapps.xpenzave.domain.usecase.EditBudgetUseCase
+import com.hcapps.xpenzave.domain.usecase.budget.EditBudgetUseCase
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
