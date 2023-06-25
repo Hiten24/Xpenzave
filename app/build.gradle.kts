@@ -82,7 +82,7 @@ dependencies {
     implementation ("androidx.compose.ui:ui")
     implementation ("androidx.compose.ui:ui-graphics")
     implementation ("androidx.compose.ui:ui-tooling-preview")
-    implementation ("androidx.compose.material3:material3:1.1.0")
+    implementation ("androidx.compose.material3:material3:1.1.1")
     implementation("androidx.core:core-ktx:1.10.1")
 
     // lifecycle
@@ -130,12 +130,12 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-flowlayout:0.30.1")
 
     // room db
-    implementation ("androidx.room:room-runtime:2.5.1")
-    implementation ("androidx.room:room-ktx:2.5.1")
-    ksp ("androidx.room:room-compiler:2.5.1")
+    implementation ("androidx.room:room-runtime:2.5.2")
+    implementation ("androidx.room:room-ktx:2.5.2")
+    ksp ("androidx.room:room-compiler:2.5.2")
 
     // splash
-    implementation ("androidx.core:core-splashscreen:1.0.0")
+    implementation ("androidx.core:core-splashscreen:1.0.1")
 
     testImplementation ("junit:junit:4.13.2")
 
