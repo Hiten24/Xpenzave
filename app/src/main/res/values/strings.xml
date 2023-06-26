@@ -28,6 +28,8 @@
     <string name="cancel">Cancel</string>
     <string name="change">Change</string>
 
+    <string name="rupee">\u20B9</string>
+
 <!--    Authentication-->
     <string name="input_empty_error">Please input the require fields.</string>
     <string name="login_title">Welcome Back &#128075;</string>

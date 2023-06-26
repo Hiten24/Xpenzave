@@ -39,12 +39,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.ZoomableImagePreview
 import com.hcapps.xpenzave.presentation.edit_budget.BudgetScreenFlow
@@ -144,7 +146,7 @@ fun ExpenseDetailContent(
     state.amount?.let {
         DetailsItem(text = "Amount") {
             Text(
-                text = "$it $",
+                text = "$it ${stringResource(id = R.string.rupee)}",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary

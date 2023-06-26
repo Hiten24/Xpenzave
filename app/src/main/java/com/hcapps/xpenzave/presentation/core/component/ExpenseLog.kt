@@ -27,8 +27,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.domain.model.expense.ExpenseDomainData
 import com.hcapps.xpenzave.presentation.defaultDisplayName
@@ -145,7 +147,7 @@ fun ExpenseItem(
             ) {
                 Text(text = category?.name ?: "")
                 Text(
-                    text = "${expense.amount} $",
+                    text = "${expense.amount} ${stringResource(id = R.string.rupee)}",
                     fontWeight = MaterialTheme.typography.labelLarge.fontWeight,
                     color = style.costTextColor
                 )

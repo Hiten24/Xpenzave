@@ -81,13 +81,13 @@ fun BudgetProgressCard(
                 )
 
                 val budget = buildAnnotatedString {
-                    val symbol = "$"
+                    val symbol = stringResource(id = R.string.rupee)
                     withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary)) {
                         append("$totalSpending $symbol")
                     }
                     withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f))) {
-                        append(" / ${budgetAmount ?: "-"}")
-                        budgetAmount?.let { append(" $") }
+                        append(" / ${budgetAmount ?: "-"} ")
+                        budgetAmount?.let { append(stringResource(id = R.string.rupee)) }
                     }
                 }
 
