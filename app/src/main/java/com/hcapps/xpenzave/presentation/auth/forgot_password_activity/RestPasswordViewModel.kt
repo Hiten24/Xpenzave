@@ -3,6 +3,7 @@ package com.hcapps.xpenzave.presentation.auth.forgot_password_activity
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.data.remote_source.repository.auth.AuthRepository
 import com.hcapps.xpenzave.presentation.auth.event.PasswordState
 import com.hcapps.xpenzave.presentation.auth.event.PasswordState.Companion.shouldBeMin8Max20Char
@@ -13,9 +14,15 @@ import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPassw
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.IntentData
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.OnPasswordChanged
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.PasswordChanged
+import com.hcapps.xpenzave.presentation.core.UIEvent
+import com.hcapps.xpenzave.presentation.core.UIEvent.Error
+import com.hcapps.xpenzave.presentation.core.UiText.StringResource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +32,9 @@ class RestPasswordViewModel @Inject constructor(
 
     private val _state = mutableStateOf(ResetPasswordState())
     val state = _state
+
+    private val _uiEvent = MutableSharedFlow<UIEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     fun onEvent(event: ResetPasswordEvent) {
         when (event) {
@@ -62,6 +72,7 @@ class RestPasswordViewModel @Inject constructor(
 
     private fun resetPassword(onSuccess: () -> Unit, onError: (String) -> Unit) = viewModelScope.launch {
         if (!validate()) {
+            _state.value = state.value.copy(loading = false)
             return@launch
         }
         _state.value = state.value.copy(loading = true)
@@ -76,8 +87,12 @@ class RestPasswordViewModel @Inject constructor(
                 onSuccess()
             } else { onError("Invalid link!") }
         } catch (e: Exception) {
-            e.message?.let { onError(it) }
-            Timber.e(e)
+            if (e is IOException) {
+                _uiEvent.emit(Error(StringResource(R.string.internet_error_msg)))
+            } else {
+                e.message?.let { onError(it) }
+                Timber.e(e)
+            }
         }
         _state.value = state.value.copy(loading = false)
     }

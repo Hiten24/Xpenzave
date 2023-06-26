@@ -4,6 +4,7 @@ import android.util.Patterns
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.domain.usecase.auth.LoginUseCase
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.ConfirmPasswordChanged
@@ -11,9 +12,14 @@ import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.EmailChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.Login
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.PasswordChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthScreenState
+import com.hcapps.xpenzave.presentation.core.UIEvent
+import com.hcapps.xpenzave.presentation.core.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +29,9 @@ class LoginViewModel @Inject constructor(
 
     private val _state = mutableStateOf(AuthScreenState())
     val state = _state
+
+    private val _uiEvent = MutableSharedFlow<UIEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     fun onEvent(event: AuthEvent) {
         when (event) {
@@ -63,10 +72,11 @@ class LoginViewModel @Inject constructor(
             loginUseCase(state.value.email, state.value.password)
             onSuccess()
         } catch (e: Exception) {
-            if (e.message == "Invalid credentials. Please check the email and password.") {
+            if (e is IOException) {
+                _uiEvent.emit(UIEvent.Error(UiText.StringResource(R.string.internet_error_msg)))
+            } else if (e.message == "Invalid credentials. Please check the email and password.") {
                 _state.value = state.value.copy(passwordError = "Invalid credentials.")
-            }
-            Timber.e(e)
+            } else { Timber.e(e) }
         }
         _state.value = state.value.copy(loading = false)
     }

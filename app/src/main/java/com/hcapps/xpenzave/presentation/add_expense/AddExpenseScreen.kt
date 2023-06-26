@@ -112,7 +112,6 @@ fun AddExpense(
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEventFlow.collectLatest { event ->
             when (event) {
-                is UIEvent.Loading -> {  }
                 is UIEvent.ShowMessage -> {
                     scope.launch { snackBarHostState.showSnackbar(event.message) }
                 }

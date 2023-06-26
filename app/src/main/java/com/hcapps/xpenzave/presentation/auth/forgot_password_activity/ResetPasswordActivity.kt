@@ -33,12 +33,12 @@ import com.hcapps.xpenzave.presentation.auth.AuthTopBar
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.ConfirmPasswordChanged
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.IntentData
 import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.ResetPasswordEvent.PasswordChanged
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
 import com.hcapps.xpenzave.presentation.core.component.input.XpenzaveTextField
 import com.hcapps.xpenzave.ui.theme.XpenzaveTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class ResetPasswordActivity :  ComponentActivity() {
@@ -62,13 +62,15 @@ fun ResetPasswordContent(
 ) {
 
     val context = LocalContext.current
-    var isExpired = false
+    val isExpired = false
+
+    viewModel.uiEvent.UiEventReceiver()
 
     link?.let {
         val userId = it.getQueryParameter("userId")
         val secret = it.getQueryParameter("secret")
         val expire = it.getQueryParameter("expire")?.replace(" ", "T")
-        val expireDateTime = LocalDateTime.parse(expire)
+//        val expireDateTime = LocalDateTime.parse(expire)
 //        isExpired = LocalDateTime.now().compareTo(expireDateTime) == 1
         Timber.i("userId: $userId")
         Timber.i("secret: $secret")

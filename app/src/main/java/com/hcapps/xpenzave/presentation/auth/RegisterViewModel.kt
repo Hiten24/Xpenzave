@@ -4,6 +4,7 @@ import android.util.Patterns
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.domain.usecase.auth.RegisterUseCase
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.ConfirmPasswordChanged
@@ -11,10 +12,16 @@ import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.EmailChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.PasswordChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.Register
 import com.hcapps.xpenzave.presentation.auth.event.AuthScreenState
-import com.hcapps.xpenzave.presentation.auth.event.PasswordState
+import com.hcapps.xpenzave.presentation.auth.event.PasswordState.Companion.checkAllRule
+import com.hcapps.xpenzave.presentation.core.UIEvent
+import com.hcapps.xpenzave.presentation.core.UIEvent.Error
+import com.hcapps.xpenzave.presentation.core.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +32,9 @@ class RegisterViewModel @Inject constructor(
     private val _state = mutableStateOf(AuthScreenState())
     val state = _state
 
+    private val _uiEvent = MutableSharedFlow<UIEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
+
     fun onEvent(event: AuthEvent) {
         when (event) {
             is EmailChanged -> {
@@ -33,16 +43,7 @@ class RegisterViewModel @Inject constructor(
             is PasswordChanged -> {
                 _state.value = state.value.copy(password = event.password, passwordError = null)
                 val pass = event.password
-                val charLimit = pass.length in 8..20
-                val lowerCase = Regex("[a-z]").containsMatchIn(pass)
-                val upperCase = Regex("[A-Z]").containsMatchIn(pass)
-                val specialChar = Regex("[1-9$!#&@?=_]").containsMatchIn(pass)
-                _state.value = state.value.copy(createPasswordState = PasswordState(
-                    shouldBeMin8Max20Char = charLimit,
-                    shouldHaveALowerCase = lowerCase,
-                    shouldHaveAUpperCase = upperCase,
-                    shouldHaveANumberOrAcceptableCharacter = specialChar
-                ))
+                _state.value = state.value.copy(createPasswordState = checkAllRule(pass))
             }
             is ConfirmPasswordChanged -> {
                 _state.value = state.value.copy(confirmPassword = event.password)
@@ -82,7 +83,9 @@ class RegisterViewModel @Inject constructor(
             registerUseCase(state.value.email, state.value.password)
             onSuccess()
         } catch (e: Exception) {
-            Timber.e(e)
+            if (e is IOException) {
+                _uiEvent.emit(Error(UiText.StringResource(R.string.internet_error_msg)))
+            } else { Timber.e(e) }
         }
         _state.value = state.value.copy(loading = false)
     }

@@ -22,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent
 import com.hcapps.xpenzave.presentation.auth.event.PasswordState
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
 import com.hcapps.xpenzave.presentation.core.component.input.XpenzaveTextField
 
@@ -34,6 +35,8 @@ fun RegisterScreen(
 ) {
 
     val state by viewModel.state
+
+    viewModel.uiEvent.UiEventReceiver()
 
     Scaffold(
         topBar = {

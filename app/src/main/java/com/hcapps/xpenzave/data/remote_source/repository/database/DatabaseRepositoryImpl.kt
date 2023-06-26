@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.data.remote_source.repository.database
 
+import coil.network.HttpException
 import com.hcapps.xpenzave.data.datastore.DataStoreService
 import com.hcapps.xpenzave.data.remote_source.repository.appwrite.AppWriteUtil.permissions
 import com.hcapps.xpenzave.domain.model.CategoryDataResponse
@@ -18,6 +19,7 @@ import io.appwrite.Query
 import io.appwrite.services.Databases
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
+import java.io.IOException
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -63,6 +65,12 @@ class DatabaseRepositoryImpl @Inject constructor(
             )
             val expenses = response.documents.map { it.toModel(it.data) }.map { it.toExpenseDomainData() }
             RequestState.Success(expenses)
+        } catch (e: HttpException) {
+            Timber.i("HTTP Exception")
+            RequestState.Error(e)
+        } catch (e: IOException) {
+            Timber.i("IO Exception")
+            RequestState.Error(e)
         } catch (e: Exception) {
             RequestState.Error(e)
         }

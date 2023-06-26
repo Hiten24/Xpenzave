@@ -58,9 +58,12 @@ class EditBudgetViewModel @Inject constructor(
 
     fun upsertBudget() = viewModelScope.launch {
         loading(true)
-        if (!validate()) return@launch
+        if (!validate()) {
+            loading(false)
+            return@launch
+        }
         val date = state.value.date ?: LocalDate.now()
-        val budget = BudgetData(date.monthValue, date.year, state.value.amount.toDouble())
+        val budget = BudgetData(date.monthValue, date.year, state.value.amount.toDoubleOrNull() ?: 0.0)
         try {
             editBudgetUseCase(state.value.budgetId, budget)
             loading(false)

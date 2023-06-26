@@ -42,6 +42,8 @@ import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.core.component.MonthHeader
 import com.hcapps.xpenzave.presentation.core.component.MonthHeaderStyle
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
+import com.hcapps.xpenzave.presentation.core.component.snackbar.SnackbarVisualsWithError
+import com.hcapps.xpenzave.presentation.core.component.snackbar.XpenzaveSnackbar
 import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -62,7 +64,7 @@ fun EditBudgetScreen(
             when (it) {
                 is BudgetScreenFlow.SnackBar -> {
                     scope.launch {
-                        snackBarHostState.showSnackbar(it.message)
+                        snackBarHostState.showSnackbar(SnackbarVisualsWithError(it.message, it.isError))
                     }
                 }
                 is BudgetScreenFlow.NavigateUp -> { navigateUp() }
@@ -71,7 +73,9 @@ fun EditBudgetScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) { data ->
+            data.XpenzaveSnackbar()
+        } }
     ) { paddingValues ->
         Column(
             modifier = Modifier

@@ -10,6 +10,7 @@ import io.appwrite.models.Session
 import io.appwrite.models.User
 import io.appwrite.services.Account
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 
 typealias AppUser = User<Map<String, Any>>
@@ -32,6 +33,8 @@ class AuthRepositoryImpl @Inject constructor(
             Timber.i("response: ${response.registration}")
             Timber.i("createAccountWithCredentials: user " + response.email + " registered successfully")
             RequestState.Success(response)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             e.printStackTrace()
             if (e.message == "A user with the same email already exists in your project.") {
@@ -52,12 +55,15 @@ class AuthRepositoryImpl @Inject constructor(
                 password = password
             )
             RequestState.Success(response)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             e.printStackTrace()
             RequestState.Error(e)
         }
     }
 
+    // not handled IOException
     override suspend fun authenticateWithOauth2(
         activity: ComponentActivity,
         provider: String
@@ -70,6 +76,8 @@ class AuthRepositoryImpl @Inject constructor(
                 failure = "${OAUTH2_REDIRECT_LINK}${OAUTH2_FAILED_SUFFIX}"
             )
             RequestState.Success(true)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             e.printStackTrace()
             RequestState.Error(e)
@@ -81,6 +89,8 @@ class AuthRepositoryImpl @Inject constructor(
             // logs out from all the devices
             account.deleteSessions()
             RequestState.Success(true)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             e.printStackTrace()
             RequestState.Error(e)
@@ -90,6 +100,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun getAccount(): RequestState<AppUser> {
         return try {
             RequestState.Success(account.get())
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }
@@ -99,6 +111,8 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             account.updatePassword(newPassword, oldPassword)
             RequestState.Success(true)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }
@@ -106,11 +120,13 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun passwordRecovery(email: String): RequestState<Boolean> {
         return try {
-            val response = account.createRecovery(
+            account.createRecovery(
                 email = email,
                 url = "https://localhost/reset-password"
             )
             RequestState.Success(true)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }
@@ -130,6 +146,8 @@ class AuthRepositoryImpl @Inject constructor(
                 passwordAgain = passwordAgain
             )
             RequestState.Success(true)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }

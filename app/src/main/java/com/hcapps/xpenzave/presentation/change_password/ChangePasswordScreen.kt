@@ -20,6 +20,7 @@ import com.hcapps.xpenzave.presentation.auth.forgot_password_activity.PasswordOb
 import com.hcapps.xpenzave.presentation.change_password.ChangePasswordEvent.NewPasswordChanged
 import com.hcapps.xpenzave.presentation.change_password.ChangePasswordEvent.OldPasswordChanged
 import com.hcapps.xpenzave.presentation.change_password.ChangePasswordEvent.OnPasswordChanged
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
 import com.hcapps.xpenzave.presentation.core.component.input.XpenzaveTextField
 
@@ -31,6 +32,8 @@ fun ChangePasswordScreen(
 
     val state by viewModel.state
 
+    viewModel.uiEvent.UiEventReceiver()
+
     Scaffold(
         topBar = {
             AuthTopBar(
@@ -39,7 +42,9 @@ fun ChangePasswordScreen(
             )
         }
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).padding(22.dp)) {
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .padding(22.dp)) {
             XpenzaveTextField(
                 value = state.oldPassword,
                 onValueChange = { viewModel.onEvent(OldPasswordChanged(it)) },

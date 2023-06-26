@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.auth.AuthTopBar
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
 import com.hcapps.xpenzave.presentation.core.component.input.XpenzaveTextField
 import kotlinx.coroutines.launch
@@ -35,9 +36,12 @@ fun ForgotPasswordScreen(
     viewModel: ForgotPasswordViewModel = hiltViewModel(),
     navigateUp: () -> Unit
 ) {
+
     val state by viewModel.state
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
+
+    viewModel.uiEvent.UiEventReceiver()
 
     Scaffold(
         topBar = {

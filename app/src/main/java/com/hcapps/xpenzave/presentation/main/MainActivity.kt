@@ -10,6 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hcapps.xpenzave.navigation.XpenzaveNavGraph
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.XpenzaveScaffold
 import com.hcapps.xpenzave.ui.theme.XpenzaveTheme
 import com.hcapps.xpenzave.util.Screen
@@ -29,6 +30,8 @@ class MainActivity: ComponentActivity() {
 
             val mainViewModel = hiltViewModel<MainViewModel>()
             val state by mainViewModel.sessionState
+
+            mainViewModel.uiEvent.UiEventReceiver()
 
             LaunchedEffect(key1 = state) {
                 keepSplashOn = state.loading

@@ -56,4 +56,7 @@
     <string name="on_board_title">Track Your Every Transaction Easily</string>
     <string name="on_board_subtitle">Track and record your every expense easily to control your Expenses</string>
     <string name="filter_by">Filter by</string>
+
+<!--    error messages-->
+    <string name="internet_error_msg">Hmm.. it looks like you\'re offline.</string>
 </resources>
