@@ -28,9 +28,7 @@ class EditBudgetUseCase @Inject constructor(
                     data.data.amount
                 ))
             }
-            is RequestState.Error -> {
-                throw response.error
-            }
+            is RequestState.Error -> throw response.error
             else -> {}
         }
     }

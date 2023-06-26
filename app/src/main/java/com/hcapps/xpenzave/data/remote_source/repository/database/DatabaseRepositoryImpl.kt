@@ -46,6 +46,8 @@ class DatabaseRepositoryImpl @Inject constructor(
             val mappedResponse = response.documents.map { it.toModel(it.data) }
             Timber.i(mappedResponse.toString())
             RequestState.Success(mappedResponse)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             Timber.e(e)
             RequestState.Error(e)
@@ -66,24 +68,12 @@ class DatabaseRepositoryImpl @Inject constructor(
             val expenses = response.documents.map { it.toModel(it.data) }.map { it.toExpenseDomainData() }
             RequestState.Success(expenses)
         } catch (e: HttpException) {
-            Timber.i("HTTP Exception")
             RequestState.Error(e)
         } catch (e: IOException) {
-            Timber.i("IO Exception")
-            RequestState.Error(e)
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }
-    }
-
-    private fun getExpensesByMonthQuery(date: LocalDate, filter: List<String>): MutableList<String> {
-        val queries = mutableListOf(
-            Query.orderAsc("day"),
-            Query.equal("month", date.monthValue),
-            Query.equal("year", date.year)
-        )
-        if (filter.isNotEmpty()) { queries.add(Query.equal("categoryId", filter)) }
-        return queries
     }
 
     override suspend fun addExpense(expense: ExpenseData): ExpenseResponse {
@@ -101,6 +91,8 @@ class DatabaseRepositoryImpl @Inject constructor(
             )
             val expenseModel = response.toModel(response.data)
             RequestState.Success(expenseModel)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }
@@ -115,6 +107,8 @@ class DatabaseRepositoryImpl @Inject constructor(
                 nestedType = ExpenseData::class.java
             )
             RequestState.Success(response.toModel(response.data))
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }
@@ -131,6 +125,8 @@ class DatabaseRepositoryImpl @Inject constructor(
                 permissions = permissions(user.first())
             )
             RequestState.Success(response.toModel(response.data))
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }
@@ -148,6 +144,8 @@ class DatabaseRepositoryImpl @Inject constructor(
                 permissions = permissions(user.first())
             )
             RequestState.Success(response.toModel(response.data))
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }
@@ -166,6 +164,8 @@ class DatabaseRepositoryImpl @Inject constructor(
             ).documents.firstOrNull()
             val toModel = response?.toModel(response.data)
             RequestState.Success(toModel)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }
@@ -179,12 +179,22 @@ class DatabaseRepositoryImpl @Inject constructor(
                 documentId = id
             )
             RequestState.Success(true)
+        } catch (e: IOException) {
+            RequestState.Error(IOException())
         } catch (e: Exception) {
             RequestState.Error(e)
         }
     }
 
-
+    private fun getExpensesByMonthQuery(date: LocalDate, filter: List<String>): MutableList<String> {
+        val queries = mutableListOf(
+            Query.orderAsc("day"),
+            Query.equal("month", date.monthValue),
+            Query.equal("year", date.year)
+        )
+        if (filter.isNotEmpty()) { queries.add(Query.equal("categoryId", filter)) }
+        return queries
+    }
 
     private fun generateUniqueId() = ID.unique()
 

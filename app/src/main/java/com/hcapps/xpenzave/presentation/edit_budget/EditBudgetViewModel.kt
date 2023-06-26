@@ -5,8 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.domain.model.budget.BudgetData
 import com.hcapps.xpenzave.domain.usecase.budget.EditBudgetUseCase
+import com.hcapps.xpenzave.presentation.core.UIEvent
+import com.hcapps.xpenzave.presentation.core.UIEvent.Error
+import com.hcapps.xpenzave.presentation.core.UiText.StringResource
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_ARGUMENT_KEY
 import com.hcapps.xpenzave.util.UiConstants.EDIT_BUDGET_BUDGET_ID_ARGUMENT_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -28,6 +33,9 @@ class EditBudgetViewModel @Inject constructor(
 
     private val _uiFlow = MutableSharedFlow<BudgetScreenFlow>()
     val uiFlow = _uiFlow.asSharedFlow()
+
+    private val _uiEvent = MutableSharedFlow<UIEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     init {
         getMonthYearArgument()
@@ -72,7 +80,9 @@ class EditBudgetViewModel @Inject constructor(
             delay(1000L)
             _uiFlow.emit(BudgetScreenFlow.NavigateUp)
         } catch (e: Exception) {
-            e.printStackTrace()
+            if (e is IOException) {
+                _uiEvent.emit(Error(StringResource(R.string.internet_error_msg)))
+            } else { e.printStackTrace() }
             loading(false)
         }
     }

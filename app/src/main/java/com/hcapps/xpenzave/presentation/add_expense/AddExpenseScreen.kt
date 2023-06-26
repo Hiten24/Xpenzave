@@ -48,11 +48,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,7 +74,7 @@ import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.domain.model.category.Category.Companion.dummies
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.*
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseState
-import com.hcapps.xpenzave.presentation.core.UIEvent
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle.Companion.defaultCategoryStyle
@@ -89,8 +87,6 @@ import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
 import com.hcapps.xpenzave.util.getActualPathOfImage
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -107,18 +103,8 @@ fun AddExpense(
     var imagePreviewOpened by remember { mutableStateOf(false) }
 
     val snackBarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.uiEventFlow.collectLatest { event ->
-            when (event) {
-                is UIEvent.ShowMessage -> {
-                    scope.launch { snackBarHostState.showSnackbar(event.message) }
-                }
-                is UIEvent.Error -> {}
-            }
-        }
-    }
+    viewModel.uiEvent.UiEventReceiver()
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },

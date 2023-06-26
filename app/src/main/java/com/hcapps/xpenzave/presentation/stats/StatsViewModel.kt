@@ -4,14 +4,21 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.domain.local_usecase.LocalExpenseUseCase
 import com.hcapps.xpenzave.domain.usecase.expense.GetExpensesUseCase
+import com.hcapps.xpenzave.presentation.core.UIEvent
+import com.hcapps.xpenzave.presentation.core.UIEvent.Error
+import com.hcapps.xpenzave.presentation.core.UiText.StringResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.IOException
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -23,6 +30,9 @@ class StatsViewModel @Inject constructor(
 
     private val _state = mutableStateOf(StatsState())
     val state: State<StatsState> = _state
+
+    private val _uiEvent = MutableSharedFlow<UIEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     var appliedFilter: List<String> = emptyList()
 
@@ -57,7 +67,9 @@ class StatsViewModel @Inject constructor(
             getExpensesUseCase.execute(date, filter)
             loading(false)
         } catch (e: Exception) {
-            Timber.e(e)
+            if (e is IOException) {
+                _uiEvent.emit(Error(StringResource(R.string.internet_error_msg)))
+            } else { Timber.e(e) }
             loading(false)
         }
     }

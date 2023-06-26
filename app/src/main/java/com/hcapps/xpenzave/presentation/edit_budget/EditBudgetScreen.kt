@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.MonthHeader
 import com.hcapps.xpenzave.presentation.core.component.MonthHeaderStyle
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
@@ -58,6 +59,8 @@ fun EditBudgetScreen(
     val state by viewModel.state
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    viewModel.uiEvent.UiEventReceiver()
 
     LaunchedEffect(key1 = viewModel.uiFlow) {
         viewModel.uiFlow.collectLatest {

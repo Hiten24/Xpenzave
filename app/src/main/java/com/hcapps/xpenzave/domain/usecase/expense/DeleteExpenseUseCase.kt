@@ -18,9 +18,7 @@ class DeleteExpenseUseCase @Inject constructor(
                 localDatabaseRepository.deleteExpense(id)
                 true
             }
-            is RequestState.Error -> {
-                throw response.error
-            }
+            is RequestState.Error -> throw response.error
             else -> false
         }
     }

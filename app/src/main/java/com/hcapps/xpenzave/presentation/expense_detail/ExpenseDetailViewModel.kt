@@ -5,9 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.data.remote_source.repository.storage.StorageRepository
 import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.domain.usecase.expense.DeleteExpenseUseCase
+import com.hcapps.xpenzave.presentation.core.UIEvent
+import com.hcapps.xpenzave.presentation.core.UIEvent.Error
+import com.hcapps.xpenzave.presentation.core.UiText.StringResource
 import com.hcapps.xpenzave.presentation.edit_budget.BudgetScreenFlow
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_DETAIL_ARGUMENT_KEY
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +21,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.IOException
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -29,6 +34,9 @@ class ExpenseDetailViewModel @Inject constructor(
 
     private val _state = mutableStateOf(ExpenseDetailState())
     val state: State<ExpenseDetailState> = _state
+
+    private val _uiEvent = MutableSharedFlow<UIEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     private val _uiFlow = MutableSharedFlow<BudgetScreenFlow>()
     val uiFlow = _uiFlow.asSharedFlow()
@@ -67,7 +75,9 @@ class ExpenseDetailViewModel @Inject constructor(
             _uiFlow.emit(BudgetScreenFlow.NavigateUp)
             loading(false)
         } catch (e: Exception) {
-            Timber.e(e)
+            if (e is IOException) {
+                _uiEvent.emit(Error(StringResource(R.string.internet_error_msg)))
+            } else Timber.e(e)
             loading(false)
         }
     }

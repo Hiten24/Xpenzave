@@ -20,10 +20,7 @@ class GetExpensesUseCase @Inject constructor(
                 Timber.i("expenses entity: $expenseEntities")
                 localDatabaseRepository.insertExpenses(expenseEntities)
             }
-            is RequestState.Error -> {
-                Timber.e(response.error)
-                throw(response.error)
-            }
+            is RequestState.Error -> { throw(response.error) }
             else -> {  }
         }
     }

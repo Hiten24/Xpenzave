@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.calendar.MonthDialog
 import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
 import com.hcapps.xpenzave.presentation.expense_log.ExpenseLogSection
@@ -55,6 +56,8 @@ fun StatsScreen(
     val state by viewModel.state
 //    val generalState by viewModel.generalState
     var dateDialogOpened by remember { mutableStateOf(false) }
+
+    viewModel.uiEvent.UiEventReceiver()
 
     val lazyState = rememberLazyListState()
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()

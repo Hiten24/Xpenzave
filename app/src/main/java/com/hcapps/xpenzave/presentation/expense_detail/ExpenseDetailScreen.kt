@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.ZoomableImagePreview
 import com.hcapps.xpenzave.presentation.edit_budget.BudgetScreenFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -65,6 +66,8 @@ fun ExpenseDetailScreen(
     val snackBarHostState = remember { SnackbarHostState() }
 
     var imagePreviewOpened by remember { mutableStateOf(false) }
+
+    viewModel.uiEvent.UiEventReceiver()
 
     LaunchedEffect(key1 = viewModel.uiFlow) {
         viewModel.uiFlow.collectLatest {

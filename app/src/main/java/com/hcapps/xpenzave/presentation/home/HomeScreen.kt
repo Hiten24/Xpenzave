@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.calendar.MonthDialog
 import com.hcapps.xpenzave.presentation.core.component.calendar.rememberMonthState
 import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
@@ -38,6 +39,8 @@ fun HomeScreen(
     val lazyListState = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val monthSelectorState by rememberMonthState()
+
+    viewModel.uiEvent.UiEventReceiver()
 
     Column(modifier = Modifier.fillMaxSize()) {
         BudgetProgressCard(

@@ -18,9 +18,7 @@ class GetBudgetByDateUseCase @Inject constructor(
                 val budget = response.data?.toBudgetDomainData()
                 budget?.toBudgetEntity()?.let { localDatabaseRepository.addBudget(it) }
             }
-            is RequestState.Error -> {
-                throw response.error
-            }
+            is RequestState.Error -> throw response.error
             else -> {}
         }
     }

@@ -3,6 +3,7 @@ package com.hcapps.xpenzave.presentation.add_expense
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.data.remote_source.APP_WRITE_DATE_TIME_FORMAT
 import com.hcapps.xpenzave.domain.model.expense.ExpenseData
 import com.hcapps.xpenzave.domain.usecase.expense.AddExpenseUseCase
@@ -15,10 +16,14 @@ import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.Detail
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.PhotoChange
 import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseState
 import com.hcapps.xpenzave.presentation.core.UIEvent
+import com.hcapps.xpenzave.presentation.core.UIEvent.Error
+import com.hcapps.xpenzave.presentation.core.UIEvent.ShowMessage
+import com.hcapps.xpenzave.presentation.core.UiText.StringResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -30,8 +35,8 @@ class AddExpenseViewModel @Inject constructor(
 
     val state = mutableStateOf(AddExpenseState())
 
-    private val _uiEventFlow = MutableSharedFlow<UIEvent>()
-    val uiEventFlow = _uiEventFlow.asSharedFlow()
+    private val _uiEvent = MutableSharedFlow<UIEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     fun onEvent(event: AddExpenseEvent) {
         when (event) {
@@ -84,7 +89,7 @@ class AddExpenseViewModel @Inject constructor(
             }
             category.isNullOrEmpty() -> {
                 viewModelScope.launch {
-                    _uiEventFlow.emit(UIEvent.ShowMessage("Select category to add expense."))
+                    _uiEvent.emit(ShowMessage("Select category to add expense."))
                 }
             }
         }
@@ -103,7 +108,9 @@ class AddExpenseViewModel @Inject constructor(
             loading(false)
             clearState()
         } catch (e: Exception) {
-            e.printStackTrace()
+            if (e is IOException) {
+                _uiEvent.emit(Error(StringResource(R.string.internet_error_msg)))
+            } else { e.printStackTrace() }
             loading(false)
         }
     }
