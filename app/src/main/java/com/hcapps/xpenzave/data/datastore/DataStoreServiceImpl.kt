@@ -20,6 +20,16 @@ class DataStoreServiceImpl @Inject constructor(
         private val USER_CURRENCY_CODE = stringPreferencesKey("currency_code")
     }
 
+    override val user: Flow<User>
+        get() = userPreferencesDataStore.data
+            .map { prefs ->
+                User(
+                    userId = prefs[USER_ID] ?: "",
+                    email = prefs[USER_EMAIL],
+                    currencyCode = prefs[USER_CURRENCY_CODE]
+                )
+            }
+
     override suspend fun saveUser(user: User) {
         userPreferencesDataStore.edit { preferences ->
             preferences[USER_ID] = user.userId

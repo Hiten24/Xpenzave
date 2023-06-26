@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface DataStoreService {
 
+    val user: Flow<User>
+
     suspend fun saveUser(user: User)
 
     fun getUser(): User
