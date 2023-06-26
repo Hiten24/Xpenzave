@@ -3,6 +3,10 @@
 import java.util.Properties
 import java.io.FileInputStream
 
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
 plugins {
     id("com.android.application")
     id("kotlin-parcelize")
@@ -11,10 +15,6 @@ plugins {
     kotlin("android")
     kotlin("kapt")
 }
-
-val keystorePropertiesFile = rootProject.file("keystore.properties")
-val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.hcapps.xpenzave"
@@ -85,6 +85,23 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.7"
+    }
+
+    buildTypes.all { types ->
+        val propertyFileName = if (types.name == "debug") "debug.remote.properties" else "release.remote.properties"
+        val remotePropertiesFile = rootProject.file(propertyFileName)
+        val remoteProperties = Properties()
+        remoteProperties.load(FileInputStream(remotePropertiesFile))
+        types.buildConfigField("String", "projectId", remoteProperties["projectId"] as String)
+        types.buildConfigField("String", "databaseId", remoteProperties["databaseId"] as String)
+        types.buildConfigField("String", "categoryCollectionId", remoteProperties["categoryCollectionId"] as String)
+        types.buildConfigField("String", "budgetCollectionId", remoteProperties["budgetCollectionId"] as String)
+        types.buildConfigField("String", "expenseCollectionId", remoteProperties["expenseCollectionId"] as String)
+        types.buildConfigField("String", "photoBucketId", remoteProperties["photoBucketId"] as String)
+        types.buildConfigField("String", "endpoint", remoteProperties["endpoint"] as String)
+        types.buildConfigField("String", "bills", remoteProperties["bills"] as String)
+        types.buildConfigField ("java.util.HashMap<String, String>", "CATEGORIES", remoteProperties["categories"] as String)
+        false // Apply configuration to all build types.
     }
 
 }
