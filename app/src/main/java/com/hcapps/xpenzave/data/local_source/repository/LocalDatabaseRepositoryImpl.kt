@@ -38,4 +38,9 @@ class LocalDatabaseRepositoryImpl @Inject constructor(
     override suspend fun deleteExpense(id: String) {
         expenseDao.deleteExpense(id)
     }
+
+    override suspend fun dropDb() {
+        expenseDao.drop()
+        budgetDao.drop()
+    }
 }

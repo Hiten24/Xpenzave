@@ -58,9 +58,7 @@ class SettingsViewModel @Inject constructor(
         } catch (e: Exception) {
             if (e is IOException) {
                 _uiEventFlow.emit(Error(UiText.StringResource(R.string.internet_error_msg)))
-            } else {
-                Timber.e(e)
-            }
+            } else { Timber.e(e) }
             _state.value = state.value.copy(logOutLoading = false)
         }
     }

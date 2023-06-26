@@ -19,4 +19,6 @@ interface LocalDatabaseRepository {
 
     suspend fun deleteExpense(id: String)
 
+    suspend fun dropDb()
+
 }

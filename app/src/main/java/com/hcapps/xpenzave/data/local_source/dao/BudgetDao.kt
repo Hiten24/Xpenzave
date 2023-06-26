@@ -19,4 +19,7 @@ interface BudgetDao {
     @Query("SELECT * FROM budget WHERE month = :month AND year = :year")
     fun getBudgetByDate(month: Int, year: Int): Flow<BudgetEntity?>
 
+    @Query("DELETE FROM budget")
+    suspend fun drop()
+
 }
