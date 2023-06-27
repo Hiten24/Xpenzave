@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.presentation.add_expense
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,7 +34,8 @@ class AddExpenseViewModel @Inject constructor(
     private val addExpenseUseCase: AddExpenseUseCase
 ): ViewModel() {
 
-    val state = mutableStateOf(AddExpenseState())
+    private val _state = mutableStateOf(AddExpenseState())
+    val state: State<AddExpenseState> = _state
 
     private val _uiEvent = MutableSharedFlow<UIEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
@@ -41,30 +43,30 @@ class AddExpenseViewModel @Inject constructor(
     fun onEvent(event: AddExpenseEvent) {
         when (event) {
             is AmountChange -> {
-                state.value = state.value.copy(amount = event.amount)
+                _state.value = state.value.copy(amount = event.amount)
             }
             is CategoryChange -> {
-               state.value = state.value.copy(category = event.category)
+                _state.value = state.value.copy(category = event.category)
             }
             is DetailsChange -> {
-                state.value = state.value.copy(details = event.detail)
+                _state.value = state.value.copy(details = event.detail)
             }
             is AddBillEachMonthChange -> {
-                state.value = state.value.copy(
+                _state.value = state.value.copy(
                     eachMonth = !state.value.eachMonth
                 )
             }
             is PhotoChange -> {
-                state.value = state.value.copy(
+                _state.value = state.value.copy(
                     photo = event.photo,
                     photoPath = event.Path
                 )
             }
             is AddExpenseEvent.ClearPhoto -> {
-                state.value = state.value.copy(photo = null)
+                _state.value = state.value.copy(photo = null)
             }
             is AddExpenseEvent.DateTimeChange -> {
-                state.value = state.value.copy(date = event.dateTime)
+                _state.value = state.value.copy(date = event.dateTime)
             }
             is AddExpenseEvent.AddButtonClicked -> {
                 uploadPhotoAndAddExpense(state.value.photoPath)
@@ -73,11 +75,11 @@ class AddExpenseViewModel @Inject constructor(
     }
 
     private fun loading(loading: Boolean) {
-        state.value = state.value.copy(loading = loading)
+        _state.value = state.value.copy(loading = loading)
     }
 
     private fun clearState() {
-        state.value = AddExpenseState()
+        _state.value = AddExpenseState()
     }
 
     private fun validate(): Boolean {
@@ -85,7 +87,7 @@ class AddExpenseViewModel @Inject constructor(
         val category = state.value.category
         when {
             amount == null || amount == 0.0 -> {
-                state.value = state.value.copy(amountError = "Amount can't be empty.")
+                _state.value = state.value.copy(amountError = "Amount can't be empty.")
             }
             category.isNullOrEmpty() -> {
                 viewModelScope.launch {
@@ -104,7 +106,7 @@ class AddExpenseViewModel @Inject constructor(
         }
         try {
             val uploadedPhoto = path?.let { uploadPhotoUseCase(it) }
-            state.value = state.value.copy(uploadedPhoto = uploadedPhoto)
+            _state.value = state.value.copy(uploadedPhoto = uploadedPhoto)
             addExpenseUseCase(getTypedExpense())
             loading(false)
             clearState()
