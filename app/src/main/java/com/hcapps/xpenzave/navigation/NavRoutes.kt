@@ -9,8 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.hcapps.xpenzave.presentation.add_expense.AddExpense
 import com.hcapps.xpenzave.presentation.auth.AuthenticationScreen
-import com.hcapps.xpenzave.presentation.auth.LoginScreen
-import com.hcapps.xpenzave.presentation.auth.RegisterScreen
+import com.hcapps.xpenzave.presentation.auth.login.LoginScreen
+import com.hcapps.xpenzave.presentation.auth.register.RegisterScreen
 import com.hcapps.xpenzave.presentation.auth.forgot_password.ForgotPasswordScreen
 import com.hcapps.xpenzave.presentation.calendar.CalendarScreen
 import com.hcapps.xpenzave.presentation.change_password.ChangePasswordScreen

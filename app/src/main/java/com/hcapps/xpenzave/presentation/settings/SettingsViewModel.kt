@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.presentation.settings
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,7 +26,7 @@ class SettingsViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _state = mutableStateOf(SettingsState())
-    var state = _state
+    var state: State<SettingsState> = _state
 
     private val user = dataStore.getUserFlow()
 

@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.presentation.main
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,7 +29,7 @@ class MainViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _sessionState = mutableStateOf(SessionState())
-    val sessionState = _sessionState
+    val sessionState: State<SessionState> = _sessionState
 
     private val _uiEvent = MutableSharedFlow<UIEvent>()
     val uiEvent = _uiEvent.asSharedFlow()

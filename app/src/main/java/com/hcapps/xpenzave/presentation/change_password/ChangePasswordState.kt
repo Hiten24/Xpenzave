@@ -2,7 +2,7 @@ package com.hcapps.xpenzave.presentation.change_password
 
 import com.hcapps.xpenzave.presentation.auth.event.PasswordState
 
-data class ChangePasswordSate(
+data class ChangePasswordState(
     val oldPassword: String = "",
     val oldPasswordError: String? = null,
     val newPassword: String = "",

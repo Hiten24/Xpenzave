@@ -1,4 +1,4 @@
-package com.hcapps.xpenzave.presentation.auth
+package com.hcapps.xpenzave.presentation.auth.register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
+import com.hcapps.xpenzave.presentation.auth.AuthTopBar
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.ConfirmPasswordChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.EmailChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.PasswordChanged

@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.presentation.change_password
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,8 +26,8 @@ class ChangePasswordViewModel @Inject constructor(
     private val changePasswordUseCase: ChangePasswordUseCase
 ): ViewModel() {
 
-    private val _state = mutableStateOf(ChangePasswordSate())
-    val state = _state
+    private val _state = mutableStateOf(ChangePasswordState())
+    val state: State<ChangePasswordState> = _state
 
     private val _uiEvent = MutableSharedFlow<UIEvent>()
     val uiEvent = _uiEvent.asSharedFlow()

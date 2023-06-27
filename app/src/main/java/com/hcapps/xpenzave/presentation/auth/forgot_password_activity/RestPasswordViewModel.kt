@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.presentation.auth.forgot_password_activity
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,7 +32,7 @@ class RestPasswordViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _state = mutableStateOf(ResetPasswordState())
-    val state = _state
+    val state: State<ResetPasswordState> = _state
 
     private val _uiEvent = MutableSharedFlow<UIEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
