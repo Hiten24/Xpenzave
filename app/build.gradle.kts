@@ -100,7 +100,7 @@ android {
         types.buildConfigField("String", "photoBucketId", remoteProperties["photoBucketId"] as String)
         types.buildConfigField("String", "endpoint", remoteProperties["endpoint"] as String)
         types.buildConfigField ("java.util.HashMap<String, String>", "CATEGORIES", remoteProperties["categories"] as String)
-        false // Apply configuration to all build types.
+        true // Apply configuration to all build types.
     }
 
 }

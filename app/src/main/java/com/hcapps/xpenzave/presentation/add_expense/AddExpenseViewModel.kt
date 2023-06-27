@@ -103,7 +103,8 @@ class AddExpenseViewModel @Inject constructor(
             return@launch
         }
         try {
-            path?.let { uploadPhotoUseCase(it) }
+            val uploadedPhoto = path?.let { uploadPhotoUseCase(it) }
+            state.value = state.value.copy(uploadedPhoto = uploadedPhoto)
             addExpenseUseCase(getTypedExpense())
             loading(false)
             clearState()

@@ -20,10 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.hcapps.xpenzave.domain.model.* { *; }
--keep class io.appwrite.* { *; }
--keep class io.appwrite.models.* { *; }
--keep class io.appwrite.* { *; }
+-keep class com.hcapps.xpenzave.domain.model.** { *; }
 -keep class java.time.LocalDate
 
 -keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
