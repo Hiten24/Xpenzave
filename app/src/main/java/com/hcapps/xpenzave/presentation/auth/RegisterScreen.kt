@@ -14,13 +14,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
-import com.hcapps.xpenzave.presentation.auth.event.AuthEvent
+import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.ConfirmPasswordChanged
+import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.EmailChanged
+import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.PasswordChanged
+import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.Register
+import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.SetPasswordFocusChanged
 import com.hcapps.xpenzave.presentation.auth.event.PasswordState
 import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
@@ -60,17 +65,18 @@ fun RegisterScreen(
 
             RegisterContent(
                 email = state.email,
-                onEmailChanged = { viewModel.onEvent(AuthEvent.EmailChanged(it)) },
+                onEmailChanged = { viewModel.onEvent(EmailChanged(it)) },
                 password = state.password,
-                onPasswordChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) },
+                onPasswordChanged = { viewModel.onEvent(PasswordChanged(it)) },
                 emailError = state.emailError,
                 passwordError = state.passwordError,
-                register = { viewModel.onEvent(AuthEvent.Register(navigateToHome)) },
+                register = { viewModel.onEvent(Register(navigateToHome)) },
                 loading = state.loading,
                 confirmPassword = state.confirmPassword,
-                onConfirmPasswordChanged = { viewModel.onEvent(AuthEvent.ConfirmPasswordChanged(it)) },
+                onConfirmPasswordChanged = { viewModel.onEvent(ConfirmPasswordChanged(it)) },
                 confirmPasswordError = state.confirmPasswordError,
-                passwordState = state.createPasswordState
+                passwordState = state.createPasswordState,
+                onSetPasswordFocusedChange = { viewModel.onEvent(SetPasswordFocusChanged) }
             )
 
         }
@@ -91,7 +97,8 @@ fun RegisterContent(
     confirmPasswordError: String? = null,
     loading: Boolean = false,
     register: () -> Unit,
-    passwordState: PasswordState? = null
+    passwordState: PasswordState? = null,
+    onSetPasswordFocusedChange: () -> Unit
 ) {
 
     Column(
@@ -109,6 +116,9 @@ fun RegisterContent(
         )
 
         XpenzaveTextField(
+            modifier = Modifier.onFocusChanged {
+                if (!it.isFocused) { onSetPasswordFocusedChange() }
+            },
             value = password,
             onValueChange = onPasswordChanged,
             label = stringResource(id = R.string.set_password),

@@ -11,6 +11,7 @@ import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.ConfirmPasswordChan
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.EmailChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.PasswordChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.Register
+import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.SetPasswordFocusChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthScreenState
 import com.hcapps.xpenzave.presentation.auth.event.PasswordState.Companion.checkAllRule
 import com.hcapps.xpenzave.presentation.core.UIEvent
@@ -54,6 +55,9 @@ class RegisterViewModel @Inject constructor(
                     return
                 }
                 register(event.onSuccess)
+            }
+            is SetPasswordFocusChanged -> {
+                _state.value = state.value.copy(createPasswordState = null)
             }
             else -> {}
         }

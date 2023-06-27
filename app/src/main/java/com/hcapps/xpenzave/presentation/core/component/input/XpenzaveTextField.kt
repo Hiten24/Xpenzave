@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun XpenzaveTextField(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
@@ -36,7 +37,7 @@ fun XpenzaveTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(text = label) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Email,
             imeAction = imeAction
