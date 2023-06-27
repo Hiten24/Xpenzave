@@ -99,7 +99,6 @@ android {
         types.buildConfigField("String", "expenseCollectionId", remoteProperties["expenseCollectionId"] as String)
         types.buildConfigField("String", "photoBucketId", remoteProperties["photoBucketId"] as String)
         types.buildConfigField("String", "endpoint", remoteProperties["endpoint"] as String)
-        types.buildConfigField("String", "bills", remoteProperties["bills"] as String)
         types.buildConfigField ("java.util.HashMap<String, String>", "CATEGORIES", remoteProperties["categories"] as String)
         false // Apply configuration to all build types.
     }
