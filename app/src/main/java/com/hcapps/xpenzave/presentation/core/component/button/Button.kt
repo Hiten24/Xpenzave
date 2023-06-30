@@ -30,7 +30,7 @@ fun XpenzaveButton(
             .height(ButtonHeight),
         enabled = enabled && loading.not(),
         onClick = onClickOfButton,
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)),
         shape = Shapes().small
     ) {
         if (loading.not()) {
