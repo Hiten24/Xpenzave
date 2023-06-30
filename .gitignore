@@ -8,3 +8,6 @@ build
 captures
 .externalNativeBuild
 .cxx
+keystore.properties
+debug.remote.properties
+release.remote.properties

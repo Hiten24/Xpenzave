@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
@@ -20,43 +21,43 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
+import com.hcapps.xpenzave.domain.model.expense.ExpenseDomainData
 import com.hcapps.xpenzave.presentation.core.component.ExpenseLog
-import com.hcapps.xpenzave.presentation.home.state.ExpensesOfTheDay
+import com.hcapps.xpenzave.presentation.core.component.ExpenseLogs
 
 @Composable
 fun RecentExpenseSection(
     modifier: Modifier = Modifier,
     spaceBetweenItem: Dp = 12.dp,
     onClickOfSeeAll: () -> Unit,
-    onClickOfDateHeader: () -> Unit,
-    onClickOfExpenseItem: () -> Unit,
+    onClickOfExpenseItem: (details: ExpenseDomainData) -> Unit,
     onClickOfAddExpense: () -> Unit,
-    expensesOfMonth: List<ExpensesOfTheDay> = emptyList()
+    expenseLazyState: LazyListState,
+    listOfExpense: ExpenseLogs? = null,
 ) {
     Column(
         modifier = modifier
     ) {
 
-        if (expensesOfMonth.isNotEmpty()) {
+        if (listOfExpense.isNullOrEmpty().not()) {
             RecentExpenseHeader(modifier = Modifier.fillMaxWidth(), onClickOfSeeAll)
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if (expensesOfMonth.isNotEmpty()) {
+        if (listOfExpense.isNullOrEmpty().not()) {
             ExpenseLog(
                 modifier = Modifier.fillMaxSize(),
-                expensesOfMonth = expensesOfMonth,
-                onClickOfDateHeader = onClickOfDateHeader,
                 onClickOfExpenseItem = onClickOfExpenseItem,
-                spaceBetweenItem = spaceBetweenItem
+                lazyState = expenseLazyState,
+                expenses = listOfExpense ?: emptyMap()
             )
         } else {
-            AddExpenseContainer(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                onClickOfAddExpense = onClickOfAddExpense
-            )
+            listOfExpense?.let {
+                AddExpenseContainer(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    onClickOfAddExpense = onClickOfAddExpense
+                )
+            }
         }
 
     }

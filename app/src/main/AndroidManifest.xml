@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".XpenzaveApplication"
         android:allowBackup="true"
@@ -9,20 +11,43 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Xpenzave"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.main.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Xpenzave">
+            android:theme="@style/Theme.Xpenzave.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+<!--            handle App write OAuth2 redirection-->
+            <!--<intent-filter android:label="android_web_auth">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="appwrite-callback-6487f4285941b21bf271" />
+            </intent-filter>-->
+
         </activity>
+
+        <activity
+            android:name=".presentation.auth.forgot_password_activity.ResetPasswordActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Xpenzave">
+            <intent-filter android:label="Xpenzave link">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                    android:host="localhost"/>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

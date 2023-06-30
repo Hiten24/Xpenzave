@@ -34,7 +34,7 @@ import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
 
 @Composable
 fun CategoryExpensesGraph(
-    categories: List<CategoryData> = emptyList(),
+    categories: List<CategoryBarChartData> = emptyList(),
     cardColor: Color = MaterialTheme.colorScheme.surface,
     cardElevation: Dp = DefaultCardElevation
 ) {
@@ -80,10 +80,10 @@ fun CategoryExpensesGraph(
 @Composable
 private fun GraphIndicator(
     modifier: Modifier,
-    category: CategoryData
+    category: CategoryBarChartData
 ) {
 
-    val selectedExpense = category.expense.getOrNull(0) ?: ExpenseData.emptyExpense()
+//    val selectedExpense = category.expense.getOrNull(0) ?: ExpenseDataForGraph.emptyExpense()
 
     Row(
         modifier = modifier,
@@ -92,14 +92,14 @@ private fun GraphIndicator(
         Column {
             Text(
                 modifier = Modifier.align(Alignment.End),
-                text = "${selectedExpense.totalSpendingOfMonth} $",
+                text = "${category.totalSpendByCategory} $",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "/ ${selectedExpense.budgetOfMonth} $",
+                text = "/ ${category.budget} $",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
             )
@@ -107,12 +107,12 @@ private fun GraphIndicator(
 
         Spacer(modifier = Modifier.width(24.dp))
 
-        GraphProgress(percentage = category.expense.getOrNull(0)?.percentage ?: 0)
+        GraphProgress(percentage = category.budgetPercentageByCategory)
 
         Spacer(modifier = Modifier.width(24.dp))
 
         Text(
-            text = "${category.expense.getOrNull(0)?.percentage}%",
+            text = "${category.budgetPercentageByCategory}%",
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.primary
@@ -158,11 +158,11 @@ fun PreviewGraphProgress() {
 @Preview
 @Composable
 fun PreviewCategoryExpensesGraph() {
-    CategoryExpensesGraph(categories = CategoryData.defaultCategoryGraphs())
+    CategoryExpensesGraph(categories = CategoryBarChartData.defaultCategoryGraphs())
 }
 
 @Preview
 @Composable
 fun PreviewGraphIndicator() {
-    GraphIndicator(modifier = Modifier.fillMaxWidth(), CategoryData.dummyCategory())
+    GraphIndicator(modifier = Modifier.fillMaxWidth(), CategoryBarChartData.dummyCategory())
 }

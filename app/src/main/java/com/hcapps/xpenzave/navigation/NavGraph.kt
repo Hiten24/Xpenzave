@@ -2,126 +2,110 @@ package com.hcapps.xpenzave.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.hcapps.xpenzave.presentation.add_expense.AddExpense
-import com.hcapps.xpenzave.presentation.auth.AuthenticationScreen
-import com.hcapps.xpenzave.presentation.compare.result.CompareResult
-import com.hcapps.xpenzave.presentation.compare.CompareSelector
-import com.hcapps.xpenzave.presentation.edit_budget.EditBudgetScreen
-import com.hcapps.xpenzave.presentation.home.HomeScreen
-import com.hcapps.xpenzave.presentation.settings.SettingsScreen
-import com.hcapps.xpenzave.presentation.stats.StateScreen
 import com.hcapps.xpenzave.util.Screen
+import com.hcapps.xpenzave.util.UiConstants.EXPENSE_FILTER_ARGUMENT_KEY
+import io.appwrite.extensions.toJson
 
 @Composable
 fun XpenzaveNavGraph(
     startDestination: String,
     navController: NavHostController,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    onDataLoaded: () -> Unit
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
 
         authenticationRoute {
             navController.popBackStack()
-            navController.navigate(Screen.Settings.route)
+            navController.navigate(Screen.Home.route)
         }
 
         homeRoute(
             paddingValues,
-            navigateToEditBudget = {
-                navController.navigate(Screen.EditBudget.route)
-            }
+            navigateToEditBudget = { monthYear, budgetId ->
+                navController.navigate(Screen.EditBudget.withArgs(monthYear, budgetId))
+            },
+            navigateToExpenseLog = {
+                navController.navigate(Screen.Stats.route)
+            },
+            navigateToDetails = { navController.navigate(Screen.ExpenseDetail.withArgs(it.toJson())) },
+            navigateToAddExpense = { navController.navigate(Screen.AddExpense.route) },
+            onDataLoaded = onDataLoaded
         )
 
-        settingsRoute(navigateToAuth = {
-            navController.popBackStack()
-            navController.navigate(Screen.Authentication.route)
-        })
+        settingsRoute(
+            navigateToAuth = {
+                navController.navigate(Screen.Login.route)
+            },
+            paddingValues,
+            navigateToChangePassword = {
+                navController.navigate(Screen.ChangePassword.route)
+            }
+        )
 
         statsRoute(
             paddingValues,
             navigateToCompare = { navController.navigate(Screen.CompareSelector.route) },
-            navigateToCalendar = {}
+            navigateToFilter = {
+                navController.navigate(Screen.Filter.withArgs(it))
+            },
+            navigateToDetails = { navController.navigate(Screen.ExpenseDetail.withArgs(it.toJson())) }
         )
 
-        editBudget(
+        editBudgetRoute(
             navigateUp = { navController.navigateUp() }
         )
 
-        addExpense(
+        addExpenseRoute(
             navigateUp = { navController.navigateUp() }
         )
 
-        compareSelector(
+        compareSelectorRoute(
             onNavigateUp = { navController.navigateUp() },
             navigateToResult = { navController.navigate(Screen.CompareResult.route) }
         )
 
-        compareResult(
+        compareResultRoute(
             onNavigateUp = { navController.navigateUp() }
         )
 
-    }
-}
+        calendarRoute(onNavigateUp = { navController.navigateUp() })
 
-fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
-    composable(route = Screen.Authentication.route) {
-        AuthenticationScreen(navigateToHome)
-    }
-}
-
-fun NavGraphBuilder.homeRoute(paddingValues: PaddingValues, navigateToEditBudget: () -> Unit) {
-    composable(route = Screen.Home.route) {
-        HomeScreen(paddingValues, navigateToEditBudget)
-    }
-}
-
-fun NavGraphBuilder.settingsRoute(navigateToAuth: () -> Unit) {
-    composable(route = Screen.Settings.route) {
-        SettingsScreen(navigateToAuth = navigateToAuth)
-    }
-}
-
-fun NavGraphBuilder.statsRoute(paddingValues: PaddingValues, navigateToCompare: () -> Unit, navigateToCalendar: () -> Unit) {
-    composable(route = Screen.Stats.route) {
-        StateScreen(paddingValues, navigateToCompare, navigateToCalendar)
-    }
-}
-
-
-fun NavGraphBuilder.editBudget(
-    navigateUp: () -> Unit
-) {
-    composable(route = Screen.EditBudget.route) {
-        EditBudgetScreen(navigateUp = navigateUp)
-    }
-}
-
-fun NavGraphBuilder.addExpense(
-    navigateUp: () -> Unit
-) {
-    composable(route = Screen.AddExpense.route) {
-        AddExpense(navigateUp = navigateUp)
-    }
-}
-
-fun NavGraphBuilder.compareSelector(
-    onNavigateUp: () -> Unit,
-    navigateToResult: () -> Unit
-) {
-    composable(route = Screen.CompareSelector.route) {
-        CompareSelector(
-            navigateCompareResult = navigateToResult,
-            navigateUp = onNavigateUp
+        expenseDetailRoute(
+            onNavigateUp = { navController.navigateUp() }
         )
-    }
-}
 
-fun NavGraphBuilder.compareResult(onNavigateUp: () -> Unit) {
-    composable(route = Screen.CompareResult.route) {
-        CompareResult(onNavigateUp)
+        filterRoute(
+            onNavigateUp = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(EXPENSE_FILTER_ARGUMENT_KEY, it.toJson())
+                navController.navigateUp()
+            }
+        )
+
+        loginRoute(
+            navigateToRegister = { navController.navigate(Screen.Register.route) },
+            navigateToHome = { navController.navigate(Screen.Home.route) },
+            navigateUp = { navController.navigateUp() },
+            navigateToForgotPassword = { navController.navigate(Screen.ForgotPassword.route) }
+        )
+
+        registerRoute(
+            navigateToLogin = { navController.navigate(Screen.Login.route) },
+            navigateToHome = { navController.navigate(Screen.Home.route) },
+            navigateUp = { navController.navigateUp() }
+        )
+
+        onBoardRoute(
+            navigateToLogin = { navController.navigate(Screen.Login.route) },
+            navigateToRegister = { navController.navigate(Screen.Register.route) },
+            onDataLoaded = onDataLoaded
+        )
+
+        forgotPasswordRoute(navigateUp = { navController.navigateUp() })
+
+        changePasswordRoute(navigateUp = { navController.navigateUp() })
+
     }
 }

@@ -4,17 +4,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Receipt
+import androidx.compose.material.icons.outlined.Notes
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -25,59 +27,67 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.hcapps.xpenzave.R
+import com.hcapps.xpenzave.domain.model.category.Category
+import com.hcapps.xpenzave.domain.model.expense.ExpenseDomainData
+import com.hcapps.xpenzave.presentation.defaultDisplayName
 import com.hcapps.xpenzave.presentation.home.component.ExpenseDateHeaderStyle
 import com.hcapps.xpenzave.presentation.home.component.ExpenseItemStyle
 import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
-import com.hcapps.xpenzave.presentation.home.state.Expense
-import com.hcapps.xpenzave.presentation.home.state.ExpensesOfTheDay
+import com.hcapps.xpenzave.presentation.ordinalDayOfMonth
+import java.time.LocalDate
+
+typealias ExpenseLogs = Map<LocalDate, List<ExpenseDomainData>>
+
+private const val headerOfTheExpense = 1000
+private const val itemOfTheCompose = 1001
 
 @Composable
 fun ExpenseLog(
     modifier: Modifier = Modifier,
-    spaceBetweenItem: Dp = 12.dp,
-    onClickOfDateHeader: () -> Unit,
-    onClickOfExpenseItem: () -> Unit,
+    onClickOfExpenseItem: (details: ExpenseDomainData) -> Unit,
+    lazyState: LazyListState = rememberLazyListState(),
     headerStyle: ExpenseDateHeaderStyle = ExpenseDateHeaderStyle.defaultExpenseDateHeaderStyle(),
     itemStyle: ExpenseItemStyle = ExpenseItemStyle.defaultExpenseItemStyle(),
-    expensesOfMonth: List<ExpensesOfTheDay> = emptyList()
+    expenses: ExpenseLogs = emptyMap()
 ) {
-    LazyColumn(modifier = modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        state = lazyState,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp)
+    ) {
 
-        items(expensesOfMonth) { expenseOfTheDay: ExpensesOfTheDay ->
-            DateHeaderItem(
-                dateOfMonth = expenseOfTheDay.dateOfTheMonth,
-                dayOfMonth = expenseOfTheDay.dayOfTheWeek,
-                onClickOfDateHeader = onClickOfDateHeader,
-                style = headerStyle
-            )
+        expenses.forEach { (date, listOfExpense) ->
+            item(contentType = headerOfTheExpense) {
+                DateHeaderItem(
+                    date = date,
+                    onClickOfDateHeader = {},
+                    style = headerStyle
+                )
+            }
 
-            Spacer(modifier = Modifier.height(spaceBetweenItem))
-
-            expenseOfTheDay.expenses.forEach { expense: Expense ->
+            items(items = listOfExpense) { expense ->
                 ExpenseItem(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onClickOfExpenseItem() }
+                        .clickable { onClickOfExpenseItem(expense) }
                         .padding(start = 8.dp),
                     expense = expense,
                     style = itemStyle
                 )
-
-                Spacer(modifier = Modifier.height(spaceBetweenItem))
-
             }
-        }
 
+        }
     }
 }
 
 @Composable
 fun DateHeaderItem(
-    dateOfMonth: String,
-    dayOfMonth: String,
+    date: LocalDate,
     style: ExpenseDateHeaderStyle = ExpenseDateHeaderStyle.defaultExpenseDateHeaderStyle(),
     onClickOfDateHeader: () -> Unit
 ) {
@@ -95,12 +105,15 @@ fun DateHeaderItem(
             .padding(10.dp)
     ) {
         Text(
-            text = dateOfMonth,
+            text = ordinalDayOfMonth(date.dayOfMonth),
             color = style.dateTextColor,
             fontWeight = style.dateFontWeight
         )
         Spacer(modifier = Modifier.width(24.dp))
-        Text(text = dayOfMonth, color = style.dayTextColor)
+        Text(
+            text = date.dayOfWeek.defaultDisplayName(),
+            color = style.dayTextColor
+        )
     }
 }
 
@@ -108,14 +121,15 @@ fun DateHeaderItem(
 fun ExpenseItem(
     modifier: Modifier = Modifier,
     style: ExpenseItemStyle = ExpenseItemStyle.defaultExpenseItemStyle(),
-    expense: Expense
+    expense: ExpenseDomainData
 ) {
+    val category = Category.dummies().find { it.id == expense.category }
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = expense.icon,
+            imageVector = category?.icon ?: Icons.Outlined.Notes,
             contentDescription = "Icon",
             tint = style.iconColor
         )
@@ -131,9 +145,9 @@ fun ExpenseItem(
                     .padding(14.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = expense.title)
+                Text(text = category?.name ?: "")
                 Text(
-                    text = "${expense.value} ${expense.symbol}",
+                    text = "${expense.amount} ${stringResource(id = R.string.rupee)}",
                     fontWeight = MaterialTheme.typography.labelLarge.fontWeight,
                     color = style.costTextColor
                 )
@@ -147,25 +161,20 @@ fun ExpenseItem(
 fun PreviewRecentExpenseSection() {
     RecentExpenseSection(
         onClickOfSeeAll = {},
-        onClickOfDateHeader = {},
         onClickOfExpenseItem = {},
-        onClickOfAddExpense = {}
+        onClickOfAddExpense = {},
+        expenseLazyState = rememberLazyListState()
     )
 }
 
 @Preview
 @Composable
 fun PreviewDateHeader() {
-    DateHeaderItem(dateOfMonth = "1st", dayOfMonth = "Sunday") {}
+    DateHeaderItem(LocalDate.now()) {}
 }
 
 @Preview
 @Composable
 fun PreviewExpenseItem() {
-    ExpenseItem(
-        expense =  Expense (icon = Icons.Outlined.Receipt,
-            title = "Bills",
-            value = 500,
-            symbol = "$")
-    )
+    ExpenseItem(expense = ExpenseDomainData.dummy())
 }

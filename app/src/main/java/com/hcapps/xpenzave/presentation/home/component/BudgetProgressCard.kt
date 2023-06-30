@@ -4,7 +4,10 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -23,16 +26,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hcapps.xpenzave.R
-import com.hcapps.xpenzave.presentation.home.BudgetCardHeader
+import com.hcapps.xpenzave.presentation.core.component.CircularProgress
+import com.hcapps.xpenzave.presentation.core.component.MonthHeader
 import com.hcapps.xpenzave.ui.theme.DefaultCardElevation
+import java.time.LocalDate
 
 @Composable
 fun BudgetProgressCard(
     modifier: Modifier = Modifier,
+    date: LocalDate = LocalDate.now(),
+    progress: Int = 0,
+    budgetAmount: Double? = 0.0,
+    totalSpending: Double = 0.0,
+    loading: Boolean = false,
     cardBackgroundColor: Color = MaterialTheme.colorScheme.surface,
     cardElevation: Dp = DefaultCardElevation,
-    onClickOfEditBudget: () -> Unit,
-    onClickOfCalendar: () -> Unit
+    onClickOfEditBudget: (() -> Unit)? = null,
+    onClickOfCalendar: (() -> Unit)? = null
 ) {
     Card(
         modifier = modifier,
@@ -42,42 +52,59 @@ fun BudgetProgressCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(16.dp)
+                .padding(bottom = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
-            BudgetCardHeader(onClickOfCalendar)
 
-            BudgetProgress(
-                archWidth = 130f,
-                containerWidth = 200.dp,
-                progress = 69,
-                progressContainerColor = MaterialTheme.colorScheme.outlineVariant,
-                progressGradient = listOf(
-                    MaterialTheme.colorScheme.secondary,
-                    MaterialTheme.colorScheme.primary,
-                    MaterialTheme.colorScheme.secondary,
-                )
+            MonthHeader(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp),
+                date = date,
+                icon = Icons.Outlined.CalendarMonth,
+                onClickOfIcon = onClickOfCalendar
             )
 
-            val budget = buildAnnotatedString {
-                val symbol = "$"
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                    append("1000 $symbol")
-                }
-                withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f))) {
-                    append(" / 2000 $")
-                }
-            }
+            if (!loading) {
+                BudgetProgress(
+                    progress = progress,
+                    archWidth = 160f,
+                    containerWidth = 250.dp,
+                    progressContainerColor = MaterialTheme.colorScheme.outlineVariant,
+                    progressGradient = listOf(
+                        MaterialTheme.colorScheme.secondary,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary,
+                    )
+                )
 
-            Text(text = budget)
+                val budget = buildAnnotatedString {
+                    val symbol = stringResource(id = R.string.rupee)
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                        append("$totalSpending $symbol")
+                    }
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f))) {
+                        append(" / ${budgetAmount ?: "-"} ")
+                        budgetAmount?.let { append(stringResource(id = R.string.rupee)) }
+                    }
+                }
 
-            OutlinedButton(
-                onClick = onClickOfEditBudget,
-                shape = Shapes().small,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-            ) {
-                Text(text = stringResource(R.string.edit_budget))
+                Text(text = budget)
+
+                onClickOfEditBudget?.let {
+                    OutlinedButton(
+                        onClick = it,
+                        shape = Shapes().small,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                    ) {
+                        Text(text = stringResource(R.string.edit_budget))
+                    }
+                }
+
+            } else {
+                CircularProgress()
             }
         }
     }
@@ -86,5 +113,5 @@ fun BudgetProgressCard(
 @Preview(showBackground = true)
 @Composable
 fun PreviewMonthBudgetCard() {
-    BudgetProgressCard(onClickOfEditBudget = {}, onClickOfCalendar =  {})
+    BudgetProgressCard(onClickOfEditBudget = {}) {}
 }

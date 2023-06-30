@@ -1,9 +1,15 @@
 package com.hcapps.xpenzave.presentation.add_expense
 
-import android.annotation.SuppressLint
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,6 +18,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,112 +28,223 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.PriorityHigh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Shapes
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.hcapps.xpenzave.R
-import com.hcapps.xpenzave.presentation.add_expense.Category.Companion.dummies
+import com.hcapps.xpenzave.domain.model.category.Category
+import com.hcapps.xpenzave.domain.model.category.Category.Companion.dummies
+import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseEvent.*
+import com.hcapps.xpenzave.presentation.add_expense.state.AddExpenseState
+import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.CategoryComponent
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle
 import com.hcapps.xpenzave.presentation.core.component.CategoryStyle.Companion.defaultCategoryStyle
-import com.hcapps.xpenzave.presentation.core.component.XpenzaveButton
+import com.hcapps.xpenzave.presentation.core.component.ZoomableImagePreview
+import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
+import com.hcapps.xpenzave.presentation.core.component.calendar.SelectDateTimeDialog
 import com.hcapps.xpenzave.presentation.home.component.LargeButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
+import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
+import com.hcapps.xpenzave.util.getActualPathOfImage
+import com.maxkeppeker.sheets.core.models.base.rememberSheetState
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AddExpense(
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    viewModel: AddExpenseViewModel = hiltViewModel()
 ) {
 
+    val state by viewModel.state
+    val context = LocalContext.current
+    val dateState = rememberSheetState()
+    var imagePreviewOpened by remember { mutableStateOf(false) }
+
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    viewModel.uiEvent.UiEventReceiver()
+
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = {
             AddExpenseTopBar(onClickOfNavigationIcon = navigateUp)
         }
-    ) {
-        LazyVerticalGrid(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(top = it.calculateTopPadding()),
-            columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(top = 24.dp, start = 12.dp, end = 12.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(22.dp)
+    ) { paddingValue ->
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(paddingValue),
         ) {
 
-            item(span = { GridItemSpan(3) }) {
-                AmountSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    amount = "",
-                    onAmountChange = {}
-                )
-            }
+            AddExpenseContent(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = ButtonHeight + 28.dp),
+                state = state,
+                onAmountChange = { viewModel.onEvent(AmountChange(it)) },
+                onClickOfCalenderIcon = { dateState.show() },
+                onSelectCategory = { viewModel.onEvent(CategoryChange(it)) },
+                onAddBillEachMonthChange = { viewModel.onEvent(AddBillEachMonthChange) },
+                onPhotoChange = { uri -> viewModel.onEvent(PhotoChange(uri, context.getActualPathOfImage(uri))) },
+                onPhotoClear = { viewModel.onEvent(ClearPhoto) },
+                onDetailChange = { viewModel.onEvent(DetailsChange(it)) },
+                previewPhoto = { imagePreviewOpened = true }
+            )
 
-            item(span = { GridItemSpan(3) }) {
-                DateSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
-                ) {
-
-                }
-            }
-
-            item(span = { GridItemSpan(3) }) {
-                AdditionalInfoCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    cardColor = MaterialTheme.colorScheme.background
-                ) {
-                    SelectCategoryComponent(
-                        categoryStyle = defaultCategoryStyle(backgroundColor = MaterialTheme.colorScheme.surface)
-                    )
-                    AddBillEachMonth(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 6.dp)
-                            .background(
-                                MaterialTheme.colorScheme.surface,
-                                MaterialTheme.shapes.small
-                            ),
-                        checked = false,
-                        onCheckedChange = { }
-                    )
-                    AddPhotoSection(modifier = Modifier.padding(horizontal = 6.dp))
-                    MoreDetailsSection(modifier = Modifier.padding(horizontal = 6.dp))
-                    XpenzaveButton(
-                        modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
-                        title = stringResource(R.string.add),
-                        onClickOfButton = {}
-                    )
-                }
+            XpenzaveButton(
+                modifier = Modifier
+                    .padding(start = 32.dp, bottom = 16.dp, end = 32.dp)
+                    .align(
+                        Alignment.BottomCenter
+                    ),
+                title = stringResource(R.string.add),
+                loading = state.loading
+            ) {
+                viewModel.onEvent(AddButtonClicked)
             }
 
         }
+    }
+
+    SelectDateTimeDialog(
+        dateState = dateState,
+        selectedDateTime = state.date,
+        onSelectDateTime = { viewModel.onEvent(DateTimeChange(it)) }
+    )
+
+    AnimatedVisibility(visible = imagePreviewOpened) {
+        Dialog(onDismissRequest = { imagePreviewOpened = false }) {
+            state.photo?.let {
+                ZoomableImagePreview(
+                    image = it,
+                    onCloseClicked = { imagePreviewOpened = false },
+                )
+            }
+        }
+    }
+
+}
+
+@Composable
+fun AddExpenseContent(
+    modifier: Modifier = Modifier,
+    state: AddExpenseState,
+    onAmountChange: (String) -> Unit,
+    onClickOfCalenderIcon: () -> Unit,
+    onSelectCategory: (id: String) -> Unit,
+    onAddBillEachMonthChange: (Boolean) -> Unit,
+    onPhotoChange: (Uri?) -> Unit,
+    onPhotoClear: () -> Unit,
+    onDetailChange: (String) -> Unit,
+    previewPhoto: () -> Unit
+) {
+    LazyVerticalGrid(
+        modifier = modifier,
+        columns = GridCells.Fixed(3),
+        contentPadding = PaddingValues(top = 24.dp, start = 12.dp, end = 12.dp, bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(22.dp)
+    ) {
+
+        item(span = { GridItemSpan(3) }) {
+            AmountSection(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                amount = state.amount,
+                error = state.amountError,
+                onAmountChange = onAmountChange
+            )
+        }
+
+        item(span = { GridItemSpan(3) }) {
+            DateSection(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                date = state.date.toLocalDate(),
+                onClickOfCalenderIcon = onClickOfCalenderIcon
+            )
+        }
+
+        item(span = { GridItemSpan(3) }) {
+            AdditionalInfoCard(
+                modifier = Modifier.fillMaxWidth(),
+                cardColor = MaterialTheme.colorScheme.background
+            ) {
+                SelectCategoryComponent(
+                    categoryStyle = defaultCategoryStyle(backgroundColor = MaterialTheme.colorScheme.surface),
+                    selected = state.category ?: "",
+                    onSelect = onSelectCategory
+                )
+                /*AddBillEachMonth(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 6.dp)
+                        .background(
+                            MaterialTheme.colorScheme.surface,
+                            MaterialTheme.shapes.small
+                        ),
+                    checked = state.eachMonth,
+                    onCheckedChange = onAddBillEachMonthChange
+                )*/
+                AddPhotoSection(
+                    modifier = Modifier.padding(horizontal = 6.dp),
+                    state.photo,
+                    progress = state.uploadPhotoProgress,
+                    onImageSelect = onPhotoChange,
+                    onClearPhoto = onPhotoClear,
+                    previewPhoto = previewPhoto
+                )
+                MoreDetailsSection(
+                    modifier = Modifier.padding(horizontal = 6.dp),
+                    value = state.details,
+                    onValueChange = onDetailChange
+                )
+            }
+        }
+
     }
 }
 
@@ -138,7 +257,6 @@ fun AddExpenseTopBar(
         modifier = Modifier.background(
             brush = Brush.horizontalGradient(
                 listOf(
-                    MaterialTheme.colorScheme.secondary,
                     MaterialTheme.colorScheme.primary,
                     MaterialTheme.colorScheme.secondary
                 )
@@ -146,14 +264,14 @@ fun AddExpenseTopBar(
         ),
         title = { Text(
             text = "Add Expense",
-            color = MaterialTheme.colorScheme.onPrimary
+            color = MaterialTheme.colorScheme.onSecondary
         ) },
         navigationIcon = {
             IconButton(onClick = onClickOfNavigationIcon) {
                 Icon(
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "Back Arrow",
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
         },
@@ -165,7 +283,8 @@ fun AddExpenseTopBar(
 fun AmountSection(
     modifier: Modifier = Modifier,
     amount: String,
-    onAmountChange: (String) -> Unit
+    onAmountChange: (String) -> Unit,
+    error: String? = null
 ) {
     Column(modifier = modifier) {
         Text(
@@ -178,14 +297,7 @@ fun AmountSection(
             value = amount,
             onValueChange = onAmountChange,
             textStyle = MaterialTheme.typography.headlineLarge,
-            colors = TextFieldDefaults.colors(
-                focusedPlaceholderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                focusedTextColor = MaterialTheme.colorScheme.primary,
-                unfocusedTextColor = MaterialTheme.colorScheme.primary,
-                unfocusedContainerColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent
-            ),
+            isError = error != null,
             placeholder = {
                 Text(
                     text = stringResource(R.string.enter),
@@ -197,7 +309,22 @@ fun AmountSection(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
-            )
+            ),
+            trailingIcon = {
+                 error?.let { Icon(imageVector = Icons.Outlined.PriorityHigh, contentDescription = null) }
+            },
+            colors = TextFieldDefaults.colors(
+                focusedPlaceholderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                focusedTextColor = MaterialTheme.colorScheme.primary,
+                unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                unfocusedContainerColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent
+            ),
+            supportingText = {
+                error?.let { Text(text = it, color = MaterialTheme.colorScheme.error) }
+            }
         )
     }
 }
@@ -227,7 +354,9 @@ fun AdditionalInfoCard(
 fun SelectCategoryComponent(
     modifier: Modifier = Modifier,
     categories: List<Category> = dummies(),
-    categoryStyle: CategoryStyle = defaultCategoryStyle()
+    categoryStyle: CategoryStyle = defaultCategoryStyle(),
+    onSelect: (id: String) -> Unit,
+    selected: String
 ) {
     val chunkedCategories = categories.chunked(3)
     Column(modifier = modifier) {
@@ -241,17 +370,25 @@ fun SelectCategoryComponent(
         Spacer(modifier = Modifier.height(22.dp))
 
         chunkedCategories.forEach { columnCategories ->
+
             Row(modifier = modifier.fillMaxWidth()) {
+
                 columnCategories.forEach { category ->
+
                     CategoryComponent(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(6.dp),
+                            .padding(2.dp),
                         category = category,
-                        style = categoryStyle
+                        style = categoryStyle,
+                        isSelected = category.id == selected,
+                        onSelect = onSelect,
                     )
+
                 }
+
             }
+
         }
     }
 }
@@ -259,16 +396,20 @@ fun SelectCategoryComponent(
 @Composable
 fun DateSection(
     modifier: Modifier = Modifier,
-    date: String = "Tuesday, 25 September",
+    date: LocalDate,
     onClickOfCalenderIcon: () -> Unit
 ) {
+
+    val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.ENGLISH)
+    val month = date.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH)
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = date,
+            text = "$dayOfWeek, ${date.dayOfMonth} $month",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary
         )
@@ -310,23 +451,90 @@ fun AddBillEachMonth(
 }
 
 @Composable
-fun AddPhotoSection(modifier: Modifier = Modifier) {
+fun AddPhotoSection(
+    modifier: Modifier = Modifier,
+    image: Uri? = null,
+    onImageSelect: (image: Uri?) -> Unit,
+    onClearPhoto: () -> Unit,
+    progress: Boolean = false,
+    previewPhoto: () -> Unit
+) {
+
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = onImageSelect
+    )
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         Text(text = "Add Photo", style = MaterialTheme.typography.titleMedium)
-        LargeButton(
-            modifier = Modifier.shadow(1.dp, shape = CircleShape),
-            buttonColor = MaterialTheme.colorScheme.onPrimary,
-            iconColor = MaterialTheme.colorScheme.primary,
-            onClickOfAddExpense = {}
-        )
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            if (image == null) {
+                LargeButton(
+                    modifier = Modifier.shadow(1.dp, shape = CircleShape),
+                    buttonColor = MaterialTheme.colorScheme.onPrimary,
+                    iconColor = MaterialTheme.colorScheme.primary,
+                    onClickOfAddExpense = {
+                        singlePhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
+                )
+            } else {
+                Card(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clickable(onClick = previewPhoto),
+                    elevation = CardDefaults.elevatedCardElevation(2.dp)
+                ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        AsyncImage(
+                            model = image,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "Uploaded Bill"
+                        )
+                        if (progress) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(22.dp),
+                                strokeWidth = 2.dp,
+                                strokeCap = StrokeCap.Round
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            image?.let {
+                TextButton(
+                    onClick = onClearPhoto,
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(
+                        text = stringResource(R.string.clear),
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+        }
+
     }
 }
 
 @Composable
-fun MoreDetailsSection(modifier: Modifier = Modifier) {
+fun MoreDetailsSection(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(text = "More Details", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(18.dp))
@@ -342,8 +550,9 @@ fun MoreDetailsSection(modifier: Modifier = Modifier) {
             placeholder = {
                 Text(text = stringResource(R.string.enter_here))
             },
-            value = "",
-            onValueChange = {}
+            value = value,
+            onValueChange = onValueChange,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
         )
     }
 }
