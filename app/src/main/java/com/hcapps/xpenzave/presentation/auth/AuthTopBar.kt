@@ -39,7 +39,7 @@ fun AuthTopBar(
         },
         navigationIcon = {
             IconButton(onClick = onNavigation) {
-                Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
+                Icon(imageVector = Icons.Outlined.Close, contentDescription = "close")
             }
         },
         actions = {

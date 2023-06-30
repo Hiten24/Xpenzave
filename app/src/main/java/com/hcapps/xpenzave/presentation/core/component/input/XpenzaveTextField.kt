@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +62,7 @@ fun XpenzaveTextField(
         },
         visualTransformation = if (visualTransformation?.value == true) PasswordVisualTransformation() else VisualTransformation.None,
         isError = error.isNullOrEmpty().not(),
-        supportingText = { error?.let { Text(text = it) } }
+        supportingText = { error?.let { Text(text = it) } },
+        colors = TextFieldDefaults.colors(unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface, unfocusedContainerColor = MaterialTheme.colorScheme.background, focusedContainerColor = MaterialTheme.colorScheme.background)
     )
 }
