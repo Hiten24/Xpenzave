@@ -12,6 +12,8 @@ plugins {
     id("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp") version "1.8.21-1.0.11"
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     kotlin("android")
     kotlin("kapt")
 }
@@ -168,6 +170,12 @@ dependencies {
 
     // splash
     implementation ("androidx.core:core-splashscreen:1.0.1")
+
+    // firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
+    implementation("com.google.firebase:firebase-analytics-ktx:21.3.0")
+    implementation("com.google.firebase:firebase-crashlytics-ktx:18.4.0")
+
 
     testImplementation ("junit:junit:4.13.2")
 
