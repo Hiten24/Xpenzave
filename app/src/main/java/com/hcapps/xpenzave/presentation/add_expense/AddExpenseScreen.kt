@@ -60,7 +60,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -85,7 +84,6 @@ import com.hcapps.xpenzave.presentation.home.component.LargeButton
 import com.hcapps.xpenzave.ui.theme.BorderWidth
 import com.hcapps.xpenzave.ui.theme.ButtonHeight
 import com.hcapps.xpenzave.ui.theme.headerBorderAlpha
-import com.hcapps.xpenzave.util.getActualPathOfImage
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -98,7 +96,6 @@ fun AddExpense(
 ) {
 
     val state by viewModel.state
-    val context = LocalContext.current
     val dateState = rememberSheetState()
     var imagePreviewOpened by remember { mutableStateOf(false) }
 
@@ -127,7 +124,7 @@ fun AddExpense(
                 onClickOfCalenderIcon = { dateState.show() },
                 onSelectCategory = { viewModel.onEvent(CategoryChange(it)) },
                 onAddBillEachMonthChange = { viewModel.onEvent(AddBillEachMonthChange) },
-                onPhotoChange = { uri -> viewModel.onEvent(PhotoChange(uri, context.getActualPathOfImage(uri))) },
+                onPhotoChange = { uri -> viewModel.onEvent(PhotoChange(uri)) },
                 onPhotoClear = { viewModel.onEvent(ClearPhoto) },
                 onDetailChange = { viewModel.onEvent(DetailsChange(it)) },
                 previewPhoto = { imagePreviewOpened = true }
