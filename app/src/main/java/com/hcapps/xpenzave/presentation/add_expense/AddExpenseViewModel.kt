@@ -109,6 +109,7 @@ class AddExpenseViewModel @Inject constructor(
             addExpenseUseCase(getTypedExpense())
             loading(false)
             clearState()
+            _uiEvent.emit(ShowMessage("Expense Added Successfully!"))
         } catch (e: Exception) {
             if (e is IOException) {
                 _uiEvent.emit(Error(StringResource(R.string.internet_error_msg)))
