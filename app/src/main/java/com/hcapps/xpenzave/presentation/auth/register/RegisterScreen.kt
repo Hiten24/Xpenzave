@@ -68,13 +68,19 @@ fun RegisterScreen(
                 email = state.email,
                 onEmailChanged = { viewModel.onEvent(EmailChanged(it)) },
                 password = state.password,
-                onPasswordChanged = { viewModel.onEvent(PasswordChanged(it)) },
+                onPasswordChanged = {
+                    if (it.length <= 20) {
+                        viewModel.onEvent(PasswordChanged(it))
+                    }
+                },
                 emailError = state.emailError,
                 passwordError = state.passwordError,
                 register = { viewModel.onEvent(Register(navigateToHome)) },
                 loading = state.loading,
                 confirmPassword = state.confirmPassword,
-                onConfirmPasswordChanged = { viewModel.onEvent(ConfirmPasswordChanged(it)) },
+                onConfirmPasswordChanged = {
+                    if (it.length <= 20) { viewModel.onEvent(ConfirmPasswordChanged(it)) }
+                },
                 confirmPasswordError = state.confirmPasswordError,
                 passwordState = state.createPasswordState,
                 onSetPasswordFocusedChange = { viewModel.onEvent(SetPasswordFocusChanged) }

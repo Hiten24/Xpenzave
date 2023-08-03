@@ -63,6 +63,7 @@ fun XpenzaveTextField(
         visualTransformation = if (visualTransformation?.value == true) PasswordVisualTransformation() else VisualTransformation.None,
         isError = error.isNullOrEmpty().not(),
         supportingText = { error?.let { Text(text = it) } },
-        colors = TextFieldDefaults.colors(unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface, unfocusedContainerColor = MaterialTheme.colorScheme.background, focusedContainerColor = MaterialTheme.colorScheme.background)
+        colors = TextFieldDefaults.colors(unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface, unfocusedContainerColor = MaterialTheme.colorScheme.background, focusedContainerColor = MaterialTheme.colorScheme.background),
+        singleLine = true,
     )
 }
