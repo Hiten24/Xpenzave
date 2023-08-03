@@ -8,6 +8,10 @@ import io.appwrite.extensions.toJson
 
 sealed class Screen(val route: String) {
 
+    object AuthNavigation: Screen(route = "auth_navigation")
+
+    object MainNavigation: Screen(route = "main_navigation")
+
     object Authentication: Screen(route = "authentication_screen")
 
     object Home: Screen(route = "home_screen")

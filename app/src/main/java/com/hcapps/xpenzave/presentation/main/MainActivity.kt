@@ -46,7 +46,8 @@ class MainActivity: ComponentActivity() {
                 ) { padding ->
                     if (!state.loading) {
                         XpenzaveNavGraph(
-                            startDestination = state.startDestination ?: Screen.OnBoard.route,
+//                            startDestination = state.startDestination ?: Screen.OnBoard.route,
+                            startDestination = state.startDestination ?: Screen.AuthNavigation.route,
                             navController = navController,
                             paddingValues = padding,
                             onDataLoaded = { keepSplashOn = false }

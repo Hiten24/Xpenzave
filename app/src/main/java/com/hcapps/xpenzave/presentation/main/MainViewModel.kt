@@ -44,15 +44,15 @@ class MainViewModel @Inject constructor(
                 is RequestState.Success -> {
                     val user = response.data.toUser()
                     if (user.userId.isNotEmpty()) {
-                        _sessionState.value = sessionState.value.copy(startDestination = Screen.Home.route, loading = false)
+                        _sessionState.value = sessionState.value.copy(startDestination = Screen.MainNavigation.route, loading = false)
                     } else {
-                        _sessionState.value = sessionState.value.copy(startDestination = Screen.OnBoard.route, loading = false)
+                        _sessionState.value = sessionState.value.copy(startDestination = Screen.AuthNavigation.route, loading = false)
                     }
                 }
                 is RequestState.Error -> {
                     if (response.error is IOException) {
                         if (dataStore.user.first().userId.isNotEmpty()) {
-                            _sessionState.value = sessionState.value.copy(startDestination = Screen.Home.route, loading = false)
+                            _sessionState.value = sessionState.value.copy(startDestination = Screen.MainNavigation.route, loading = false)
                         } else {
                             _uiEvent.emit(Error(StringResource(R.string.internet_error_msg)))
                         }
