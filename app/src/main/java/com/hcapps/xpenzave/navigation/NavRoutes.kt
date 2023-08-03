@@ -135,7 +135,9 @@ fun NavGraphBuilder.statsRoute(
                 navigateToFilter(it)
             },
             navigateToDetails = navigateToDetails,
-            viewModel = filterViewModel
+            onDateChange = {
+                backStackEntry.savedStateHandle.remove<String>(EXPENSE_FILTER_ARGUMENT_KEY)
+            }
         )
     }
 }
