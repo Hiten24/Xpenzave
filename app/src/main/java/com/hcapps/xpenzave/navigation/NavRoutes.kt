@@ -8,7 +8,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.hcapps.xpenzave.presentation.add_expense.AddExpense
-import com.hcapps.xpenzave.presentation.auth.AuthenticationScreen
 import com.hcapps.xpenzave.presentation.auth.forgot_password.ForgotPasswordScreen
 import com.hcapps.xpenzave.presentation.auth.login.LoginScreen
 import com.hcapps.xpenzave.presentation.auth.register.RegisterScreen
@@ -29,14 +28,6 @@ import com.hcapps.xpenzave.util.Screen
 import com.hcapps.xpenzave.util.UiConstants
 import com.hcapps.xpenzave.util.UiConstants.EXPENSE_FILTER_ARGUMENT_KEY
 import io.appwrite.extensions.fromJson
-
-fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
-    composable(
-        route = Screen.Authentication.route
-    ) {
-        AuthenticationScreen(navigateToHome)
-    }
-}
 
 fun NavGraphBuilder.loginRoute(
     navigateToRegister: () -> Unit,

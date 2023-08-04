@@ -20,11 +20,6 @@ fun XpenzaveNavGraph(
 
         navigation(startDestination = Screen.OnBoard.route, route = Screen.AuthNavigation.route) {
 
-            authenticationRoute {
-                navController.popBackStack()
-                navController.navigate(Screen.Home.route)
-            }
-
             loginRoute(
                 navigateToRegister = {
                     navController.popBackStack()
