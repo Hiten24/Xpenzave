@@ -58,7 +58,9 @@ class RegisterViewModel @Inject constructor(
                 register(event.onSuccess)
             }
             is SetPasswordFocusChanged -> {
-                _state.value = state.value.copy(createPasswordState = null)
+                if (event.isFocused) {
+                    _state.value = state.value.copy(createPasswordState = checkAllRule(state.value.password))
+                }
             }
             else -> {}
         }

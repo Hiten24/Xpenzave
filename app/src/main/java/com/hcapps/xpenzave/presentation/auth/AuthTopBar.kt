@@ -10,6 +10,7 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,7 +22,8 @@ fun AuthTopBar(
     subtitle: String? = null,
     onNavigation: () -> Unit,
     actionText: String? = null,
-    onAction: () -> Unit = {}
+    onAction: () -> Unit = {},
+    scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     LargeTopAppBar(
         title = {
@@ -52,6 +54,7 @@ fun AuthTopBar(
                     )
                 }
             }
-        }
+        },
+        scrollBehavior = scrollBehavior
     )
 }
