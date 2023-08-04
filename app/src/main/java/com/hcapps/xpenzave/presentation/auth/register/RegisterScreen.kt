@@ -115,7 +115,7 @@ fun RegisterScreen(
             Box() {
                 XpenzaveButton(
                     title = "Register",
-                    enabled = state.email.isNotEmpty() && state.password.isNotEmpty() && state.confirmPassword.isNotEmpty(),
+                    enabled = state.email.isNotEmpty() && state.password.isNotEmpty(),
                     loading = state.loading,
                     onClickOfButton = { viewModel.onEvent(Register(navigateToHome)) }
                 )

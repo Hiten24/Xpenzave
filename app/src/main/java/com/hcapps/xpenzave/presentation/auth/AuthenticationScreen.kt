@@ -88,9 +88,9 @@ fun AuthenticationScreen(
                 onPasswordChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) },
                 emailError = state.emailError,
                 passwordError = state.passwordError,
-                confirmPassword = state.confirmPassword,
+                confirmPassword = "",
                 onConfirmPasswordChange = { viewModel.onEvent(AuthEvent.ConfirmPasswordChanged(it)) },
-                confirmPasswordError = state.confirmPasswordError,
+                confirmPasswordError = "",
                 screen = state.authState
             )
 

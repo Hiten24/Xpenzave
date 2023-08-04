@@ -47,9 +47,6 @@ class RegisterViewModel @Inject constructor(
                 val pass = event.password
                 _state.value = state.value.copy(createPasswordState = checkAllRule(pass))
             }
-            is ConfirmPasswordChanged -> {
-                _state.value = state.value.copy(confirmPassword = event.password)
-            }
             is Register -> {
                 if (validate().not()) {
                     _state.value = state.value.copy(loading = false)
@@ -69,19 +66,16 @@ class RegisterViewModel @Inject constructor(
     private fun validate(): Boolean {
         val emailValid = Patterns.EMAIL_ADDRESS.matcher(state.value.email).matches()
         val passwordValid = state.value.password.length >= 8
-        val passwordMatchValid = state.value.password == state.value.confirmPassword
         val passRule = state.value.createPasswordState
         val passwordRules = passRule?.shouldBeMin8Max20Char == true && passRule.shouldHaveAUpperCase && passRule.shouldHaveALowerCase && passRule.shouldHaveANumberOrAcceptableCharacter
         if (!emailValid) {
             _state.value = state.value.copy(emailError = "Enter Valid Email address.")
         } else if (!passwordValid) {
             _state.value = state.value.copy(passwordError = "Password must be at least 8 chars long.")
-        } else if (!passwordMatchValid) {
-            _state.value = state.value.copy(confirmPasswordError = "Password must be same.")
         } else if (!passwordRules) {
             _state.value = state.value.copy(passwordError = "Password should contain below:")
         }
-        return emailValid && passwordMatchValid && passwordRules
+        return emailValid && passwordRules
     }
 
     private fun register(onSuccess: () -> Unit) = viewModelScope.launch {
