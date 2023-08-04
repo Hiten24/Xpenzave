@@ -122,7 +122,7 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             account.createRecovery(
                 email = email,
-                url = "https://localhost/reset-password"
+                url = "https://cloud.appwrite.io/reset-password"
             )
             RequestState.Success(true)
         } catch (e: IOException) {
