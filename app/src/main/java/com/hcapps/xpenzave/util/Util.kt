@@ -18,3 +18,5 @@ fun ContentResolver.getFileName(uri: Uri): String {
     }
     return name
 }
+
+fun serverDateToLocalDateTime(serverDate: String) = serverDate.takeWhile { it != '+' }

@@ -6,6 +6,7 @@ import com.hcapps.xpenzave.domain.model.category.Category
 import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.random.Random
 
@@ -13,7 +14,7 @@ import kotlin.random.Random
 data class ExpenseDomainData(
     val id: String,
     val category: String,
-    val date: LocalDate,
+    val date: LocalDateTime,
     val amount: Double,
     val photoId: String?,
     val moreDetail: String
@@ -37,13 +38,13 @@ data class ExpenseDomainData(
         photo = photoId,
         day = date.dayOfMonth,
         month = date.monthValue,
-        year = date.year
-
+        year = date.year,
+        date = date
     )
 
     companion object {
 
-        fun dummy(date: LocalDate = LocalDate.now()) = ExpenseDomainData(
+        fun dummy(date: LocalDateTime = LocalDateTime.now()) = ExpenseDomainData(
             id = UUID.randomUUID().toString(),
             category = Category.dummies().random().id,
             date = date,
@@ -70,9 +71,9 @@ private val lastYearExpense  = mapOf(
     Pair(
         LocalDate.now(),
         listOf(
-            ExpenseDomainData.dummy(LocalDate.of(2022, 4, 30)),
-            ExpenseDomainData.dummy(LocalDate.of(2022, 4, 27)),
-            ExpenseDomainData.dummy(LocalDate.of(2022, 4, 25)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2022, 4, 30, 12, 0)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2022, 4, 27, 12, 0)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2022, 4, 25, 12, 0)),
         )
     )
 )
@@ -85,29 +86,29 @@ private val mayDummyExpense = mapOf(
     Pair(
         LocalDate.now(),
         listOf(
-            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 1)),
-            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 1)),
-            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 1)),
-            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 1)),
-            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 2)),
-            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 3)),
-            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 4)),
-            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 4)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 1, 12, 0)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 1, 12, 0)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 1, 12, 0)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 1, 12, 0)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 2, 12, 0)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 3, 12, 0)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 4, 12, 0)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 4, 12, 0)),
         )
     ),
     Pair(
         LocalDate.of(2023, 5, 2),
-        listOf(ExpenseDomainData.dummy(LocalDate.of(2023, 5, 2)),)
+        listOf(ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 2, 12, 0)),)
     ),
     Pair(
         LocalDate.of(2023, 5, 3),
-        listOf(ExpenseDomainData.dummy(LocalDate.of(2023, 5, 3)),)
+        listOf(ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 3, 12, 0)),)
     ),
     Pair(
         LocalDate.of(2023, 5, 4),
         listOf(
-            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 4)),
-            ExpenseDomainData.dummy(LocalDate.of(2023, 5, 4)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 4, 12, 0)),
+            ExpenseDomainData.dummy(LocalDateTime.of(2023, 5, 4, 12, 0)),
         )
     )
 )

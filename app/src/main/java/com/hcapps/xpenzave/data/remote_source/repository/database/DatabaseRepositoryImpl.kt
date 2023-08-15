@@ -14,6 +14,7 @@ import com.hcapps.xpenzave.util.Constant.APP_WRITE_BUDGE_COLLECTION_ID
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_CATEGORY_COLLECTION_ID
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_DATABASE_ID
 import com.hcapps.xpenzave.util.Constant.APP_WRITE_EXPENSE_COLLECTION_ID
+import com.hcapps.xpenzave.util.serverDateToLocalDateTime
 import io.appwrite.ID
 import io.appwrite.Query
 import io.appwrite.services.Databases
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import java.io.IOException
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class DatabaseRepositoryImpl @Inject constructor(
@@ -66,6 +68,11 @@ class DatabaseRepositoryImpl @Inject constructor(
                 queries = getExpensesByMonthQuery(date, filter)
             )
             val expenses = response.documents.map { it.toModel(it.data) }.map { it.toExpenseDomainData() }
+            val expense = response.documents.getOrNull(0)?.data?.date
+            expense?.let {
+                val convertedDate = LocalDateTime.parse(serverDateToLocalDateTime(it))
+                Timber.i("converted date: $convertedDate")
+            }
             RequestState.Success(expenses)
         } catch (e: HttpException) {
             RequestState.Error(e)

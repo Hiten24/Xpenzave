@@ -1,7 +1,7 @@
 package com.hcapps.xpenzave.presentation.expense_detail
 
 import com.hcapps.xpenzave.domain.model.category.Category
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class ExpenseDetailState(
     val expenseId: String? = null,
@@ -11,7 +11,7 @@ data class ExpenseDetailState(
     val photoId: String? = null,
     val more: String? = null,
     val loading: Boolean = false,
-    val date: LocalDate? = null
+    val date: LocalDateTime? = null
 ) {
 
     override fun equals(other: Any?): Boolean {

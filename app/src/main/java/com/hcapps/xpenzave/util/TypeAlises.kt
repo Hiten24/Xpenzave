@@ -1,6 +1,6 @@
 package com.hcapps.xpenzave.util
 
 import com.hcapps.xpenzave.domain.model.expense.ExpenseDomainData
-import java.time.LocalDate
+import java.time.LocalDateTime
 
-typealias ExpenseLogType = Map<LocalDate, List<ExpenseDomainData>>
+typealias ExpenseLogType = Map<LocalDateTime, List<ExpenseDomainData>>
