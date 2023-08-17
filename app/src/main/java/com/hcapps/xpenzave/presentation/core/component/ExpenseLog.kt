@@ -39,8 +39,9 @@ import com.hcapps.xpenzave.presentation.home.component.ExpenseItemStyle
 import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
 import com.hcapps.xpenzave.presentation.ordinalDayOfMonth
 import java.time.LocalDate
+import java.time.LocalDateTime
 
-typealias ExpenseLogs = Map<LocalDate, List<ExpenseDomainData>>
+typealias ExpenseLogs = Map<LocalDateTime, List<ExpenseDomainData>>
 
 private const val headerOfTheExpense = 1000
 private const val itemOfTheCompose = 1001
@@ -64,7 +65,7 @@ fun ExpenseLog(
         expenses.forEach { (date, listOfExpense) ->
             item(contentType = headerOfTheExpense) {
                 DateHeaderItem(
-                    date = date,
+                    date = date.toLocalDate(),
                     onClickOfDateHeader = {},
                     style = headerStyle
                 )
@@ -105,7 +106,7 @@ fun DateHeaderItem(
             .padding(10.dp)
     ) {
         Text(
-            text = ordinalDayOfMonth(date.dayOfMonth),
+            text = ordinalDayOfMonth(date.dayOfMonth) + " " + date.month.defaultDisplayName(),
             color = style.dateTextColor,
             fontWeight = style.dateFontWeight
         )

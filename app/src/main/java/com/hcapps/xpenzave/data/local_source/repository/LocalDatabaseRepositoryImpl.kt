@@ -19,7 +19,9 @@ class LocalDatabaseRepositoryImpl @Inject constructor(
     }
 
     override fun getExpenses(date: LocalDate, filters: List<String>): Flow<List<ExpenseEntity>> {
-        return expenseDao.getExpenses(month = date.monthValue, year = date.year, filters, filters.size)
+        Timber.i("month: ${date.month}, year: ${date.year}")
+        val monthAndYear = "${String.format("%02d", date.monthValue)} ${date.year}"
+        return expenseDao.getExpenses(monthAndYear = monthAndYear, filters, filters.size)
     }
 
     override fun getBudget(date: LocalDate): Flow<BudgetEntity?> {

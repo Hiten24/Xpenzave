@@ -62,7 +62,7 @@ class StatsViewModel @Inject constructor(
     }
 
     private fun getExpenses(date: LocalDate, filter: List<String>) = viewModelScope.launch {
-         loading(true)
+        loading(true)
         try {
             getExpensesUseCase.execute(date, filter)
             loading(false)

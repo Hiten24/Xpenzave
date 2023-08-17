@@ -12,7 +12,6 @@ data class AddExpenseState(
     val eachMonth: Boolean = false,
     val category: String? = null,
     val photo: Uri? = null,
-    val photoPath: String? = null,
     val uploadedPhoto: UploadedPhoto? = null,
     val loading: Boolean = false,
     val uploadPhotoProgress: Boolean = false

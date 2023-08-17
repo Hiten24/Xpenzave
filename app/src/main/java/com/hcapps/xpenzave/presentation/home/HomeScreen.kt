@@ -23,6 +23,8 @@ import com.hcapps.xpenzave.presentation.core.component.calendar.rememberMonthSta
 import com.hcapps.xpenzave.presentation.expense_detail.ExpenseDetailNavArgs
 import com.hcapps.xpenzave.presentation.home.component.BudgetProgressCard
 import com.hcapps.xpenzave.presentation.home.component.RecentExpenseSection
+import timber.log.Timber
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +41,8 @@ fun HomeScreen(
     val lazyListState = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val monthSelectorState by rememberMonthState()
+
+    Timber.tag("local_date_format").i(LocalDateTime.now().toString())
 
     viewModel.uiEvent.UiEventReceiver()
 

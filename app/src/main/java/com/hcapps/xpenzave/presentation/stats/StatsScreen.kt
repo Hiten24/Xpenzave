@@ -50,6 +50,7 @@ fun StatsScreen(
     navigateToCompare: () -> Unit,
     navigateToFilter: (appliedFilters: Array<String>) -> Unit,
     navigateToDetails: (details: ExpenseDetailNavArgs) -> Unit,
+    onDateChange: () -> Unit,
     viewModel: StatsViewModel = hiltViewModel()
 ) {
 
@@ -159,6 +160,7 @@ fun StatsScreen(
             onDismiss = { dateDialogOpened = false },
             onSelectMonthYear = {
                 viewModel.dateChange(it)
+                onDateChange()
                 dateDialogOpened = false
             }
         )

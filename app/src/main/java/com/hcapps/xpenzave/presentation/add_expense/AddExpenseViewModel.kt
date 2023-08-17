@@ -1,5 +1,6 @@
 package com.hcapps.xpenzave.presentation.add_expense
 
+import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.IOException
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -57,10 +59,7 @@ class AddExpenseViewModel @Inject constructor(
                 )
             }
             is PhotoChange -> {
-                _state.value = state.value.copy(
-                    photo = event.photo,
-                    photoPath = event.Path
-                )
+                _state.value = state.value.copy(photo = event.photo)
             }
             is AddExpenseEvent.ClearPhoto -> {
                 _state.value = state.value.copy(photo = null)
@@ -69,7 +68,7 @@ class AddExpenseViewModel @Inject constructor(
                 _state.value = state.value.copy(date = event.dateTime)
             }
             is AddExpenseEvent.AddButtonClicked -> {
-                uploadPhotoAndAddExpense(state.value.photoPath)
+                uploadPhotoAndAddExpense(state.value.photo)
             }
         }
     }
@@ -98,22 +97,24 @@ class AddExpenseViewModel @Inject constructor(
         return (amount != null && amount != 0.0 && category.isNullOrEmpty().not())
     }
 
-    private fun uploadPhotoAndAddExpense(path: String?) = viewModelScope.launch {
+    private fun uploadPhotoAndAddExpense(uri: Uri?) = viewModelScope.launch {
         loading(true)
         if (validate().not()) {
             loading(false)
             return@launch
         }
         try {
-            val uploadedPhoto = path?.let { uploadPhotoUseCase(it) }
+            val uploadedPhoto = uri?.let { uploadPhotoUseCase(it) }
             _state.value = state.value.copy(uploadedPhoto = uploadedPhoto)
             addExpenseUseCase(getTypedExpense())
             loading(false)
             clearState()
+            _uiEvent.emit(ShowMessage("Expense Added Successfully!"))
         } catch (e: Exception) {
             if (e is IOException) {
                 _uiEvent.emit(Error(StringResource(R.string.internet_error_msg)))
-            } else { e.printStackTrace() }
+            }
+            Timber.e(e)
             loading(false)
         }
     }

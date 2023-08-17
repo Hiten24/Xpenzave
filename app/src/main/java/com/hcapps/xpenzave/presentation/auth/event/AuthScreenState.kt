@@ -6,8 +6,6 @@ data class AuthScreenState(
     val emailError: String? = null,
     val password: String = "",
     val passwordError: String? = null,
-    val confirmPassword: String = "",
-    val confirmPasswordError: String? = null,
     val loading: Boolean = false,
     val createPasswordState: PasswordState? = null,
     val passwordHint: Boolean = false

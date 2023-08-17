@@ -1,6 +1,7 @@
 package com.hcapps.xpenzave.presentation.core.component.input
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -26,7 +27,9 @@ fun XpenzaveTextField(
     label: String,
     error: String? = null,
     imeAction: ImeAction = ImeAction.Done,
-    keyboardType: KeyboardType = KeyboardType.Text
+    supportingText: String? = null,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    keyboardActions: KeyboardActions = KeyboardActions()
 ) {
 
     var visualTransformation: MutableState<Boolean>? = null
@@ -62,7 +65,14 @@ fun XpenzaveTextField(
         },
         visualTransformation = if (visualTransformation?.value == true) PasswordVisualTransformation() else VisualTransformation.None,
         isError = error.isNullOrEmpty().not(),
-        supportingText = { error?.let { Text(text = it) } },
-        colors = TextFieldDefaults.colors(unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface, unfocusedContainerColor = MaterialTheme.colorScheme.background, focusedContainerColor = MaterialTheme.colorScheme.background)
+        supportingText = {
+            if (supportingText != null && error == null) {
+                Text(text = supportingText)
+            }
+            error?.let { Text(text = it) }
+        },
+        colors = TextFieldDefaults.colors(unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface, unfocusedContainerColor = MaterialTheme.colorScheme.background, focusedContainerColor = MaterialTheme.colorScheme.background),
+        singleLine = true,
+        keyboardActions = keyboardActions
     )
 }

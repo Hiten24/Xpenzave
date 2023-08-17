@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
-import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,7 +53,7 @@ class ExpenseDetailViewModel @Inject constructor(
             category = Category.dummies().find { it.id == details?.categoryId },
             photoId = details?.photoId,
             more = details?.moreDetails,
-            date = LocalDate.parse(details?.date)
+            date = LocalDateTime.parse(details?.date)
         )
         Timber.i("photoId: ${details?.photoId}")
         savedStateHandle.clearSavedStateProvider(EXPENSE_DETAIL_ARGUMENT_KEY)

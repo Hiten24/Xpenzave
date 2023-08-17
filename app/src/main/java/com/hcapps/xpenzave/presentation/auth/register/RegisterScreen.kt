@@ -1,20 +1,24 @@
 package com.hcapps.xpenzave.presentation.auth.register
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hcapps.xpenzave.R
 import com.hcapps.xpenzave.presentation.auth.AuthTopBar
-import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.ConfirmPasswordChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.EmailChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.PasswordChanged
 import com.hcapps.xpenzave.presentation.auth.event.AuthEvent.Register
@@ -32,6 +35,7 @@ import com.hcapps.xpenzave.presentation.core.UiEventReceiver
 import com.hcapps.xpenzave.presentation.core.component.button.XpenzaveButton
 import com.hcapps.xpenzave.presentation.core.component.input.XpenzaveTextField
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     navigateToHome: () -> Unit,
@@ -44,145 +48,90 @@ fun RegisterScreen(
 
     viewModel.uiEvent.UiEventReceiver()
 
+    val scrollState = rememberScrollState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AuthTopBar(
                 title = stringResource(id = R.string.register_title),
                 subtitle = stringResource(id = R.string.register_subtitle),
                 actionText = stringResource(id = R.string.register_action_text),
                 onNavigation = navigateUp,
-                onAction = login
+                onAction = login,
+                scrollBehavior = scrollBehavior
             )
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(top = paddingValues.calculateTopPadding())
                 .padding(horizontal = 24.dp)
-                .padding(vertical = 32.dp)
-                .padding(paddingValues),
+                .padding(vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
 
-            RegisterContent(
-                email = state.email,
-                onEmailChanged = { viewModel.onEvent(EmailChanged(it)) },
-                password = state.password,
-                onPasswordChanged = { viewModel.onEvent(PasswordChanged(it)) },
-                emailError = state.emailError,
-                passwordError = state.passwordError,
-                register = { viewModel.onEvent(Register(navigateToHome)) },
-                loading = state.loading,
-                confirmPassword = state.confirmPassword,
-                onConfirmPasswordChanged = { viewModel.onEvent(ConfirmPasswordChanged(it)) },
-                confirmPasswordError = state.confirmPasswordError,
-                passwordState = state.createPasswordState,
-                onSetPasswordFocusedChange = { viewModel.onEvent(SetPasswordFocusChanged) }
+            XpenzaveTextField(
+                value = state.email,
+                onValueChange = { viewModel.onEvent(EmailChanged(it)) },
+                label = stringResource(id = R.string.e_mail),
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next,
+                error = state.emailError
             )
 
+            XpenzaveTextField(
+                modifier = Modifier.onFocusChanged {
+                    viewModel.onEvent(SetPasswordFocusChanged(it.isFocused))
+                },
+                value = state.password,
+                onValueChange = {
+                    if (it.length <= 20) {
+                        viewModel.onEvent(PasswordChanged(it))
+                    }
+                },
+                label = stringResource(id = R.string.set_password),
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next,
+                error = state.passwordError,
+                supportingText = state.createPasswordState?.let { getPasswordRulesSupportingText(it) }
+            )
+
+            /*XpenzaveTextField(
+                value = state.confirmPassword,
+                onValueChange = { viewModel.onEvent(ConfirmPasswordChanged(it)) },
+                label = stringResource(id = R.string.confirm_password),
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next,
+                error = state.confirmPasswordError
+            )*/
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Box() {
+                XpenzaveButton(
+                    title = "Register",
+                    enabled = state.email.isNotEmpty() && state.password.isNotEmpty(),
+                    loading = state.loading,
+                    onClickOfButton = { viewModel.onEvent(Register(navigateToHome)) }
+                )
+            }
         }
     }
 
 }
 
 @Composable
-fun RegisterContent(
-    email: String,
-    onEmailChanged: (String) -> Unit,
-    emailError: String? = null,
-    password: String,
-    onPasswordChanged: (String) -> Unit,
-    passwordError: String? = null,
-    confirmPassword: String,
-    onConfirmPasswordChanged: (String) -> Unit,
-    confirmPasswordError: String? = null,
-    loading: Boolean = false,
-    register: () -> Unit,
-    passwordState: PasswordState? = null,
-    onSetPasswordFocusedChange: () -> Unit
-) {
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-
-        XpenzaveTextField(
-            value = email,
-            onValueChange = onEmailChanged,
-            label = stringResource(id = R.string.e_mail),
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next,
-            error = emailError
-        )
-
-        XpenzaveTextField(
-            modifier = Modifier.onFocusChanged {
-                if (!it.isFocused) { onSetPasswordFocusedChange() }
-            },
-            value = password,
-            onValueChange = onPasswordChanged,
-            label = stringResource(id = R.string.set_password),
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Next,
-            error = passwordError
-        )
-
-        passwordState?.let {
-            val checkIcon = stringResource(id = R.string.check_unicode)
-            val bulletIcon = stringResource(id = R.string.bullet_point_unicode)
-            Text(
-                text = stringResource(id = R.string.password_rule_title),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = stringResource(
-                    id = R.string.password_rule_1,
-                    if (passwordState.shouldBeMin8Max20Char) checkIcon else bulletIcon
-                ),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = stringResource(
-                    id = R.string.password_rule_2,
-                    if (passwordState.shouldHaveALowerCase) checkIcon else bulletIcon
-                ),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = stringResource(
-                    id = R.string.password_rule_3,
-                    if (passwordState.shouldHaveAUpperCase) checkIcon else bulletIcon
-                ),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Text(
-                text = stringResource(
-                    id = R.string.password_rule_4,
-                    if (passwordState.shouldHaveANumberOrAcceptableCharacter) checkIcon else bulletIcon
-                ),
-                style = MaterialTheme.typography.labelLarge
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        XpenzaveTextField(
-            value = confirmPassword,
-            onValueChange = onConfirmPasswordChanged,
-            label = stringResource(id = R.string.confirm_password),
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Next,
-            error = confirmPasswordError
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        XpenzaveButton(
-            title = "Register",
-            enabled = email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty(),
-            loading = loading,
-            onClickOfButton = register
-        )
-
-    }
+private fun getPasswordRulesSupportingText(state: PasswordState): String {
+    val checkIcon = stringResource(id = R.string.check_unicode)
+    val bulletIcon = stringResource(id = R.string.bullet_point_unicode)
+    return stringResource(id = R.string.password_rule_title) + "\n" + "\n" +
+    stringResource(id = R.string.password_rule_1, if (state.shouldBeMin8Max20Char) checkIcon else bulletIcon) + "\n" +
+    stringResource(id = R.string.password_rule_2, if (state.shouldHaveALowerCase) checkIcon else bulletIcon) + "\n" +
+    stringResource(id = R.string.password_rule_3, if (state.shouldHaveAUpperCase) checkIcon else bulletIcon) + "\n" +
+    stringResource(id = R.string.password_rule_4, if (state.shouldHaveANumberOrAcceptableCharacter) checkIcon else bulletIcon)
 }

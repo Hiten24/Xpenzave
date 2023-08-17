@@ -52,8 +52,8 @@ import com.hcapps.xpenzave.presentation.core.component.ZoomableImagePreview
 import com.hcapps.xpenzave.presentation.edit_budget.BudgetScreenFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -88,7 +88,7 @@ fun ExpenseDetailScreen(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = {
             TopBar(
-                date = state.date ?: LocalDate.now(),
+                date = state.date ?: LocalDateTime.now(),
                 onClickOfNavigationIcon = navigateUp,
                 deleteExpense = {
                     state.expenseId?.let { viewModel.deleteExpense(it, state.photoId) }
@@ -213,11 +213,12 @@ fun ExpenseDetailContent(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun TopBar(
-    date: LocalDate = LocalDate.now(),
+    date: LocalDateTime = LocalDateTime.now(),
     onClickOfNavigationIcon: () -> Unit,
     deleteExpense: () -> Unit
 ) {
-    Timber.i("date: $date")
+    val formattedDate = "${date.dayOfMonth} ${date.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH)}"
+    val formattedTime = date.format(DateTimeFormatter.ofPattern("hh:mm a"))
     LargeTopAppBar(
         title = {
             Column(modifier = Modifier.padding(horizontal = 6.dp)) {
@@ -227,7 +228,7 @@ private fun TopBar(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${date.dayOfMonth} ${date.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH)}",
+                    text = "$formattedDate $formattedTime",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary

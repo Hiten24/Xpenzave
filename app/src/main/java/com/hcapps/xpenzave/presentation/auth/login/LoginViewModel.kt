@@ -42,9 +42,6 @@ class LoginViewModel @Inject constructor(
             is PasswordChanged -> {
                 _state.value = state.value.copy(password = event.password, passwordError = null)
             }
-            is ConfirmPasswordChanged -> {
-                _state.value = state.value.copy(confirmPassword = event.password)
-            }
             is Login -> {
                 if (validate().not()) {
                     _state.value = state.value.copy(loading = false)

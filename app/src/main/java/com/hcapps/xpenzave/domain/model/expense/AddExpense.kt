@@ -2,9 +2,9 @@ package com.hcapps.xpenzave.domain.model.expense
 
 import com.hcapps.xpenzave.domain.model.Response
 import com.hcapps.xpenzave.domain.model.category.Category
+import com.hcapps.xpenzave.util.serverDateToLocalDateTime
 import io.appwrite.ID
-import java.time.LocalDate
-import java.time.Month
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 data class ExpenseData(
@@ -22,7 +22,7 @@ data class ExpenseData(
 fun Response<ExpenseData>.toExpenseDomainData() = ExpenseDomainData(
     id = id,
     category = data.categoryId,
-    date = LocalDate.of(data.year, Month.of(data.month), data.day),
+    date = LocalDateTime.parse(serverDateToLocalDateTime(data.date)),
     amount = data.amount,
     photoId = data.photo,
     moreDetail = data.details
